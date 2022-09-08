@@ -6,9 +6,11 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start":"App.vue"
+    "start": "App.vue"
   },
   "dependencies": {
+    "@babel/core": "^7.19.0",
+    "@babel/preset-env": "^7.19.0",
     "core-js": "^3.6.5",
     "vue": "^3.0.0"
   },
@@ -40,5 +42,4 @@
     "last 2 versions",
     "not dead"
   ]
-
 }
