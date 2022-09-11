@@ -1,4 +1,4 @@
-package Features.Booking;
+package features.booking;
 
 public class BookingModel {
     
