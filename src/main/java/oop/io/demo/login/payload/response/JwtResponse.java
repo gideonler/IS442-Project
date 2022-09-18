@@ -5,24 +5,8 @@ import org.springframework.security.core.GrantedAuthority;
 public class JwtResponse {
     private String id;
 	private String email;
-	private GrantedAuthority usertype;
     private String jwt;
-
-	public GrantedAuthority getUsertype() {
-        return usertype;
-    }
-
-    public void setUsertype(GrantedAuthority usertype) {
-        this.usertype = usertype;
-    }
-
-    public String getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }
+    private GrantedAuthority usertype;
 
     public JwtResponse(String jwt, String string,  String email, GrantedAuthority usertype) {
 		this.jwt = jwt;
@@ -50,4 +34,12 @@ public class JwtResponse {
 	public GrantedAuthority getUserType() {
 		return usertype;
 	}
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
 }

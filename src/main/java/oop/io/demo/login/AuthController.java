@@ -3,8 +3,6 @@ package oop.io.demo.login;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +20,6 @@ import oop.io.demo.user.USERTYPE;
 import oop.io.demo.user.User;
 import oop.io.demo.login.payload.request.LoginRequest;
 import oop.io.demo.login.payload.request.SignupRequest;
-import oop.io.demo.login.payload.response.UserInfoResponse;
 import oop.io.demo.login.payload.response.JwtResponse;
 import oop.io.demo.login.payload.response.MessageResponse;
 import oop.io.demo.user.UserRepository;
@@ -62,7 +59,6 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),
                                     userDetails.getEmail(),
                                     userDetails.getAuthority()));
-
         }
 
         @PostMapping("/signup")
