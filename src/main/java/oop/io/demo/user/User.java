@@ -24,8 +24,13 @@ public class User {
 	private String firstName;
 	private String lastName;
 	private USERTYPE userType;
+    private String password;
 
     public User() {}
+    public User(String email, String password) {
+        this.email= email;
+        this.password= password;
+    }
 	public User(String email, String firstName, String lastName){
         this.email = email;
         this.firstName = firstName;
@@ -54,6 +59,14 @@ public class User {
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -64,6 +77,9 @@ public class User {
 
     public void setUserType(USERTYPE userType) {
         this.userType = userType;
+    }
+    public String getUserId() {
+        return userId;
     }
 
 
