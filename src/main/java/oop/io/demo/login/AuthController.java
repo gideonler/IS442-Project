@@ -22,12 +22,13 @@ import oop.io.demo.user.User;
 import oop.io.demo.login.payload.request.LoginRequest;
 import oop.io.demo.login.payload.request.SignupRequest;
 import oop.io.demo.login.payload.response.UserInfoResponse;
+import oop.io.demo.login.payload.response.JwtResponse;
 import oop.io.demo.login.payload.response.MessageResponse;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.login.security.jwt.JwtUtils;
 import oop.io.demo.login.security.services.UserDetailImplementation;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -39,7 +40,6 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
-
 
     private final UserRepository repository;
 
@@ -55,19 +55,15 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailImplementation userDetails = (UserDetailImplementation) authentication.getPrincipal();
+        String jwt = jwtUtils.generateJwtToken(authentication);
 
-        ResponseCookie jwtCookie = JwtUtils.generateJwtCookie(userDetails);
-
-
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-            .body(new UserInfoResponse(userDetails.getId(),
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),
                                     userDetails.getEmail(),
                                     userDetails.getAuthority()));
         }
 
         @PostMapping("/signup")
         public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-
 
         if (repository.existsByEmail(signUpRequest.getEmail())) {
         return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
@@ -77,7 +73,7 @@ public class AuthController {
         User user = new User(
                             signUpRequest.getEmail(),
                             encoder.encode(signUpRequest.getPassword()));
-        
+
         user.setUserType(USERTYPE.STAFF);
         repository.save(user);
 
@@ -87,8 +83,7 @@ public class AuthController {
 
         @PostMapping("/signout")
         public ResponseEntity<?> logoutUser() {
-        ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+        return ResponseEntity.ok()
             .body(new MessageResponse("You've been signed out!"));
 
         }
