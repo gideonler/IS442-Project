@@ -1,9 +1,10 @@
-package oop.io.demo.login.security;
+package oop.io.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 //import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import oop.io.demo.login.security.jwt.AuthEntryPointJwt;
 import oop.io.demo.login.security.jwt.AuthTokenFilter;
 import oop.io.demo.login.security.services.UserDetailServiceImplementation;
+import oop.io.demo.user.USERTYPE;
 
 @Configuration
 //@EnableWebSecurity
@@ -58,7 +60,7 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
       return authConfig.getAuthenticationManager();
     }
-  
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
       return new BCryptPasswordEncoder();
@@ -69,15 +71,11 @@ public class WebSecurityConfig {
       http.cors().and().csrf().disable()
           .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
           .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-          .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-          .antMatchers("/api/test/**").permitAll()
-          .antMatchers(h2ConsolePath + "/**").permitAll()
+          .authorizeRequests().antMatchers("/auth/**").permitAll()
+          //.antMatchers(h2ConsolePath + "/**").permitAll()
+          .antMatchers("/users").hasAnyAuthority(USERTYPE.ADMIN.toString())
+          .antMatchers("/users/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
           .anyRequest().authenticated();
-      
-        // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'
-        //http.headers().frameOptions().sameOrigin();
-      
-        //http.authenticationProvider(authenticationProvider());
   
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
       
