@@ -43,7 +43,7 @@ public class UserController {
         return ResponseEntity.ok(repository.findAll());
     }
 
-    @GetMapping("/users/{email}")
+    /*@GetMapping("/users/{email}")
     public ResponseEntity findByEmail(@PathVariable("email") String email) {
         Optional<User> user= this.repository.findByEmail(email);
         if(user.isPresent()){
@@ -52,7 +52,7 @@ public class UserController {
         else {
             return ResponseEntity.ok("A user with email:"+ email +" was not found.");
         }
-    }
+    }*/
 
     @GetMapping("/users/{userType}")
     public ResponseEntity findByUserType(@PathVariable("userType") USERTYPE userType) {
@@ -72,6 +72,7 @@ public class UserController {
         user.setEmail(userRequest.getEmail());
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
+        user.setPassword(userRequest.getPassword());
         String uType = userRequest.getUserType().toString().toUpperCase();
         user.setUserType(USERTYPE.valueOf(uType));
         //TODO: return message if email already exists

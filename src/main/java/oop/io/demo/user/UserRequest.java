@@ -5,12 +5,22 @@ public class UserRequest {
 	private String firstName;
 	private String lastName;
 	private USERTYPE userType;
+    private String password;
     
-    public UserRequest(String email, String firstName, String lastName, USERTYPE userType) {
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public UserRequest(String email, String firstName, String lastName, USERTYPE userType, String password) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.userType = userType;
+        this.password = password;
     }
 
     public String getEmail() {
