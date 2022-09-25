@@ -56,7 +56,7 @@ const NotificationsPlugin = {
     });
     Vue.prototype.$notify = app.notify;
     Vue.prototype.$notifications = app.notificationStore;
-    Vue.component('Notifications', Notifications);
+    Vue.component('Notifications_Component', Notifications);
     if (options) {
       NotificationStore.setOptions(options);
     }

@@ -16,6 +16,7 @@
 import Notification from './Notification.vue';
 
 export default {
+  name:'notifications-component',
   components: {
     Notification
   },

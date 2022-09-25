@@ -26,7 +26,7 @@
 </template>
 <script>
 export default {
-  name: 'notification',
+  name: 'notification-component',
   components: {
     contentRender: {
       props: ['component'],

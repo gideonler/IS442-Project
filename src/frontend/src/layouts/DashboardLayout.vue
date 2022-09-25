@@ -1,32 +1,21 @@
 <template>
-  <div class="wrapper">
-    <side-bar>
+  
+    <div class="wrapper">
+      <side-bar>
       <mobile-menu slot="content"></mobile-menu>
-      <sidebar-link to="/admin/overview">
-        <i class="nc-icon nc-chart-pie-35"></i>
-        <p>Dashboard</p>
-      </sidebar-link>
-      <sidebar-link to="/admin/user">
+      <sidebar-link to="/user">
         <i class="nc-icon nc-circle-09"></i>
         <p>User Profile</p>
       </sidebar-link>
-      <sidebar-link to="/admin/table-list">
+      <sidebar-link to="/booking">
         <i class="nc-icon nc-notes"></i>
-        <p>Table list</p>
+        <p>New Booking </p>
       </sidebar-link>
-      <sidebar-link to="/admin/typography">
+      <sidebar-link to="/about">
         <i class="nc-icon nc-paper-2"></i>
-        <p>Typography</p>
+        <p>Upcoming bookings</p>
       </sidebar-link>
-      <sidebar-link to="/admin/icons">
-        <i class="nc-icon nc-atom"></i>
-        <p>Icons</p>
-      </sidebar-link>
-      <sidebar-link to="/admin/maps">
-        <i class="nc-icon nc-pin-3"></i>
-        <p>Maps</p>
-      </sidebar-link>
-      <sidebar-link to="/admin/notifications">
+      <sidebar-link to="/home">
         <i class="nc-icon nc-bell-55"></i>
         <p>Notifications</p>
       </sidebar-link>
@@ -34,16 +23,15 @@
       <template slot="bottom-links">
         <sidebar-link class="active"
                       to="/admin/upgrade">
-          <i class="nc-icon nc-alien-33"></i>
-          <p>Upgrade to PRO</p>
+          <i class="nc-icon nc-notes"></i>
+          <p>Book Now</p>
         </sidebar-link>
       </template>
-    </side-bar>
+    </side-bar> 
+  
     <div class="main-panel">
       <top-nav-bar></top-nav-bar>
-
-      <dashboard-content @click="toggleSidebar">
-
+      <dashboard-content  @click="toggleSidebar">
       </dashboard-content>
 
       <content-footer></content-footer>
@@ -57,13 +45,16 @@
   import TopNavBar from './TopNavBar'
   import ContentFooter from './ContentFooter.vue'
   import DashboardContent from './Content.vue'
-  import MobileMenu from './MobileMenu.vue'
+  // import MobileMenu from './MobileMenu.vue'
+  
+
   export default {
     components: {
       TopNavBar,
       ContentFooter,
       DashboardContent,
-      MobileMenu
+      // MobileMenu
+
     },
     methods: {
       toggleSidebar () {
