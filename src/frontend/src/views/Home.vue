@@ -1,18 +1,22 @@
 <template>
-   <TopNavBar>  
-    </TopNavBar>
+    <div class="Home">
+        <h1>Home</h1>
+    </div>
+
 
 </template>
 
 
 <script>
+import DashboardLayout from '../layouts/DashboardLayout'
 
-import TopNavBar from '../layouts/TopNavBar'
 
 export default {
         name: "home-page",
-        components: { TopNavBar }
-        
+
+        created() {
+            this.$emit('update:layout', DashboardLayout);
+         },
     };
 
 </script>

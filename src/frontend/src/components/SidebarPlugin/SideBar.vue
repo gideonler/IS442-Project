@@ -1,13 +1,13 @@
 <template>
   <div class="sidebar"
        :style="sidebarStyle"
-       :data-color="backgroundColor"
-       :data-image="backgroundImage">
+       :data-color="backgroundColor">
     <div class="sidebar-wrapper">
+      
       <div class="logo">
         <a href="#" class="simple-text logo__container">
             <div class="logo-img">
-                <img src="img/vue-logo.png" alt="">
+                <img src="../../assets/images/sss_logo1.jpg" alt="">
             </div>
           {{title}}
         </a>
@@ -27,6 +27,7 @@
           </sidebar-link>
         </slot>
       </ul>
+      <b-img class="m-3" height=150 center  src="../../assets/images/sss_logo2.png" alt=""></b-img>
       <ul class="nav nav-bottom" v-if="$slots['bottom-links']">
         <slot name="bottom-links"></slot>
       </ul>
@@ -43,19 +44,15 @@
     props: {
       title: {
         type: String,
-        default: 'Vue LBD'
+        default: 'User 1'
       },
       backgroundColor: {
         type: String,
-        default: 'black',
+        default: 'red',
         validator: (value) => {
           let acceptedValues = ['', 'blue', 'azure', 'green', 'orange', 'red', 'purple', 'black']
           return acceptedValues.indexOf(value) !== -1
         }
-      },
-      backgroundImage: {
-        type: String,
-        default: 'img/sidebar-5.jpg'
       },
       activeColor: {
         type: String,
@@ -82,7 +79,7 @@
     computed: {
       sidebarStyle () {
         return {
-          backgroundImage: `url(${this.backgroundImage})`
+   
         }
       }
     }

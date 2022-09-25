@@ -17,6 +17,7 @@ $black:    #000 !default;
 
 // $grays: () !default;
 
+$theme: #d89522 !default;
 $blue:    #007bff !default;
 $indigo:  #6610f2 !default;
 $purple:  #6f42c1 !default;
@@ -91,7 +92,6 @@ $sizes: () !default;
 // Settings for the `<body>` element.
 $body-bg:                   $white !default;
 $body-color:                $gray-900 !default;
-
 
 // Links
 //
@@ -1185,6 +1185,22 @@ $font-family-base:            $font-family-sans-serif !default;
 // $b-skeleton-animation-duration: 1.75s !default;
 // $b-skeleton-text-spacing: map-get($spacers, 1) !default;
 // $b-skeleton-btn-width: 75px !default;
+
+// --- Full Calendar ---
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: #a9a9a9;
+}
+
+.fc-col-header-cell {
+  background-color: #1a252f;
+}
+.fc-col-header-cell-cushion{
+  color: rgb(236, 236, 236);
+}
+
+.fc-daygrid-day-number {
+  color: rgb(119, 119, 119);
+}
 
 
 // Then import Bootstrap and BootstrapVue SCSS files (order is important)

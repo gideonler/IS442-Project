@@ -1,17 +1,16 @@
 <template>
-    <TopNavBar>
-        <h1>About us</h1>
-    </TopNavBar>
-        
+
+  <h1>About us</h1>
   
 </template>
 
 <script>
-import TopNavBar from '../layouts/TopNavBar'
+import DashboardLayout from '../layouts/DashboardLayout'
 
   export default {
     name: "about-page",
-    components: { TopNavBar }
-
+    created() {
+            this.$emit('update:layout', DashboardLayout);
+         },
   }
 </script>
