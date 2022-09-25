@@ -1,6 +1,6 @@
-package oop.io.demo.booking;
+package oop.io.demo.loan;
 
-public enum BOOKINGSTATUS {
+public enum LOANSTATUS {
     CANCELLED,
     TOBECOLLECTED,
     COLLECTED,

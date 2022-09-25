@@ -48,6 +48,12 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
+        if(!(loginRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) || !(loginRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
+        } /* else if (!(loginRequest.getEmail().contains("@sportsschool.edu.sg")) || !(loginRequest.getEmail().contains("@nysi.org.sg"))){
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a school email!"));
+            } */
+
         Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -66,7 +72,11 @@ public class AuthController {
 
         if (repository.existsByEmail(signUpRequest.getEmail())) {
         return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-        }
+        } else if(!(signUpRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) || !(signUpRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
+        } /*else if(!(signUpRequest.getEmail().contains("@sportsschool.edu.sg")) || !(signUpRequest.getEmail().contains("@nysi.org.sg"))){
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a school email!"));
+        } */
 
         // Create new user's account
         User user = new User(
