@@ -1,7 +1,11 @@
 <template>
-  <transition name="fade" mode="out-in">
+  <div class="m-5">
+    <transition name="fade" mode="out-in">
     <router-view></router-view>
-  </transition>
+    </transition>
+
+  </div>
+
 </template>
 <script>
   export default {
