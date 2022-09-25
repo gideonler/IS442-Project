@@ -70,14 +70,7 @@ public class Pass {
         return false;
     }
     
-
-    // public void SetID(String PassID) {
-    //     this.PassID=PassID;
-    // }
-    // public void SetAvailability(int PassAvailability) {
-    //     this.PassAvailability=PassAvailability;
-    // }
-
+}
 
    
 
@@ -88,4 +81,4 @@ public class Pass {
 
 
     
-}
+

@@ -25,159 +25,159 @@ import oop.io.demo.login.security.jwt.JwtUtils;
 public class PassController {
 
 
-    @Autowired
-    PassRepository passRepository;
+    // @Autowired
+    // PassRepository passRepository;
   
-    @GetMapping("/pass")
-    public ResponseEntity<List<Pass>> getAllPasses(@RequestParam(required = false) String Passname) {
-        try {
-            List<Pass> pass = new ArrayList<Pass>();
+    // @GetMapping("/pass")
+    // public ResponseEntity<List<Pass>> getAllPasses(@RequestParam(required = false) String Passname) {
+    //     try {
+    //         List<Pass> pass = new ArrayList<Pass>();
         
-            if (Passname== null)
-              passRepository.findAll().forEach(pass::add);
-            else
-              // passRepository.findByPassContaining(Passname).forEach(pass::add);
-              System.out.println("Test");
+    //         if (Passname== null)
+    //           passRepository.findAll().forEach(pass::add);
+    //         else
+    //           // passRepository.findByPassContaining(Passname).forEach(pass::add);
+    //           System.out.println("Test");
         
-            if (pass.isEmpty()) {
-              return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
+    //         if (pass.isEmpty()) {
+    //           return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    //         }
         
-            return new ResponseEntity<>(pass, HttpStatus.OK);
-          } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-          }
-    }
+    //         return new ResponseEntity<>(pass, HttpStatus.OK);
+    //       } catch (Exception e) {
+    //         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    //       }
+    // }
   
-    @GetMapping("/pass/{id}")
-    public ResponseEntity<Pass> getPassById(@PathVariable("id") String id) {
-        Optional<Pass> passData = passRepository.findById(id);
+    // @GetMapping("/pass/{id}")
+    // public ResponseEntity<Pass> getPassById(@PathVariable("id") String id) {
+    //     Optional<Pass> passData = passRepository.findById(id);
 
-        if (passData.isPresent()) {
-          return new ResponseEntity<>(passData.get(), HttpStatus.OK);
-        } else {
-          return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    //     if (passData.isPresent()) {
+    //       return new ResponseEntity<>(passData.get(), HttpStatus.OK);
+    //     } else {
+    //       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    //     }
       
-    }
+    // }
   
-    @PostMapping("/pass")
-    public ResponseEntity<Pass> createPass(@RequestBody Pass pass) {
-        try {
-            Pass _pass = passRepository.save(new Pass(pass.GetPasses(),pass.GetGuest()));
-            return new ResponseEntity<>(_pass, HttpStatus.CREATED);
-          } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-          }
+    // @PostMapping("/pass")
+    // public ResponseEntity<Pass> createPass(@RequestBody Pass pass) {
+    //     try {
+    //         Pass _pass = passRepository.save(new Pass(pass.GetPasses(),pass.GetGuest()));
+    //         return new ResponseEntity<>(_pass, HttpStatus.CREATED);
+    //       } catch (Exception e) {
+    //         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    //       }
       
-    }
+    // }
   
-    @PutMapping("/pass/{id}")
-    public ResponseEntity<Pass> updatePass(@PathVariable("id") String id, @RequestBody Pass pass) {
-        Optional<Pass> passData = passRepository.findById(id);
+    // @PutMapping("/pass/{id}")
+    // public ResponseEntity<Pass> updatePass(@PathVariable("id") String id, @RequestBody Pass pass) {
+    //     Optional<Pass> passData = passRepository.findById(id);
 
-        if (passData.isPresent()) {
-            Pass _pass = passData.get();
-            _pass.SetPasses(pass.GetPasses());
-            _pass.SetGuest(pass.GetGuest());
+    //     if (passData.isPresent()) {
+    //         Pass _pass = passData.get();
+    //         _pass.SetPasses(pass.GetPasses());
+    //         _pass.SetGuest(pass.GetGuest());
         
-            return new ResponseEntity<>(passRepository.save(_pass), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+    //         return new ResponseEntity<>(passRepository.save(_pass), HttpStatus.OK);
+    //     } else {
+    //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    //     }
+    // }
   
-    @DeleteMapping("/pass/{id}")
-    public ResponseEntity<HttpStatus> deletePass(@PathVariable("id") String id) {
-        try {
-            passRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-          } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-          }
-    }
+    // @DeleteMapping("/pass/{id}")
+    // public ResponseEntity<HttpStatus> deletePass(@PathVariable("id") String id) {
+    //     try {
+    //         passRepository.deleteById(id);
+    //         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    //       } catch (Exception e) {
+    //         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    //       }
+    // }
   
-    @DeleteMapping("/pass")
-    public ResponseEntity<HttpStatus> deleteAllPass() {
-        try {
-            passRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-          } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-          }
+    // @DeleteMapping("/pass")
+    // public ResponseEntity<HttpStatus> deleteAllPass() {
+    //     try {
+    //         passRepository.deleteAll();
+    //         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    //       } catch (Exception e) {
+    //         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    //       }
       
-    }
+    // }
   
  
 
 
     
-    // @Autowired
-    // AuthenticationManager authenticationManager;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-    // @Autowired
-    // PasswordEncoder encoder;
+    @Autowired
+    PasswordEncoder encoder;
 
-    // @Autowired
-    // JwtUtils jwtUtils;
+    @Autowired
+    JwtUtils jwtUtils;
 
-    // private final PassRepository repository;
+    private final PassRepository repository;
 
-    // public PassController(PassRepository passRepository) {
-    //     this.repository = passRepository;
-    // }
+    public PassController(PassRepository passRepository) {
+        this.repository = passRepository;
+    }
     
-    // @GetMapping("/pass")
-    // public ResponseEntity<List<Pass>> getAllPasses() {
-    //     return ResponseEntity.ok(repository.findAll());
-    // }
+    @GetMapping("/pass")
+    public ResponseEntity<List<Pass>> getAllPasses() {
+        return ResponseEntity.ok(repository.findAll());
+    }
 
-    // @GetMapping("/pass/{passname}")
-    // public ResponseEntity findByPass(@PathVariable("name") String name) {
-    //     Optional<Pass> pass= this.repository.findById(name);
-    //     if(pass.isPresent()){
-    //         return ResponseEntity.ok(pass);
-    //     }
-    //     else {
-    //         return ResponseEntity.ok("Pass:"+ name +" was not found.");
-    //     }
-    // }
+    @GetMapping("/pass/{passname}")
+    public ResponseEntity findByPass(@PathVariable("name") String name) {
+        Optional<Pass> pass= this.repository.findById(name);
+        if(pass.isPresent()){
+            return ResponseEntity.ok(pass);
+        }
+        else {
+            return ResponseEntity.ok("Pass:"+ name +" was not found.");
+        }
+    }
 
-
-    
 
     
-    // @PostMapping("/pass")
-    // public ResponseEntity<Pass> createPass(@RequestBody PassRequest passRequest) {
-    //     Pass pass = new Pass();
-    //     pass.SetPasses(passRequest.GetPasses());
-    //     pass.SetGuest(passRequest.GetGuest());
 
-    //     //TODO: return message if email already exists
-    //     return ResponseEntity.ok(repository.save(pass));
-    // }
+    
+    @PostMapping("/pass")
+    public ResponseEntity<Pass> createPass(@RequestBody PassRequest passRequest) {
+        Pass pass = new Pass();
+        pass.SetPasses(passRequest.GetPasses());
+        pass.SetGuest(passRequest.GetGuest());
+
+        //TODO: return message if email already exists
+        return ResponseEntity.ok(repository.save(pass));
+    }
 
 
 
-    // @DeleteMapping("/pass/{passname}")
-    // public ResponseEntity deletePass(@PathVariable("id") String name) {
-    //     Optional<Pass> pass = this.repository.findById(name);
-    //     if(pass.isPresent()){
-    //         this.repository.deleteById(name);
-    //         return ResponseEntity.ok("Successfully deleted.");
-    //     }
-    //     else {
-    //         return ResponseEntity.ok("Pass " + name+ " was not found.");
-    //     }
-    // }
-    // @DeleteMapping("/pass")
-    // public ResponseEntity<HttpStatus> deleteAllPasses() {
-    //     try {
-    //         repository.deleteAll();
-    //         return new ResponseEntity<>(HttpStatus.OK);
-    //     }
-    //     catch(Exception e) {
-    //         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    //     }
-    // } 
+    @DeleteMapping("/pass/{passname}")
+    public ResponseEntity deletePass(@PathVariable("id") String name) {
+        Optional<Pass> pass = this.repository.findById(name);
+        if(pass.isPresent()){
+            this.repository.deleteById(name);
+            return ResponseEntity.ok("Successfully deleted.");
+        }
+        else {
+            return ResponseEntity.ok("Pass " + name+ " was not found.");
+        }
+    }
+    @DeleteMapping("/pass")
+    public ResponseEntity<HttpStatus> deleteAllPasses() {
+        try {
+            repository.deleteAll();
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    } 
 }
