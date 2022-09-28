@@ -1,17 +1,13 @@
 package oop.io.demo.user;
 
+import java.util.Set;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.Column;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+//import oop.io.demo.auth.registrationtoken.RegistrationToken;
 
 
 @Document("User")
@@ -19,12 +15,26 @@ public class User {
 
     @Id
     private String userId;
-    @Indexed(unique=true)
+
+    @Column(unique=true)
 	private String email;
-	private String firstName;
-	private String lastName;
+
+    @Column(unique =true)
+    private String contactNo;
+	private String name;
 	private USERTYPE userType;
     private String password;
+
+    private boolean isVerified;
+    //private Set<RegistrationToken> tokens;
+
+    public String getContactNo() {
+        return contactNo;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
 
     public User() {}
 
@@ -33,10 +43,9 @@ public class User {
         this.password= password;
     }
 
-	public User(String email, String firstName, String lastName, String password){
+	public User(String email, String name, String password){
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.password = password;
 		this.userType = USERTYPE.STAFF;
     }
@@ -45,12 +54,8 @@ public class User {
         return email;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
+    public String getName() {
+        return name;
     }
 
     public USERTYPE getUserType() {
@@ -70,12 +75,8 @@ public class User {
         this.password = password;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setUserType(USERTYPE userType) {
@@ -83,6 +84,14 @@ public class User {
     }
     public String getUserId() {
         return userId;
+    }
+
+    public void setVerified(boolean isVerified) {
+        this.isVerified = isVerified;
+    }
+
+    public void setContactNo(String contactNo) {
+        this.contactNo = contactNo;
     }
 
 

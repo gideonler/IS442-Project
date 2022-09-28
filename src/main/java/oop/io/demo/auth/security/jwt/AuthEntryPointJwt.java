@@ -1,4 +1,4 @@
-package oop.io.demo.login.security.jwt;
+package oop.io.demo.auth.security.jwt;
 
 import java.io.IOException;
 import java.util.HashMap;

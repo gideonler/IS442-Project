@@ -1,4 +1,4 @@
-package oop.io.demo.login.security.services;
+package oop.io.demo.auth.security.services;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,12 +26,15 @@ public class UserDetailImplementation implements UserDetails {
     //private Collection<? extends GrantedAuthority> authorities;
     GrantedAuthority authority;
 
+    private boolean isVerified;
+
     public UserDetailImplementation(String id, String email, String password,
-        GrantedAuthority authority/*Collection<? extends GrantedAuthority authorities*/) {
+        GrantedAuthority authority, boolean isVerified) {
       this.id = id;
       this.email = email;
       this.password = password;
       this.authority = authority;
+      this.isVerified = isVerified;
     }
   
     public static UserDetailImplementation build(User user) {
@@ -42,7 +45,8 @@ public class UserDetailImplementation implements UserDetails {
             user.getUserId(),
             user.getEmail(),
             user.getPassword(), 
-            authority);
+            authority,
+            user.isVerified());
     }
   
     @Override
@@ -85,7 +89,7 @@ public class UserDetailImplementation implements UserDetails {
   
     @Override
     public boolean isEnabled() {
-        return true;
+        return isVerified;
     }
   
     @Override

@@ -1,4 +1,4 @@
-package oop.io.demo.login.security.services;
+package oop.io.demo.auth.security.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
