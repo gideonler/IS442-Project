@@ -1,4 +1,4 @@
-package oop.io.demo.login.security.jwt;
+package oop.io.demo.auth.security.jwt;
 
 import java.util.Date;
 
@@ -14,8 +14,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
-import oop.io.demo.login.security.services.UserDetailImplementation;
 import io.jsonwebtoken.*;
+import oop.io.demo.auth.security.services.UserDetailImplementation;
 
 @Component
 public class JwtUtils {

@@ -1,4 +1,4 @@
-package oop.io.demo.login.payload.response;
+package oop.io.demo.auth.payload.response;
 
 public class MessageResponse {
     private String message;

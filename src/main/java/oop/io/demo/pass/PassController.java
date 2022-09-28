@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.login.security.jwt.JwtUtils;
+import oop.io.demo.auth.security.jwt.JwtUtils;
 @CrossOrigin(maxAge = 3600)
 @RestController
 // @RequestMapping("/api")

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.login.security.jwt.JwtUtils;
+import oop.io.demo.auth.security.jwt.JwtUtils;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
@@ -70,8 +70,7 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody UserRequest userRequest) {
         User user = new User();
         user.setEmail(userRequest.getEmail());
-        user.setFirstName(userRequest.getFirstName());
-        user.setLastName(userRequest.getLastName());
+        user.setName(userRequest.getName());
         user.setPassword(userRequest.getPassword());
         String uType = userRequest.getUserType().toString().toUpperCase();
         user.setUserType(USERTYPE.valueOf(uType));

@@ -20,9 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import oop.io.demo.login.security.jwt.AuthEntryPointJwt;
-import oop.io.demo.login.security.jwt.AuthTokenFilter;
-import oop.io.demo.login.security.services.UserDetailServiceImplementation;
+import oop.io.demo.auth.security.jwt.AuthEntryPointJwt;
+import oop.io.demo.auth.security.jwt.AuthTokenFilter;
+import oop.io.demo.auth.security.services.UserDetailServiceImplementation;
 import oop.io.demo.user.USERTYPE;
 
 @Configuration

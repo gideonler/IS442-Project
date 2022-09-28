@@ -1,4 +1,4 @@
-package oop.io.demo.login.payload.response;
+package oop.io.demo.auth.payload.response;
 
 import org.springframework.security.core.GrantedAuthority;
 
