@@ -9,6 +9,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface UserRepository extends MongoRepository<User, String>{
     Optional<List<User>> findByUserType(USERTYPE userType);
     Optional<User> findByEmail(String email);
-
     boolean existsByEmail(String email);
 }

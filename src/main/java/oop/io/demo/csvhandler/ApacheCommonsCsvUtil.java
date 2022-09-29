@@ -25,10 +25,9 @@ public class ApacheCommonsCsvUtil {
 	public static void usersToCsv(Writer writer, List<User> users) throws IOException {
 
 		try (CSVPrinter csvPrinter = new CSVPrinter(writer,
-				CSVFormat.DEFAULT.withHeader("id", "name", "address", "age"));) {
+				CSVFormat.DEFAULT.withHeader("name", "email"));) {
 			for (User user : users) {
 				List<String> data = Arrays.asList(user.getEmail());
-
 				csvPrinter.printRecord(data);
 			}
 			csvPrinter.flush();

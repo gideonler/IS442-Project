@@ -7,11 +7,13 @@ public class JwtResponse {
 	private String email;
     private String jwt;
     private GrantedAuthority usertype;
+	private String name;
 
-    public JwtResponse(String jwt, String string,  String email, GrantedAuthority usertype) {
+    public JwtResponse(String jwt, String string,  String email, String name, GrantedAuthority usertype) {
 		this.jwt = jwt;
         this.id = string;
 		this.email = email;
+		this.name = name;
 		this.usertype = usertype;
 	}
 
@@ -25,6 +27,14 @@ public class JwtResponse {
 
 	public String getEmail() {
 		return email;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setEmail(String email) {

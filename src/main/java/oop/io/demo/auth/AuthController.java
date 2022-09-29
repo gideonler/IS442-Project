@@ -66,7 +66,7 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),
-                                    userDetails.getEmail(),
+                                    userDetails.getEmail(), userDetails.getName(),
                                     userDetails.getAuthority()));
         }
 
@@ -76,7 +76,7 @@ public class AuthController {
         public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
         if (repository.existsByEmail(signUpRequest.getEmail())) {
-        return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
         } else if(!(signUpRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(signUpRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
         }
@@ -84,7 +84,7 @@ public class AuthController {
         // Create new user's account
         User user = new User(
                             signUpRequest.getName(),
-                            encoder.encode(signUpRequest.getEmail()));
+                            signUpRequest.getEmail());
 
         user.setUserType(USERTYPE.STAFF);
         user.setVerified(false);
