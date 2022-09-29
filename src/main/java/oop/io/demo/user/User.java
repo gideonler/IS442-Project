@@ -28,26 +28,13 @@ public class User {
     private boolean isVerified;
     //private Set<RegistrationToken> tokens;
 
-    public String getContactNo() {
-        return contactNo;
-    }
-
-    public boolean isVerified() {
-        return isVerified;
-    }
-
     public User() {}
 
-    public User(String email, String password) {
+    public User(String name, String email) {
         this.email= email;
-        this.password= password;
-    }
-
-	public User(String email, String name, String password){
-        this.email = email;
         this.name = name;
-        this.password = password;
-		this.userType = USERTYPE.STAFF;
+        this.isVerified=false;
+        this.userType = USERTYPE.STAFF;
     }
 
     public String getEmail() {
@@ -92,6 +79,14 @@ public class User {
 
     public void setContactNo(String contactNo) {
         this.contactNo = contactNo;
+    }
+
+    public String getContactNo() {
+        return contactNo;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
     }
 
 

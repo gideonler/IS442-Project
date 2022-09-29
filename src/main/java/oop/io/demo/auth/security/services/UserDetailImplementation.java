@@ -22,6 +22,8 @@ public class UserDetailImplementation implements UserDetails {
   
     @JsonIgnore
     private String password;
+
+    private String name;
   
     //private Collection<? extends GrantedAuthority> authorities;
     GrantedAuthority authority;
@@ -29,12 +31,13 @@ public class UserDetailImplementation implements UserDetails {
     private boolean isVerified;
 
     public UserDetailImplementation(String id, String email, String password,
-        GrantedAuthority authority, boolean isVerified) {
+    String name, GrantedAuthority authority, boolean isVerified) {
       this.id = id;
       this.email = email;
       this.password = password;
       this.authority = authority;
       this.isVerified = isVerified;
+      this.name = name;
     }
   
     public static UserDetailImplementation build(User user) {
@@ -45,6 +48,7 @@ public class UserDetailImplementation implements UserDetails {
             user.getUserId(),
             user.getEmail(),
             user.getPassword(), 
+            user.getName(),
             authority,
             user.isVerified());
     }
@@ -62,9 +66,9 @@ public class UserDetailImplementation implements UserDetails {
     public String getId() {
         return id;
     }
-  
-    public String getEmail() {
-        return email;
+
+    public String getName() {
+        return name;
     }
   
     @Override
@@ -91,6 +95,10 @@ public class UserDetailImplementation implements UserDetails {
     public boolean isEnabled() {
         return isVerified;
     }
+
+    public String getEmail() {
+        return email;
+    }
   
     @Override
     public boolean equals(Object o) {
@@ -101,7 +109,7 @@ public class UserDetailImplementation implements UserDetails {
         UserDetailImplementation user = (UserDetailImplementation) o;
         return Objects.equals(id, user.id);
     }
-
+    //this is here because it has to be overriden
     @Override
     public String getUsername() {
         return email;
