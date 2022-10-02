@@ -1,55 +1,48 @@
 package oop.io.demo.csvhandler;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import oop.io.demo.csvhandler.ApacheCommonsCsvUtil;
-import oop.io.demo.user.User;
+import oop.io.demo.auth.AuthService;
+import oop.io.demo.auth.payload.request.SignupRequest;
 import oop.io.demo.user.UserRepository;
 
-/**
- * 
- * Copyright https://loizenai.com
- * @author loizenai.com
- */
 @Service
 public class CsvHandlerService {
     @Autowired
-	UserRepository userRepo;
+	UserRepository repository;
 
 	// Store Csv File's data to database
-	public void store(InputStream file) {
+	public ArrayList<String> store(InputStream file) {
+		ArrayList<String> messages = new ArrayList<>();
 		try {
 			// Using ApacheCommons Csv Utils to parse CSV file
-			List<User> userList = ApacheCommonsCsvUtil.parseCsvFile(file);
+			List<SignupRequest> signupRequest = ApacheCommonsCsvUtil.parseCsvFile(file);
 			
-			// Using OpenCSV Utils to parse CSV file
-			// List<Users> usersList = OpenCsvUtil.parseCsvFile(file);
-			
+			int successfulSignUps = 0;
 			// Save users to database
-			userRepo.saveAll(userList);
+			AuthService authService = new AuthService(repository);
+			for(SignupRequest request: signupRequest) {
+				if (repository.existsByEmail(request.getEmail())) {
+					messages.add(request.getEmail()+" already exists");
+					continue;
+				} else if(!(request.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(request.getEmail().matches("[a-z0-9]+@nysi.org.sg"))) {
+					messages.add(request.getEmail()+" isn't a Singapore Sports School email.");
+					continue;
+				}
+				authService.signUpOneUser(request);
+				successfulSignUps+=1;
+			}
+			messages.add(""+successfulSignUps+ " users successfully added to database.");
 		} catch(Exception e) {
 			throw new RuntimeException("FAIL! -> message = " + e.getMessage());
 		}
+
+		return messages;
 	}
 	
-	// Load Data to CSV File
-    public void loadFile(Writer writer) throws IOException {
-    	try {
-        	List<User> users = (List<User>) userRepo.findAll();
-        	
-        	// Using ApacheCommons Csv Utils to write User List objects to a Writer
-             ApacheCommonsCsvUtil.usersToCsv(writer, users);
-        	
-        	// Using Open CSV Utils to write User List objects to a Writer
-        	// OpenCsvUtil.usersToCsv(writer, users);    		
-    	} catch(Exception e) {
-    		throw new RuntimeException("Fail! -> Message = " + e.getMessage());
-    	}
-    }
 }

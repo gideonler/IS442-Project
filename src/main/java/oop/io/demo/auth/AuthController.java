@@ -74,24 +74,13 @@ public class AuthController {
         //will need to trigger sending of an email so user can complete registration (enter password and contact no)
         @PostMapping("/signup")
         public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-
-        if (repository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-        } else if(!(signUpRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(signUpRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
-        }
-
-        // Create new user's account
-        User user = new User(
-                            signUpRequest.getName(),
-                            signUpRequest.getEmail());
-
-        user.setUserType(USERTYPE.STAFF);
-        user.setVerified(false);
-        repository.save(user);
-
-        return ResponseEntity.ok(new MessageResponse("Please check email to complete registration"));
-        
+            if (repository.existsByEmail(signUpRequest.getEmail())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+            } else if(!(signUpRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(signUpRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
+            }
+            AuthService authService = new AuthService(repository);
+            return authService.signUpOneUser(signUpRequest);
         }
 
         @PostMapping("/signout")

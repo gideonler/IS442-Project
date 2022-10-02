@@ -71,10 +71,11 @@ public class WebSecurityConfig {
       http.cors().and().csrf().disable()
           .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
           .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-          .authorizeRequests().antMatchers("/auth/**").permitAll()
+          //.authorizeRequests().antMatchers("/auth/**").permitAll()
           //.antMatchers(h2ConsolePath + "/**").permitAll()
-          .antMatchers("/users").hasAnyAuthority(USERTYPE.ADMIN.toString())
-          .antMatchers("/users/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+          //.antMatchers("/users").hasAnyAuthority(USERTYPE.ADMIN.toString())
+          //.antMatchers("/users/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+          .authorizeRequests().antMatchers("/**").permitAll()
           .anyRequest().authenticated();
   
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
