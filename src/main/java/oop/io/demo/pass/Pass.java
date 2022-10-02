@@ -16,7 +16,6 @@ public class Pass {
 
     @Id
     private String PassID;
-    @Indexed(unique=true)
     private String PassName;
     private int Guest;
 
