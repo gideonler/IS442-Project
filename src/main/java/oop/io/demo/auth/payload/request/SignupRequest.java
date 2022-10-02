@@ -9,6 +9,11 @@ public class SignupRequest {
 	@NotBlank
 	private String name;
 
+	public SignupRequest(String email, String name) {
+		this.email = email;
+		this.name = name;
+	}
+
 
 	public String getEmail() {
 		return email;
