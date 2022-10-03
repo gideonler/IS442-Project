@@ -1,5 +1,5 @@
 <template>
-  <div class="m-5">
+  <div class="mx-5 my-4">
     <transition name="fade" mode="out-in">
     <router-view></router-view>
     </transition>
