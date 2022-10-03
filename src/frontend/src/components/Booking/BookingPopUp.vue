@@ -1,6 +1,5 @@
 <template>
     <div>
-      <b-button id="show-btn" @click="showModal">Open Modal</b-button>
   
       <b-modal ref="my-modal" 
       hide-footer title="Book New Pass">
@@ -29,7 +28,7 @@
   
       </form>
         
-        <b-button class="mt-2" variant="success" block @click="toggleModal">Confirm Booking</b-button>
+        <b-button class="mt-2" variant="success" block @click="confirmBooking(date)">Confirm Booking</b-button>
       </b-modal>
 
       
@@ -38,24 +37,33 @@
   
   <script>
     export default {
+        name: 'booking-popup',
         data() {
             return {
                 //TODO: replace dummy data with backend data
                 no_avail: 3,
-                date: '27/09/2022'
+                date: null,
             };
         },
+        created() {
+        this.$root.$refs.BookingPopUp = this;
+        },
       methods: {
-        showModal() {
+        showModal(date) {
+          this.date= date
           this.$refs['my-modal'].show()
         },
         hideModal() {
           this.$refs['my-modal'].hide()
         },
-        toggleModal() {
-          // We pass the ID of the button that we want to return focus to
-          // when the modal has hidden
+        confirmBooking(date) {
+          // close current modal
           this.$refs['my-modal'].toggle('#toggle-btn')
+
+          //TODO: Send to backend to confirm booking- update db
+
+          //show confirmation message
+          this.$root.$refs.BookingConfirmation.showModal(date);
         }
       }
     }

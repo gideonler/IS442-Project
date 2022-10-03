@@ -18,23 +18,24 @@
 
 <script>
     export default {
-      data() {
-        return {
-          selected: null,
-          selected_avail: [],
-          //TODO: Get data from backend
-          options: [
-            { value: null, text: 'Please select a pass type' },
-            { value: 'a', text: 'Mandai Wildlife Reserve' },
-            { value: 'b', text: 'Duck Tours' },
-            { value: 'c', text: 'Singapore Flyer' },
-            { value: 'd', text: 'Art Science Museum', disabled: true }
-          ],
-          options_avail: [
-          { text: 'Available', value: 'available' },
-          { text: 'Waiting List', value: 'unavailable' }
-        ]
+        name: 'calendar-filter',
+        data() {
+            return {
+            selected: null,
+            selected_avail: [],
+            //TODO: Get data from backend
+            options: [
+                { value: null, text: 'Please select a pass type' },
+                { value: 'a', text: 'Mandai Wildlife Reserve' },
+                { value: 'b', text: 'Duck Tours' },
+                { value: 'c', text: 'Singapore Flyer' },
+                { value: 'd', text: 'Art Science Museum', disabled: true }
+            ],
+            options_avail: [
+            { text: 'Available', value: 'available' },
+            { text: 'Waiting List', value: 'unavailable' }
+            ]
+            }
         }
-      }
-    }
+        }
   </script>
