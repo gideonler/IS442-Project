@@ -8,4 +8,6 @@ public class LoanService {
 
     //method to allow user to cancel booking 
 
+    //method to retrieve all loans under a certain user (using email) 
+
 }

@@ -1,39 +1,71 @@
 package oop.io.demo.pass;
 
+import javax.persistence.Id;
+
 public class PassRequest {
+    
+    private String PlaceOfInterest;
+    private PASSTYPE PassType;
+    private double ReplacementFee;
+    //MaxGuest includes borrower- should we change the name of this field though?
+    private int MaxNoGuest;
+    private PASSSTATUS PassStatus;
+    private int noOfPasses;
 
-    private String PassName;
-    private int Guest;
-
-    public PassRequest( String PassName, int Guest){
-        this.PassName = PassName;
-        this.Guest=Guest;
- 
-
+    public PassRequest(String PlaceOfInterest, PASSTYPE PassType, double ReplacementFee, int MaxNoGuest, int noOfPasses) {
+        this.PlaceOfInterest = PlaceOfInterest;
+        this.PassType = PassType;
+        this.ReplacementFee = ReplacementFee;
+        this.MaxNoGuest = MaxNoGuest;
+        this.PassStatus = PASSSTATUS.INOFFICE;
     }
 
-    public String GetPasses() {
-        return PassName;
+    public String getPlaceOfInterest() {
+        return PlaceOfInterest;
     }
 
-    public int GetGuest(){
-        return Guest;
+    public void setPlaceOfInterest(String placeOfInterest) {
+        PlaceOfInterest = placeOfInterest;
     }
 
-
-
-
-    public void SetPasses(String PassName) {
-        this.PassName = PassName;
+    public PASSTYPE getPassType() {
+        return PassType;
     }
 
-    public void setGuest(int Guest){
-        this.Guest=Guest;
+    public void setPassType(PASSTYPE passType) {
+        PassType = passType;
     }
 
+    public double getReplacementFee() {
+        return ReplacementFee;
+    }
 
+    public void setReplacementFee(double replacementFee) {
+        ReplacementFee = replacementFee;
+    }
 
+    public int getMaxNoGuest() {
+        return MaxNoGuest;
+    }
 
+    public void setMaxNoGuest(int maxNoGuest) {
+        MaxNoGuest = maxNoGuest;
+    }
 
+    public PASSSTATUS getPassStatus() {
+        return PassStatus;
+    }
+
+    public void setPassStatus(PASSSTATUS passStatus) {
+        PassStatus = passStatus;
+    }
+
+    public int getNoOfPasses() {
+        return noOfPasses;
+    }
+
+    public void setNoOfPasses(int noOfPasses) {
+        this.noOfPasses = noOfPasses;
+    }
     
 }
