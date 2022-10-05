@@ -8,7 +8,7 @@
         >
         <div class="d-block text-center">
             <h2>Booking Confirmed!</h2>
-            <p>You have booked {{no_tickets}} {{pass}} Passses for <br>{{date}}. </p>
+            <p>You have booked {{no_passes}} {{pass}} Passses for <br>{{date}}. </p>
             <p>A confirmation email will be sent to your email. Please bring along the Authorisation Letter attached in the email.</p>
         </div>
         <b-button class="mt-3" block  @click="$bvModal.hide('booking-confirmation')">Ok</b-button>
@@ -25,7 +25,7 @@
         data() {
             return {
                 //TODO: replace dummy data with backend data
-                no_tickets: 2,
+                no_passes: null,
                 pass: 'Mandai Wildlife Reserve',
                 date: null
             };
@@ -34,9 +34,10 @@
         this.$root.$refs.BookingConfirmation= this;
         },
       methods: {
-        showModal(date) {
+        showModal(date, no_passes) {
           this.$refs['my-modal'].show()
           this.date= date
+          this.no_passes= no_passes
         },
         hideModal() {
           this.$refs['my-modal'].hide()

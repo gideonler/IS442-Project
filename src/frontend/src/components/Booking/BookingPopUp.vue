@@ -19,7 +19,7 @@
             type="number"
             min="1"
             max="2"
-            v-model="name"
+            v-model="no_passes"
             placeholder="Enter No. of Passes to Book"
             :state="nameState"
             required
@@ -28,7 +28,7 @@
   
       </form>
         
-        <b-button class="mt-2" variant="success" block @click="confirmBooking(date)">Confirm Booking</b-button>
+        <b-button class="mt-2" variant="success" block @click="confirmBooking(date, no_passes)">Confirm Booking</b-button>
       </b-modal>
 
       
@@ -40,9 +40,10 @@
         name: 'booking-popup',
         data() {
             return {
-                //TODO: replace dummy data with backend data
+                //TODO: replace dummy data for no. available with backend data
                 no_avail: 3,
                 date: null,
+                no_passes:null,
             };
         },
         created() {
@@ -56,14 +57,13 @@
         hideModal() {
           this.$refs['my-modal'].hide()
         },
-        confirmBooking(date) {
+        confirmBooking(date, no_passes) {
           // close current modal
           this.$refs['my-modal'].toggle('#toggle-btn')
-
           //TODO: Send to backend to confirm booking- update db
 
           //show confirmation message
-          this.$root.$refs.BookingConfirmation.showModal(date);
+          this.$root.$refs.BookingConfirmation.showModal(date, no_passes);
         }
       }
     }
