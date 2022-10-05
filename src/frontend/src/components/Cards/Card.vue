@@ -1,11 +1,11 @@
 <template>
-  <div class="card" :class="[type && `card-${type}`]">
+  <div class="card mb-3" :class="[type && `card-${type}`]">
     <div class="card-image" v-if="$slots.image">
       <slot name="image"></slot>
     </div>
     <div class="card-header" v-if="$slots.header || title" :class="headerClasses">
       <slot name="header">
-        <h4 class="card-title">{{title}}</h4>
+        <h3 class="card-title">{{title}}</h3>
         <p class="card-category" v-if="subTitle">{{subTitle}}</p>
       </slot>
     </div>

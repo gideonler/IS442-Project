@@ -1,6 +1,5 @@
 <template>
 <div class="content">
-  <h1>Analytics Dashboard</h1>
   <div class="container-fluid">
     <div class="row">
         <div class="col-xl-3 col-sm-4 second">
@@ -41,11 +40,12 @@
               <h4 class="card-title">3</h4>
             </div>
             <div slot="footer">
-              <i class="fa fa-calendar-o"></i>{{selected_year}}
+              <i class="nc-icon nc-calendar-60"></i>{{selected_year}}
             </div>
           </StatsCard>
         </div>
         <div class="col-xl-3 mb-3 first">
+          <h3 class="mb-0"><strong>DASHBOARD</strong></h3>
           <strong>For the Year of</strong>
           <b-form-select v-model="selected_year" :options="options"></b-form-select>
         </div>
