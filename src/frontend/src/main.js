@@ -11,8 +11,10 @@ import LightBootstrap from './light-bootstrap-main'
 
 import './assets/scss/app.scss'
 import './assets/sass/light-bootstrap-dashboard.scss'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 
 Vue.use(LightBootstrap)
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 Vue.config.productionTip = false
 
