@@ -1,6 +1,6 @@
 <template>
 
-  <h1>About us</h1>
+  <h1>Analytics</h1>
   
 </template>
 

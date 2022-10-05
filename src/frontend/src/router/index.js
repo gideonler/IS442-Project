@@ -10,7 +10,7 @@ import TopNavBar from '../layouts/TopNavBar.vue'
 // User pages
 import Home from '../views/Home.vue'
 import Booking from '../views/Booking.vue'
-import About from '../views/About.vue'
+import Analyics from '../views/Analytics.vue'
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
 
@@ -23,7 +23,7 @@ const routes = [
     redirect: '/home'
   },
   { path: '/home', component: Home },
-  { path: '/about', component: About },
+  { path: '/analytics', component: Analyics },
   { path: '/booking', component: Booking }
 ]
 
