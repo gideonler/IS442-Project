@@ -15,6 +15,10 @@
         <b-form-group
         >
           <b-form-input
+            :value= "pass_type"
+            disabled
+          ></b-form-input>
+          <b-form-input
             id="no_passes"
             type="number"
             min="1"
@@ -44,12 +48,16 @@
                 no_avail: 3,
                 date: null,
                 no_passes:null,
+                pass_type:null,
             };
         },
         created() {
         this.$root.$refs.BookingPopUp = this;
         },
       methods: {
+        updatePassType(pass_type){
+          this.pass_type= pass_type
+        },  
         showModal(date) {
           this.date= date
           this.$refs['my-modal'].show()

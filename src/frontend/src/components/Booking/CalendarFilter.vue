@@ -26,16 +26,27 @@
             //TODO: Get data from backend
             options: [
                 { value: null, text: 'Please select a pass type' },
-                { value: 'a', text: 'Mandai Wildlife Reserve' },
-                { value: 'b', text: 'Duck Tours' },
-                { value: 'c', text: 'Singapore Flyer' },
-                { value: 'd', text: 'Art Science Museum', disabled: true }
+                { value: 'Mandai Wildlife Reserve', text: 'Mandai Wildlife Reserve' },
+                { value: 'Duck Tours', text: 'Duck Tours' },
+                { value: 'Singapore Flyer', text: 'Singapore Flyer' },
+                { value: 'Art Science Museum', text: 'Art Science Museum', disabled: true }
             ],
             options_avail: [
             { text: 'Available', value: 'available' },
             { text: 'Waiting List', value: 'unavailable' }
             ]
             }
+        },
+        watch: {
+        // whenever select changes, this function will run
+        selected() {
+            this.updateBooking(this.selected)
+            }
+        },
+        methods: {
+            updateBooking(pass_type) {
+                this.$root.$refs.BookingPopUp.updatePassType(pass_type);
+            }
         }
-        }
+    }
   </script>
