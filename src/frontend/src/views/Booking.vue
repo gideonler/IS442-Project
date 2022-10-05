@@ -2,10 +2,11 @@
 <div class="content">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-8" >
+        <div class="col-md-7" >
+          <CalendarFilter></CalendarFilter>
          <Calendar fluid></Calendar>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
 
         </div>
       </div>
@@ -16,16 +17,17 @@
  
  <script>
     import DashboardLayout from '../layouts/DashboardLayout'
- import Calendar from '../components/Booking/Calendar'
- 
-export default {
-        name: "booking-page",
-        components: { Calendar },
-        created() {
-            this.$emit('update:layout', DashboardLayout);
-         },
-        
-    };
+    import Calendar from '../components/Booking/Calendar'
+    import CalendarFilter from '../components/Booking/CalendarFilter.vue';
+    
+    export default {
+            name: "booking-page",
+            components: { Calendar, CalendarFilter },
+            created() {
+                this.$emit('update:layout', DashboardLayout);
+            },
+            
+        };
 
 </script>
 
