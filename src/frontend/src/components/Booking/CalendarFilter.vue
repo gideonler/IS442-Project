@@ -46,6 +46,7 @@
         methods: {
             updateBooking(pass_type) {
                 this.$root.$refs.BookingPopUp.updatePassType(pass_type);
+                this.$root.$refs.WaitingListPopUp.updatePassType(pass_type);
             }
         }
     }
