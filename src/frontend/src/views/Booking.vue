@@ -5,6 +5,7 @@
         <div class="col-md-7" >
           <CalendarFilter></CalendarFilter>
          <Calendar fluid></Calendar>
+         <Sidebar></Sidebar>
         </div>
         <div class="col-md-5">
 
@@ -19,10 +20,11 @@
     import DashboardLayout from '../layouts/DashboardLayout'
     import Calendar from '../components/Booking/Calendar'
     import CalendarFilter from '../components/Booking/CalendarFilter.vue';
+    import Sidebar from '../components/Booking/Sidebar.vue';
     
     export default {
             name: "booking-page",
-            components: { Calendar, CalendarFilter },
+            components: { Calendar, CalendarFilter, Sidebar },
             created() {
                 this.$emit('update:layout', DashboardLayout);
             },
