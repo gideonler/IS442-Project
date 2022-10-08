@@ -3,26 +3,26 @@ package oop.io.demo.auth.payload.response;
 import org.springframework.security.core.GrantedAuthority;
 
 public class JwtResponse {
-    private String id;
+    private String username;
 	private String email;
     private String jwt;
     private GrantedAuthority usertype;
 	private String name;
 
-    public JwtResponse(String jwt, String string,  String email, String name, GrantedAuthority usertype) {
+    public JwtResponse(String jwt, String username,  String email, String name, GrantedAuthority usertype) {
 		this.jwt = jwt;
-        this.id = string;
+        this.username = username;
 		this.email = email;
 		this.name = name;
 		this.usertype = usertype;
 	}
 
-	public String getId() {
-		return id;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getEmail() {

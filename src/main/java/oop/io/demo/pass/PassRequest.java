@@ -1,63 +1,62 @@
 package oop.io.demo.pass;
 
-import javax.persistence.Id;
-
 public class PassRequest {
     
-    private String PlaceOfInterest;
-    private PASSTYPE PassType;
-    private double ReplacementFee;
+    private String placeOfInterest;
+    private String passType;
+    private double replacementFee;
     //MaxGuest includes borrower- should we change the name of this field though?
-    private int MaxNoGuest;
-    private PASSSTATUS PassStatus;
+    private int maxNoGuest;
+    private String passStatus;
     private int noOfPasses;
 
-    public PassRequest(String PlaceOfInterest, PASSTYPE PassType, double ReplacementFee, int MaxNoGuest, int noOfPasses) {
-        this.PlaceOfInterest = PlaceOfInterest;
-        this.PassType = PassType;
-        this.ReplacementFee = ReplacementFee;
-        this.MaxNoGuest = MaxNoGuest;
-        this.PassStatus = PASSSTATUS.INOFFICE;
+    public PassRequest(String placeOfInterest, String passType, double replacementFee, int maxNoGuest, int noOfPasses) {
+        this.placeOfInterest = placeOfInterest;
+        this.replacementFee = replacementFee;
+        this.maxNoGuest = maxNoGuest;
+        this.passType= passType;
+        this.passStatus = "inoffice";
+        this.noOfPasses=noOfPasses;
     }
 
     public String getPlaceOfInterest() {
-        return PlaceOfInterest;
+        return placeOfInterest;
     }
 
     public void setPlaceOfInterest(String placeOfInterest) {
-        PlaceOfInterest = placeOfInterest;
+        this.placeOfInterest = placeOfInterest;
     }
 
-    public PASSTYPE getPassType() {
-        return PassType;
+    public String getPassType() {
+        return passType;
     }
 
-    public void setPassType(PASSTYPE passType) {
-        PassType = passType;
+    public void setPassType(String passType) {
+        this.passType = passType;
     }
 
     public double getReplacementFee() {
-        return ReplacementFee;
+        return replacementFee;
     }
 
     public void setReplacementFee(double replacementFee) {
-        ReplacementFee = replacementFee;
+        this.replacementFee = replacementFee;
     }
 
     public int getMaxNoGuest() {
-        return MaxNoGuest;
+        return maxNoGuest;
     }
 
     public void setMaxNoGuest(int maxNoGuest) {
-        MaxNoGuest = maxNoGuest;
+        this.maxNoGuest = maxNoGuest;
     }
 
-    public PASSSTATUS getPassStatus() {
-        return PassStatus;
+    public String getPassStatus() {
+        return passStatus;
     }
 
-    public void setPassStatus(PASSSTATUS passStatus) {
-        PassStatus = passStatus;
+    public void setPassStatus(String passStatus) {
+        this.passStatus = passStatus;
     }
 
     public int getNoOfPasses() {
