@@ -14,13 +14,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
     @Id
-    private String userId;
+    private String userName;
 
     @Column(unique=true)
 	private String email;
 
     @Column(unique =true)
     private String contactNo;
+
 	private String name;
 	private USERTYPE userType;
     private String password;
@@ -69,9 +70,6 @@ public class User {
     public void setUserType(USERTYPE userType) {
         this.userType = userType;
     }
-    public String getUserId() {
-        return userId;
-    }
 
     public void setVerified(boolean isVerified) {
         this.isVerified = isVerified;
@@ -87,6 +85,14 @@ public class User {
 
     public boolean isVerified() {
         return isVerified;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 

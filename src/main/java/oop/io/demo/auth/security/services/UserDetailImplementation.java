@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class UserDetailImplementation implements UserDetails {
     private static final String serialVersionUID = "";
 
-    private String id;
+    private String userName;
   
     private String email;
   
@@ -30,9 +30,9 @@ public class UserDetailImplementation implements UserDetails {
 
     private boolean isVerified;
 
-    public UserDetailImplementation(String id, String email, String password,
+    public UserDetailImplementation(String userName, String email, String password,
     String name, GrantedAuthority authority, boolean isVerified) {
-      this.id = id;
+      this.userName = userName;
       this.email = email;
       this.password = password;
       this.authority = authority;
@@ -45,7 +45,7 @@ public class UserDetailImplementation implements UserDetails {
         GrantedAuthority authority = new SimpleGrantedAuthority(uType);
   
         return new UserDetailImplementation(
-            user.getUserId(),
+            user.getUserName(),
             user.getEmail(),
             user.getPassword(), 
             user.getName(),
@@ -61,10 +61,6 @@ public class UserDetailImplementation implements UserDetails {
 
     public GrantedAuthority getAuthority() {
         return authority;
-    }
-  
-    public String getId() {
-        return id;
     }
 
     public String getName() {
@@ -107,11 +103,11 @@ public class UserDetailImplementation implements UserDetails {
         if (o == null || getClass() != o.getClass())
             return false;
         UserDetailImplementation user = (UserDetailImplementation) o;
-        return Objects.equals(id, user.id);
+        return Objects.equals(userName, user.userName);
     }
     //this is here because it has to be overriden
     @Override
     public String getUsername() {
-        return email;
+        return userName;
     }
 }
