@@ -47,7 +47,13 @@
         <div class="col-xl-3 mb-3 first">
           <h3 class="mb-0"><strong>DASHBOARD</strong></h3>
           <strong>For the Year of</strong>
-          <b-form-select v-model="selected_year" :options="options"></b-form-select>
+          <!-- <b-form-select v-model="selected_year" :options="options"></b-form-select> -->
+          <div class="text-right">
+            <b-form-select class= "d-inline" v-model="selected_year" :options="options"></b-form-select>
+            <b-button b-button class="my-1 d-inline" variant="dark" size="sm" title="Export">
+              <b-icon icon="download" aria-hidden="true"></b-icon>
+            </b-button>
+          </div>
         </div>
       </div>
       <div class="row">
