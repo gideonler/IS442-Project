@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
     @Id
-    private String userName;
+    private String username;
 
     @Column(unique=true)
 	private String email;
@@ -29,13 +29,17 @@ public class User {
     private boolean isVerified;
     //private Set<RegistrationToken> tokens;
 
+    private double outStandingFees;
+
     public User() {}
 
-    public User(String name, String email) {
+    public User(String name, String username, String email) {
         this.email= email;
+        this.username = username;
         this.name = name;
         this.isVerified=false;
         this.userType = USERTYPE.STAFF;
+        this.outStandingFees = 0.0;
     }
 
     public String getEmail() {
@@ -94,6 +98,16 @@ public class User {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
+    public double getOutStandingFees() {
+        return outStandingFees;
+    }
+
+    public void setOutStandingFees(double outStandingFees) {
+        this.outStandingFees = outStandingFees;
+    }
+
+    
 
 
 }

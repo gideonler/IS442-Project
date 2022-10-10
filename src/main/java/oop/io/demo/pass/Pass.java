@@ -13,13 +13,11 @@ public class Pass {
     public static final String SEQUENCE_NAME = "pass_sequence";
 
     @Id
-    private long passId;
+    private String passId;
+
+    private String passNo;
 
     private String placeOfInterest;
-    private PASSTYPE passType;
-    private double replacementFee;
-    //MaxGuest includes borrower- should we change the name of this field though?
-    private int maxNoGuest;
 
     private PASSSTATUS passStatus;
 
@@ -27,12 +25,24 @@ public class Pass {
         this.passStatus = PASSSTATUS.INOFFICE;
     }
 
-    public long getPassId() {
+    public String getPassId() {
         return passId;
     }
 
-    public void setPassID(long passId) {
+    public void setPassID(String passId) {
         this.passId = passId;
+    }
+
+    public void setPassId(String passId) {
+        this.passId = passId;
+    }
+
+    public String getPassNo() {
+        return passNo;
+    }
+
+    public void setPassNo(String passNo) {
+        this.passNo = passNo;
     }
 
     public String getPlaceOfInterest() {
@@ -41,30 +51,6 @@ public class Pass {
 
     public void setPlaceOfInterest(String placeOfInterest) {
         this.placeOfInterest = placeOfInterest;
-    }
-
-    public PASSTYPE getPassType() {
-        return passType;
-    }
-
-    public void setPassType(PASSTYPE passType) {
-        this.passType = passType;
-    }
-
-    public double getReplacementFee() {
-        return replacementFee;
-    }
-
-    public void setReplacementFee(double replacementFee) {
-        this.replacementFee = replacementFee;
-    }
-
-    public int getMaxNoGuest() {
-        return maxNoGuest;
-    }
-
-    public void setMaxNoGuest(int maxNoGuest) {
-        this.maxNoGuest = maxNoGuest;
     }
 
     public PASSSTATUS getPassStatus() {
