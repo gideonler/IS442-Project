@@ -45,7 +45,7 @@ public class UserDetailImplementation implements UserDetails {
         GrantedAuthority authority = new SimpleGrantedAuthority(uType);
   
         return new UserDetailImplementation(
-            user.getUserName(),
+            user.getUsername(),
             user.getEmail(),
             user.getPassword(), 
             user.getName(),
