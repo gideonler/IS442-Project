@@ -43,16 +43,16 @@ public class UserController {
         return ResponseEntity.ok(repository.findAll());
     }
 
-    /*@GetMapping("/users/{email}")
-    public ResponseEntity findByEmail(@PathVariable("email") String email) {
-        Optional<User> user= this.repository.findByEmail(email);
+    @GetMapping("/users/{username}")
+    public ResponseEntity findByEmail(@PathVariable("username") String username) {
+        Optional<User> user= this.repository.findById(username);
         if(user.isPresent()){
             return ResponseEntity.ok(user);
         }
         else {
-            return ResponseEntity.ok("A user with email:"+ email +" was not found.");
+            return ResponseEntity.ok("User with username:"+ username +" was not found.");
         }
-    }*/
+    }
 
     @GetMapping("/users/{userType}")
     public ResponseEntity findByUserType(@PathVariable("userType") USERTYPE userType) {
@@ -65,51 +65,24 @@ public class UserController {
         }
     }
 
-    //for creating new user
-    @PostMapping("/users")
-    public ResponseEntity<User> createUser(@RequestBody UserRequest userRequest) {
-        User user = new User();
-        user.setEmail(userRequest.getEmail());
-        user.setName(userRequest.getName());
-        user.setPassword(userRequest.getPassword());
-        String uType = userRequest.getUserType().toString().toUpperCase();
-        user.setUserType(USERTYPE.valueOf(uType));
-        //TODO: return message if email already exists
-        return ResponseEntity.ok(repository.save(user));
-    }
-
-    /*@PutMapping("/users/{email}")
-    public ResponseEntity updateUser(@PathVariable("email") String email, @RequestBody User user) {
-        Optional<User> _user = this.repository.findById(email);
-        if (_user.isPresent()) {
-            _user.setEmail(user.getEmail());
-            _user.setFirstName(user.getFirstName());
-            _user.setLastName(user.getLastName());
-            _user.setUserType(user.getUserType());
+    /*@PutMapping("/users/{username}")
+    public ResponseEntity updateUser(@PathVariable("username") String username, @RequestBody User user) {
+        Optional<User> user = this.repository.findById(username);
+        if (user.isPresent()) {
+            
         }
-        //TODO: return message if email already exists
-        return _user;
     }*/
 
-    @DeleteMapping("/users/{email}")
-    public ResponseEntity deleteUser(@PathVariable("id") String email) {
-        Optional<User> user = this.repository.findById(email);
+    @DeleteMapping("/users/{username}")
+    public ResponseEntity deleteUser(@PathVariable("username") String username) {
+        Optional<User> user = this.repository.findById(username);
         if(user.isPresent()){
-            this.repository.deleteById(email);
+            this.repository.deleteById(username);
             return ResponseEntity.ok("Successfully deleted.");
         }
         else {
-            return ResponseEntity.ok("User with email: " + email+ " was not found.");
+            return ResponseEntity.ok("User with username: " + username + " was not found.");
         }
     }
-    @DeleteMapping("/users")
-    public ResponseEntity<HttpStatus> deleteAllUsers() {
-        try {
-            repository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        catch(Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    } 
+
 } 

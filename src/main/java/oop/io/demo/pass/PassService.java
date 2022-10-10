@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import oop.io.demo.PlaceOfInterest.PASSTYPE;
+
 public class PassService {
 
     private final PassRepository repository;
@@ -17,15 +19,16 @@ public class PassService {
         this.repository = passRepository;
     }
 
-    public void createPass(PassRequest createPassRequest){
-        Pass p = new Pass();
-        p.setMaxNoGuest(createPassRequest.getMaxNoGuest());
-        String passStatus= createPassRequest.getPassStatus().toString().toUpperCase();
-        p.setPassStatus(PASSSTATUS.valueOf(passStatus));
-        String passType = createPassRequest.getPassType().toString().toUpperCase();
-        p.setPassType(PASSTYPE.valueOf(passType));
-        p.setPlaceOfInterest(createPassRequest.getPlaceOfInterest());
-        p.setReplacementFee(createPassRequest.getReplacementFee());
+    public void createPasses(String placeOfInterest, PassRequest createPassRequest){
+        PASSSTATUS passStatus = PASSSTATUS.INOFFICE;
+        Pass pass = new Pass();
+        String passNo = createPassRequest.getPassNo();
+        pass.setPassNo(passNo);
+        String passId = passNo + placeOfInterest;
+        pass.setPassID(passId);
+        pass.setPassStatus(passStatus);
+        pass.setPlaceOfInterest(placeOfInterest);
+        repository.save(pass);
     }
 
     public void changePassStatus(String passId, PASSSTATUS passStatus){
