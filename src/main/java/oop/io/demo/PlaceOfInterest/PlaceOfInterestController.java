@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ import oop.io.demo.pass.PassRepository;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
-@RequestMapping("/placeOfInterest")
+@RequestMapping("/placeofinterest")
 public class PlaceOfInterestController {
 
     @Autowired
@@ -41,29 +42,54 @@ public class PlaceOfInterestController {
         this.passRepository = passRepository;
     }
 
-    @GetMapping("/{placeofinterest}")
-    public ResponseEntity<Optional<PlaceOfInterest>> getPlaceOfInterestDetails(@PathVariable("placeofinterest") String placeOfInterestName){
-        return ResponseEntity.ok(repository.findById(placeOfInterestName));
+    @GetMapping("/{placeofinterest}/details")
+    public ResponseEntity getPlaceOfInterestDetails(@PathVariable("placeofinterest") String placeOfInterestName){
+        Optional<PlaceOfInterest> placeOfInterest = repository.findByPlaceOfInterestName(placeOfInterestName);
+        if(placeOfInterest.isPresent()) {
+            return ResponseEntity.ok(placeOfInterest.get());
+        }
+        else {
+            return ResponseEntity.ok("Place Of Interest not found!");
+        }
     }
     
     @PostMapping("/new")
     public ResponseEntity createAttraction(@RequestBody PlaceOfInterestRequest placeOfInterestRequest){
         String placeOfInterestName = placeOfInterestRequest.getPlaceOfInterest();
         double replacementFee = placeOfInterestRequest.getReplacementFee();
-        PASSTYPE passtype = PASSTYPE.valueOf(placeOfInterestRequest.getPasstype().toUpperCase());
+        PASSTYPE passtype = PASSTYPE.valueOf(placeOfInterestRequest.getPassType().toUpperCase());
         PlaceOfInterest placeOfInterest = new PlaceOfInterest(placeOfInterestName,replacementFee,passtype);
         return ResponseEntity.ok(repository.save(placeOfInterest));
     }
 
-    @PutMapping("/deactivate/{placeofinterest}")
-    public ResponseEntity deactiveAttraction(@PathVariable("placeofinterest") String placeOfInterestName) {
-        PlaceOfInterest placeOfInterest = repository.findByPlaceOfInterestName(placeOfInterestName);
-        placeOfInterest.setActive(false);
-        List<Pass> passes = passRepository.findPassesByPlaceOfInterest(placeOfInterestName);
-        for(Pass p: passes){
-            p.setPassStatus(PASSSTATUS.DEACTIVATED);
-            //to save this to repo
+    @PutMapping("/edit/{placeofinterest}")
+    public ResponseEntity editAttraction(@PathVariable("placeofinterest") String placeOfInterestName, @RequestBody PlaceOfInterestRequest placeOfInterestRequest) {
+        Optional<PlaceOfInterest> _placeOfInterest = repository.findByPlaceOfInterestName(placeOfInterestName);
+        if(_placeOfInterest.isPresent()){
+            PlaceOfInterest placeOfInterest = _placeOfInterest.get();
+            if(placeOfInterestRequest.getPassType()!=null) placeOfInterest.setPasstype(PASSTYPE.valueOf(placeOfInterestRequest.getPassType().toUpperCase()));
+            if(placeOfInterestRequest.getPlaceOfInterest()!=null) placeOfInterest.setPlaceOfInterestName(placeOfInterestRequest.getPlaceOfInterest());
+            if(placeOfInterestRequest.getReplacementFee()!=0.0) placeOfInterest.setReplacementFee(placeOfInterestRequest.getReplacementFee());
+            return ResponseEntity.ok(repository.save(placeOfInterest));
+        } else {
+            return ResponseEntity.ok("Place of interest not found.");
         }
-        return ResponseEntity.ok("Deactivated "+ placeOfInterestName + " attraction and all passes under "+ placeOfInterestName+".");
+    }
+
+    @PutMapping("/deactivate/{placeofinterest}")
+    public ResponseEntity deactivateAttraction(@PathVariable("placeofinterest") String placeOfInterestName) {
+        Optional<PlaceOfInterest> _placeOfInterest = repository.findByPlaceOfInterestName(placeOfInterestName);
+        if(_placeOfInterest.isPresent()){
+            PlaceOfInterest placeOfInterest = _placeOfInterest.get();
+            placeOfInterest.setActive(false);
+            List<Pass> passes = passRepository.findPassesByPlaceOfInterest(placeOfInterestName);
+            for(Pass p: passes){
+                p.setPassStatus(PASSSTATUS.DEACTIVATED);
+                //to save this to repo
+            }
+            return ResponseEntity.ok("Deactivated "+ placeOfInterestName + " attraction and all passes under "+ placeOfInterestName+".");
+        } else {
+            return ResponseEntity.ok("Place of interest not found.");
+        }
     }
 }
