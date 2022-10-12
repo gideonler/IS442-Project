@@ -18,8 +18,7 @@ public class Loan {
 
     @CreatedBy
     private String userEmail;
-    //what type should passNo be?
-    private int passNo;
+    private long passNo;
     private LOANSTATUS status;
 
     //constructor with attributes required to create a new loan
@@ -44,11 +43,15 @@ public class Loan {
         return attractionName;
     }
 
-    public int getPassNo() {
+    public long getPassNo() {
         return passNo;
     }
-    public void setPassNo(int passNo) {
+    public void setPassNo(long passNo) {
         this.passNo = passNo;
+    }
+
+    public void setLoanDate(Date loanDate) {
+        this.loanDate = loanDate;
     }
     public String getUserEmail() {
         return userEmail;
