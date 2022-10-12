@@ -1,19 +1,17 @@
 package oop.io.demo.PlaceOfInterest;
 
-import oop.io.demo.pass.PassRequest;
-
 public class PlaceOfInterestRequest{
     
     private String placeOfInterest;
 
     private double replacementFee;
 
-    private String passtype;
+    private String passType;
 
     public PlaceOfInterestRequest(String placeOfInterest, double replacementFee, String passType) {
         this.placeOfInterest=placeOfInterest;
         this.replacementFee=replacementFee;
-        this.passtype= passType;
+        this.passType= passType;
     }
 
     public String getPlaceOfInterest() {
@@ -32,12 +30,12 @@ public class PlaceOfInterestRequest{
         this.replacementFee = replacementFee;
     }
 
-    public String getPasstype() {
-        return passtype;
+    public String getPassType() {
+        return passType;
     }
 
-    public void setPasstype(String passtype) {
-        this.passtype = passtype;
+    public void setPasstype(String passType) {
+        this.passType = passType;
     }
 
 }
