@@ -2,6 +2,7 @@ package oop.io.demo.pass;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,26 +13,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.SequenceGeneratorService;
+import oop.io.demo.PlaceOfInterest.PlaceOfInterestRepository;
 import oop.io.demo.auth.security.jwt.JwtUtils;
 @CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/pass")
 public class PassController {
-
-    //@Autowired
-    //AuthenticationManager authenticationManager;
+    @Autowired
+    AuthenticationManager autenticationManager;
 
     @Autowired
     JwtUtils jwtUtils;
 
     private final PassRepository repository;
 
-    //remove if not needed
-    private SequenceGeneratorService sequenceGenerator;
+    private final PlaceOfInterestRepository placeOfInterestRepository;
 
-    public PassController(PassRepository passRepository, SequenceGeneratorService sequenceGenerator) {
+    public PassController(PassRepository passRepository, PlaceOfInterestRepository placeOfInterestRepository) {
         this.repository = passRepository;
-        this.sequenceGenerator = sequenceGenerator;
+        this.placeOfInterestRepository = placeOfInterestRepository; 
     }
 
     @GetMapping("/{passid}")
@@ -39,9 +39,9 @@ public class PassController {
         return ResponseEntity.ok(repository.findById(passId));
     }
   
-    @GetMapping("/passes/{PlaceOfInterest}")
+    @GetMapping("/passes/{placeofinterest}")
     public ResponseEntity<List<Pass>> getAvailablePassesByPlaceOfInterest(@PathVariable("placeofinterest") String placeOfInterest) {
-        List<Pass> passes = new PassService(repository).getAvailablePassesByPlaceOfInterest(placeOfInterest);
+        List<Pass> passes = new PassService(repository, placeOfInterestRepository).getAvailablePassesByPlaceOfInterest(placeOfInterest);
         return ResponseEntity.ok(passes);
     }
     
@@ -51,17 +51,22 @@ public class PassController {
     }
     
     //for creating new passes for an existing attraction
-    @PostMapping("{placeOfInterest}/newpass")
-    public ResponseEntity createPasses(@PathVariable("placeOfInterest") String placeOfInterest, @RequestBody PassRequest passRequest) {
-        PassService passService = new PassService(repository);
-        passService.createPass(placeOfInterest, passRequest);
-        return ResponseEntity.ok("Uploaded");
+    @PostMapping("/{placeofinterestname}/new")
+    public ResponseEntity createPasses(@PathVariable("placeofinterestname") String placeOfInterestName, @RequestBody PassRequest passRequest) {
+        PassService passService = new PassService(repository, placeOfInterestRepository);
+        ResponseEntity r = passService.createPass(passRequest);
+        return r;
+    }
+    
+    @GetMapping("/{passid}/deactivate")
+    public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
+        ResponseEntity r = new PassService(repository, placeOfInterestRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
+        return r;
     }
 
-    
-    @PutMapping("/deactivatepass")
-    public ResponseEntity deactivatePass(@RequestBody String passId) {
-        new PassService(repository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
-        return ResponseEntity.ok("Deactivated");
+    @GetMapping("/{passid}/activate")
+    public ResponseEntity activatePass(@PathVariable("passid") String passId) {
+        ResponseEntity r = new PassService(repository, placeOfInterestRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
+        return r;
     }
 }

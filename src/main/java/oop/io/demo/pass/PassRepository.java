@@ -4,6 +4,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface PassRepository extends MongoRepository<Pass, String> {
     Pass findPassByPassId(String passID);
-    List<Pass> findPassesByPlaceOfInterest(String placeOfInterest);
+    List<Pass> findPassesByPlaceOfInterestName(String placeOfInterestName);
 }
 
