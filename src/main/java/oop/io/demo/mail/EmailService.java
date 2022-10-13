@@ -1,31 +1,122 @@
 package oop.io.demo.mail;
 
+import freemarker.template.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import java.util.Properties;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.mail.MessagingException;
+@Service
+public class EmailService {
+    @Autowired
+    JavaMailSender javaMailSender;
+    @Qualifier("getFreeMarkerConfiguration")
+    @Autowired
+    Configuration fmConfiguration;
 
-import freemarker.template.TemplateException;
+    public void send(Email mail) {
+        final String username = "oopg2t4@outlook.com";
+        final String password = "g2t4OOP!";
 
-public interface EmailService {
-    void sendSimpleMessage(String to,
-                           String subject,
-                           String text);
-    void sendSimpleMessageUsingTemplate(String to,
-                                        String subject,
-                                        String ...templateModel);
-    void sendMessageWithAttachment(String to,
-                                   String subject,
-                                   String text,
-                                   String pathToAttachment);
-    
-    void sendMessageUsingThymeleafTemplate(String to,
-                                           String subject,
-                                           Map<String, Object> templateModel) 
-            throws IOException, MessagingException;
+        Properties prop = new Properties();
+		prop.put("mail.smtp.host", "smtp.office365.com");
+        prop.put("mail.smtp.port", "587");
+        prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.starttls.enable", "true"); //TLS
+        
+        Session session = Session.getInstance(prop,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
 
-    void sendMessageUsingFreemarkerTemplate(String to,
-                                            String subject,
-                                            Map<String, Object> templateModel)
-            throws IOException, TemplateException, MessagingException;
+        try {
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("oopg2t4@outlook.com"));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse("oopg2t4@outlook.com")
+            );
+            message.setSubject("Testing Outlook TLS");
+            message.setText("Dear Mail Crawler,"
+                    + "\n\n Please do not spam my email!");
+
+            Transport.send(message);
+
+            System.out.println("Done");
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            System.out.println("OOPS...");
+        }
+    }
+
+    public void sendEmail(Email mail) {
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo(mail.getTo());
+        msg.setFrom(mail.getFrom());
+        msg.setSubject(mail.getSubject());
+        msg.setText(mail.getContent());
+        javaMailSender.send(msg);
+    }
+
+    public void sendEmailWithAttachment(Email mail) throws MessagingException, IOException {
+        MimeMessage msg = javaMailSender.createMimeMessage();
+        // true = multipart message
+        MimeMessageHelper helper = new MimeMessageHelper(msg, true);
+
+        helper.setTo(mail.getTo());
+        helper.setFrom(mail.getFrom());
+        helper.setSubject(mail.getSubject());
+        helper.setText(mail.getContent());
+
+        // hard coded a file path
+        // FileSystemResource file = new FileSystemResource(new    File("path/img.png"));
+        // helper.addAttachment("Google Photo",file);
+        helper.addAttachment("Google Photo", new ClassPathResource("img.png"));
+        javaMailSender.send(msg);
+    }
+
+    public void sendEmailWithTemplate(Email mail) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            mimeMessageHelper.setSubject(mail.getSubject());
+            mimeMessageHelper.setFrom(mail.getFrom());
+            mimeMessageHelper.setTo(mail.getTo());
+            mail.setContent(geContentFromTemplate(mail.getModel()));
+            mimeMessageHelper.setText(mail.getContent(), true);
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String geContentFromTemplate(Map<String, Object> model) {
+        StringBuffer content = new StringBuffer();
+
+        try {
+            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(fmConfiguration.getTemplate("email-template.flth"), model));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return content.toString();
+    }
 }
