@@ -42,6 +42,11 @@ public class PlaceOfInterestController {
         this.passRepository = passRepository;
     }
 
+    @GetMapping("/all")
+    public ResponseEntity getPlacesOfInterest() {
+        return ResponseEntity.ok(repository.findAll());
+    }
+
     @GetMapping("/{placeofinterest}/details")
     public ResponseEntity getPlaceOfInterestDetails(@PathVariable("placeofinterest") String placeOfInterestName){
         Optional<PlaceOfInterest> placeOfInterest = repository.findByPlaceOfInterestName(placeOfInterestName);
@@ -62,7 +67,7 @@ public class PlaceOfInterestController {
         return ResponseEntity.ok(repository.save(placeOfInterest));
     }
 
-    @PutMapping("/edit/{placeofinterest}")
+    @PutMapping("/{placeofinterest}/edit")
     public ResponseEntity editAttraction(@PathVariable("placeofinterest") String placeOfInterestName, @RequestBody PlaceOfInterestRequest placeOfInterestRequest) {
         Optional<PlaceOfInterest> _placeOfInterest = repository.findByPlaceOfInterestName(placeOfInterestName);
         if(_placeOfInterest.isPresent()){
@@ -76,17 +81,18 @@ public class PlaceOfInterestController {
         }
     }
 
-    @PutMapping("/deactivate/{placeofinterest}")
+    @PutMapping("/{placeofinterest}/deactivate")
     public ResponseEntity deactivateAttraction(@PathVariable("placeofinterest") String placeOfInterestName) {
         Optional<PlaceOfInterest> _placeOfInterest = repository.findByPlaceOfInterestName(placeOfInterestName);
         if(_placeOfInterest.isPresent()){
             PlaceOfInterest placeOfInterest = _placeOfInterest.get();
             placeOfInterest.setActive(false);
-            List<Pass> passes = passRepository.findPassesByPlaceOfInterest(placeOfInterestName);
+            List<Pass> passes = passRepository.findPassesByPlaceOfInterestName(placeOfInterestName);
             for(Pass p: passes){
                 p.setPassStatus(PASSSTATUS.DEACTIVATED);
-                //to save this to repo
             }
+            passRepository.saveAll(passes);
+            repository.save(placeOfInterest);
             return ResponseEntity.ok("Deactivated "+ placeOfInterestName + " attraction and all passes under "+ placeOfInterestName+".");
         } else {
             return ResponseEntity.ok("Place of interest not found.");

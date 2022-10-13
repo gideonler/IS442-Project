@@ -4,8 +4,11 @@ public class PassRequest {
     
     private String passNo;
 
-    public PassRequest(String passNo) {
+    private String placeOfInterestName;
+
+    public PassRequest(String passNo, String placeOfInterestName) {
         this.passNo = passNo;
+        this.placeOfInterestName = placeOfInterestName;
     }
 
     public String getPassNo() {
@@ -14,6 +17,14 @@ public class PassRequest {
 
     public void setPassNo(String passNo) {
         this.passNo = passNo;
+    }
+
+    public String getPlaceOfInterestName() {
+        return placeOfInterestName;
+    }
+
+    public void setPlaceOfInterestName(String placeOfInterestName) {
+        this.placeOfInterestName = placeOfInterestName;
     }
     
 }
