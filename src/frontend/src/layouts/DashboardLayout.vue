@@ -9,11 +9,11 @@
       </sidebar-link>
       <sidebar-link to="/booking">
         <i class="nc-icon nc-notes"></i>
-        <p>New Booking </p>
+        <p>My Bookings</p>
       </sidebar-link>
-      <sidebar-link to="/about">
-        <i class="nc-icon nc-paper-2"></i>
-        <p>Upcoming bookings</p>
+      <sidebar-link to="/analytics">
+        <i class="nc-icon nc-chart-bar-32"></i>
+        <p>Analytics</p>
       </sidebar-link>
       <sidebar-link to="/home">
         <i class="nc-icon nc-bell-55"></i>

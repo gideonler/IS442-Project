@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg">
        
       <div class="container-fluid">
-        <img height="90" src="../assets/images/sss_logo1.jpg" alt="">
+        <img height="65" class="py-1" src="../assets/images/sss_logo1.jpg" alt="">
 <!--             
         <a class="navbar-brand" href="#">Your Bookings</a> -->
 
