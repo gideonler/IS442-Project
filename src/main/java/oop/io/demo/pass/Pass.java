@@ -1,11 +1,9 @@
 package oop.io.demo.pass;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 
 @Document("Pass")
 public class Pass {

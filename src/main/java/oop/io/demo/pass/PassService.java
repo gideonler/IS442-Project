@@ -19,7 +19,7 @@ public class PassService {
         this.repository = passRepository;
     }
 
-    public void createPasses(String placeOfInterest, PassRequest createPassRequest){
+    public void createPass(String placeOfInterest, PassRequest createPassRequest){
         PASSSTATUS passStatus = PASSSTATUS.INOFFICE;
         Pass pass = new Pass();
         String passNo = createPassRequest.getPassNo();

@@ -29,7 +29,7 @@ public class User {
     private boolean isVerified;
     //private Set<RegistrationToken> tokens;
 
-    private double outStandingFees;
+    private double outstandingFees;
 
     public User() {}
 
@@ -39,7 +39,7 @@ public class User {
         this.name = name;
         this.isVerified=false;
         this.userType = USERTYPE.STAFF;
-        this.outStandingFees = 0.0;
+        this.outstandingFees = 0.0;
     }
 
     public String getEmail() {
@@ -99,12 +99,12 @@ public class User {
         this.username = username;
     }
 
-    public double getOutStandingFees() {
-        return outStandingFees;
+    public double getOutstandingFees() {
+        return outstandingFees;
     }
 
-    public void setOutStandingFees(double outStandingFees) {
-        this.outStandingFees = outStandingFees;
+    public void setOutstandingFees(double outstandingFees) {
+        this.outstandingFees = outstandingFees;
     }
 
     
