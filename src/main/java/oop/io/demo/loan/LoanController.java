@@ -1,43 +1,62 @@
 package oop.io.demo.loan;
 import java.util.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.pass.PassRequest;
-import oop.io.demo.pass.PassService;
+import oop.io.demo.auth.security.jwt.JwtUtils;
+
+
+
+
+@CrossOrigin(maxAge = 3600)
+@RestController
+@RequestMapping("/loan")
 public class LoanController {
     //loan controller should:
     //have method endpoint: "newbooking" calls method in loanservice to make new booking
     ////access: both staff and admin can access to make booking for themself- userEmail automatically assigned based on their identity
 
+
+
+    @Autowired
     private LoanRepository repository;
-    public String newBooking(Loan loan){
-        repository.save(loan);
-        return "Booking to " + loan.getAttractionName() + " made by " + loan.getUserEmail() + " has been added.";
+    @Autowired
+    private LoanService loanService;
+
+
+
+    @Autowired
+    JwtUtils jwtUtils;
+    public LoanController(LoanRepository loanRepository) {
+        this.repository = loanRepository;
     }
 
-    // public String deleteBooking(String loanID){
-    //     Loan loan = repository.findByLoanID(loanID);
-    //     repository.delete(loan);
-    //     return "Booking to " + loan.getAttractionName() + " made by " + loan.getUserEmail() + " has been deleted.";
-    // }
-
-    public String updateBooking(Loan loan){
-        repository.save(loan);
-        return "";
-
+    @PostMapping("newloan")
+    public ResponseEntity createPasses() {
+        LoanService loanService = new LoanService(repository);
+        loanService.newLoan();
+        return ResponseEntity.ok("Uploaded");
     }
+
+    
+
+
+    /**
+  * GET /read  --> Read a booking by booking id from the database.
+  */
+
 
 
 
     //have method endpoint: "cancelbooking" calls loanservice to cancel booking
     ////access: both staff and admin
-    public String cancelBooking(){
-        repository.
-    }
 
     //have method to allow user to report loss of card (associated with booking?) endpoint: reportloss
 

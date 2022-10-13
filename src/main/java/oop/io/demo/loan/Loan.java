@@ -12,25 +12,31 @@ public class Loan {
     private Date loanDate;
     @CreatedDate
     private Date bookingMadeDate;
-    @LastModifiedDate
-    private Date lastModifiedDate;
     private String attractionName;
 
     @CreatedBy
     private String userEmail;
-    private long passNo;
+    private String loanID;
     private LOANSTATUS status;
 
+    
+
     //constructor with attributes required to create a new loan
-    public Loan(Date loanDate, Date bookingMadeDate, String attractionName, String userEmail) {
-        Calendar cal = Calendar.getInstance();
-        this.loanDate = loanDate;
+
+    public Loan(){}
+
+
+    public Loan(String userEmail, Date loanDate) {
+    
+        this.loanDate = loanDate;//the date where the user is making the booking
         this.bookingMadeDate = bookingMadeDate;
         this.attractionName = attractionName;
         this.userEmail = userEmail;
-        this.lastModifiedDate=cal.getTime();
+        this.loanID=loanDate+userEmail;
     }
 
+
+    
     public Date getLoanDate() {
         return loanDate;
     }
@@ -43,16 +49,19 @@ public class Loan {
         return attractionName;
     }
 
-    public long getPassNo() {
-        return passNo;
-    }
-    public void setPassNo(long passNo) {
-        this.passNo = passNo;
-    }
+    
+ 
 
     public void setLoanDate(Date loanDate) {
         this.loanDate = loanDate;
     }
+    public void setBookingMadeDate(Date bookingMadeDate) {
+        this.bookingMadeDate = bookingMadeDate;
+    }
+    public void setEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+    
     public String getUserEmail() {
         return userEmail;
     }
