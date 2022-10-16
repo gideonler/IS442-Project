@@ -23,18 +23,16 @@
         
         data() {
             return {
-                //TODO: replace dummy data with backend data
-             
+               attraction: null,
             };
         },
         created() {
         this.$root.$refs.AttractionCreationConfirmation= this;
         },
       methods: {
-        showModal(date, no_passes) {
+        showModal(selected_attraction) {
           this.$refs['my-modal'].show()
-          this.date= date
-          this.no_passes= no_passes
+          this.attraction= selected_attraction
         },
         hideModal() {
           this.$refs['my-modal'].hide()

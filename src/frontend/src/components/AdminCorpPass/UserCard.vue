@@ -2,7 +2,7 @@
   <card>
     <h4 slot="header" class="card-title"><strong>Create New Passes</strong></h4>
     <form>  
-      <div class="row">
+      <div class="form-row">
         <div  class="col-md-6">
           <label>Corporate Pass</label>
           <b-form-select v-model="selected_attraction" 
@@ -22,14 +22,15 @@
           </div>
       </div>
 
-      <div class="row">
+      <div class="form-row">
           <div class="col-md-12">
               <label class="mt-0">Corporate Pass Numbers</label>
               <b-form-input
                   v-for="index in parseInt(no_passes)"
                   :key="index"
+                  v-model= corporate_passes[index]
                   class="form-row mb-1"
-                  type="email"
+                  type="text"
                   placeholder="Enter Corporate Pass Number"
                   size="sm"
                   required
@@ -53,7 +54,7 @@
 </template>
 <script>
   import Card from '../Cards/Card.vue'
-import PassCreationConfirmation from './PassCreationConfirmation.vue';
+  import PassCreationConfirmation from './PassCreationConfirmation.vue';
 
 
   export default {
@@ -66,7 +67,7 @@ import PassCreationConfirmation from './PassCreationConfirmation.vue';
         no_passes: 1,
         attractions: [
           { value: null, text: 'Select Corporate Pass' },
-          { text: 'Mandai Wildlife Reserve', value: 'Mandai Wildlife Reserve,' },
+          { text: 'Mandai Wildlife Reserve', value: 'Mandai Wildlife Reserve' },
           { text: 'Gardens By the Bay', value: 'Gardens By the Bay' }
           ],
         selected_attraction: null,
@@ -74,13 +75,25 @@ import PassCreationConfirmation from './PassCreationConfirmation.vue';
           options: [
           { text: 'Physical Card', value: 'physical' },
           { text: 'E-card', value: 'digital' }
-          ]
+          ],
+        corporate_passes: []
       }
     },
     methods: {
+      isFormValid(){
+        return this.corporate_passes.length>1 && this.selected_attraction!=null
+      },
+      formReset(){
+        this.no_passes=1
+        this.corporate_passes=[]
+        this.selected_attraction= null
+      },
       createPass () {
         //TODO: API Call to update database
-        this.$root.$refs.PassCreationConfirmation.showModal(this.no_passes, this.selected_attraction);
+        if(this.isFormValid()){
+          this.$root.$refs.PassCreationConfirmation.showModal(this.no_passes, this.selected_attraction);
+        }
+        this.formReset()
       },
 
     }

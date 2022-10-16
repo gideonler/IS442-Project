@@ -7,7 +7,7 @@
             <base-input type="text"
                       label="Corporate Pass Name"
                       placeholder="eg. Singapore Gardens"
-                      v-model="mandai.passname">
+                      v-model="passname">
             </base-input>
           </div>
         </div>
@@ -16,7 +16,7 @@
             <base-input type="text"
                       label="Place of Interest"
                       placeholder="eg. Gardens by the Bay"
-                      v-model="mandai.interest">
+                      v-model="interest">
             </base-input>
           </div>
         </div>
@@ -27,7 +27,7 @@
                 <b-form-input
                     type="number"
                     min="0"
-                    v-model="mandai.replacementfee"
+                    v-model="replacementfee"
                 ></b-form-input>
             </b-input-group>
           </div>
@@ -35,7 +35,7 @@
             <label>Pass Type</label>
             <b-form-radio-group
                 id="radio-group-1"
-                v-model="selected"
+                v-model="selected_passtype"
                 :options="options"
                 :aria-describedby="ariaDescribedby"
                 name="radio-options"
@@ -47,8 +47,8 @@
             <div class="col-md-12">
                 <label>Templates</label>
                 <b-form-file
-                v-model="file1"
-                :state="Boolean(file1)"
+                v-model="email_file"
+                :state="Boolean(email_file)"
                 placeholder="Upload Email Template Here..."
                 drop-placeholder="Drop file here..."
                 ></b-form-file>
@@ -57,8 +57,8 @@
         <div class="row">
             <div class="col-md-12">
                 <b-form-file
-                v-model="file2"
-                :state="Boolean(file2)"
+                v-model="pdf_file"
+                :state="Boolean(pdf_file)"
                 placeholder="Upload PDF Attachement Template Here..."
                 drop-placeholder="Drop file here..."
                 ></b-form-file>
@@ -66,74 +66,65 @@
         </div>
 
         <div class="text-center">
-          <b-button type="submit" variant="primary" class="float-right" @click.prevent="updateProfile">
+          <b-button type="submit" variant="primary" class="float-right" @click.prevent="createAttraction">
             Create Attraction
           </b-button>
         </div>
         <div class="clearfix"></div>
+        <div>
+        <AttractionCreationConfirmation></AttractionCreationConfirmation>
+      </div>
       </form>
     </card>
   </template>
   <script>
     import Card from '../Cards/Card.vue'
-    import { validationMixin } from "vuelidate";
-    import { required, minLength } from "vuelidate/lib/validators";
-
+    import AttractionCreationConfirmation from './AttractionCreationConfirmation.vue'
   
     export default {
-      mixins: [validationMixin],
       components: {
-        Card
+        Card,
+        AttractionCreationConfirmation
       },
       data () {
         return {
-          validations: {
-            form: {
-              food: {
-                required
-              },
-              name: {
-                required,
-                minLength: minLength(3)
-              }
-            }
-          },
-          no_passes: 1,
-          mandai: {
-            passname: 'Mandai Wildlife Reserve',
-            interest: 'Singapore Zoo',
-            number: '',
-            replacementfee: '',
-            template: ''
-          },
-          selected: 'physical',
+          //TODO: Replace with data
+          passname: '',
+          interest: '',
+          replacementfee: '',
+          email_file: '',
+          pdf_file:'',
+          selected_passtype: '',
             options: [
             { text: 'Physical Card', value: 'physical' },
             { text: 'E-card', value: 'digital' }
-            ]
+            ],
+
         }
       },
       methods: {
-        validateState(name) {
-        const { $dirty, $error } = this.$v.form[name];
-        return $dirty ? !$error : null;
+        isFormValid(){
+        return this.passname!= '' &&
+          this.interest!= '' &&
+          this.replacementfee!= '' &&
+          this.email_file!= ''&&
+          this.pdf_file!='' &&
+          this.selected_passtype!= ''
         },
-        resetForm() {
-          this.form = {
-            name: null,
-            food: null
-          };
-
-          this.$nextTick(() => {
-            this.$v.$reset();
-          });
+        formReset(){
+          this.passname= ''
+          this.interest= ''
+          this.replacementfee= ''
+          this.email_file= ''
+          this.pdf_file=''
+          this.selected_passtype= ''
         },
-        updateProfile () {
-          this.$v.form.$touch();
-          if (this.$v.form.$anyError) {
-            return;
+        createAttraction () {
+          //TODO: API Call to update database
+          if(this.isFormValid()){
+            this.$root.$refs.AttractionCreationConfirmation.showModal(this.passname);
           }
-          alert('Your data: ' + JSON.stringify(this.user))
+          this.formReset()
         },
 
       }
