@@ -1,15 +1,15 @@
 <template>
     <div class="content">
     <div class="container-fluid">
-        <h2>Pass Management</h2>
+        <h2>Attraction/Pass Creation</h2>
         <div class="row">
             
         </div>
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <EditPassForm></EditPassForm>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
             <UserCard></UserCard>
             </div>
         </div>
