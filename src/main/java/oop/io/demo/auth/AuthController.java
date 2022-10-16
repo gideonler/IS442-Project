@@ -1,7 +1,5 @@
 package oop.io.demo.auth;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +10,24 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenRepository;
+import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.LoginRequest;
 import oop.io.demo.auth.payload.request.SignupRequest;
 import oop.io.demo.auth.payload.response.JwtResponse;
 import oop.io.demo.auth.payload.response.MessageResponse;
 import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.auth.security.services.UserDetailImplementation;
-import oop.io.demo.user.USERTYPE;
-import oop.io.demo.user.User;
+import oop.io.demo.mail.EmailService;
 import oop.io.demo.user.UserRepository;
+import oop.io.demo.user.UserService;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
@@ -42,8 +44,11 @@ public class AuthController {
 
     private final UserRepository repository;
 
-    public AuthController(UserRepository userRepository) {
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+
+    public AuthController(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository) {
         this.repository = userRepository;
+        this.confirmationTokenRepository = confirmationTokenRepository;
     }
 
     @PostMapping("/signin")
@@ -71,7 +76,6 @@ public class AuthController {
         }
 
         //this is the first step to signing up (just using name and email)
-        //will need to trigger sending of an email so user can complete registration (enter password and contact no)
         @PostMapping("/signup")
         public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
             if (repository.existsByEmail(signUpRequest.getEmail())) {
@@ -79,8 +83,14 @@ public class AuthController {
             } /* else if(!(signUpRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(signUpRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
             } */
-            AuthService authService = new AuthService(repository);
+            AuthService authService = new AuthService(repository, confirmationTokenRepository);
             return authService.signUpOneUser(signUpRequest);
+        }
+
+        @GetMapping("/confirm")
+        public String confirmUser(@RequestParam("token") String token) {
+            AuthService authService = new AuthService(repository, confirmationTokenRepository);
+            return authService.confirmToken(token);
         }
 
         @PostMapping("/signout")
@@ -89,5 +99,4 @@ public class AuthController {
             .body(new MessageResponse("You've been signed out!"));
 
         }
-
 }
