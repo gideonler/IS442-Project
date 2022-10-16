@@ -54,7 +54,7 @@ public class PassController {
     @PostMapping("{placeOfInterest}/newpass")
     public ResponseEntity createPasses(@PathVariable("placeOfInterest") String placeOfInterest, @RequestBody PassRequest passRequest) {
         PassService passService = new PassService(repository);
-        passService.createPasses(placeOfInterest, passRequest);
+        passService.createPass(placeOfInterest, passRequest);
         return ResponseEntity.ok("Uploaded");
     }
 

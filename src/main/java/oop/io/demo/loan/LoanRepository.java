@@ -11,7 +11,11 @@ import oop.io.demo.pass.Pass;
 public interface LoanRepository extends MongoRepository<Loan, String>{
 
     
-    Loan findByLoanID(String loanID);
+   
+    ArrayList<Loan> findAllByEmail(String userEmail);
+    ArrayList<Loan> findAllByAttraction(String attractionName);
+    Loan findbyLoanID(String loanID);
+    ArrayList<Loan> findAllByPassNo(int passNo);
 
     
 

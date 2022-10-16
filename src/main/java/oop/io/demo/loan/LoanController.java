@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,17 +35,15 @@ public class LoanController {
 
     @Autowired
     JwtUtils jwtUtils;
-    public LoanController(LoanRepository loanRepository) {
-        this.repository = loanRepository;
+    @PostMapping("/loan")
+    public String addBooking(@RequestBody Loan loan){
+        return loanService.addBooking(loan);
     }
-
-    @PostMapping("newloan")
-    public ResponseEntity createPasses() {
-        LoanService loanService = new LoanService(repository);
-        loanService.newLoan();
-        return ResponseEntity.ok("Uploaded");
-    }
-
+    
+    // @DeleteMapping("/loan/all/{loanID}")
+    // public String deleteBooking(@PathVariable String loanID){
+    //     return loanService.deleteBooking(loanID);
+    // }
     
 
 
