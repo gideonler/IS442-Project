@@ -27,6 +27,10 @@
     name: 'MonthlyLoanChart',
     components: { Bar },
     props: {
+      data:{
+        type: Array,
+        default:() => []
+      },
       chartId: {
         type: String,
         default: 'monthly-loan-chart'

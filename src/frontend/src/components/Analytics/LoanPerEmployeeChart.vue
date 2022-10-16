@@ -20,9 +20,12 @@
     import { Bar } from 'vue-chartjs'
 
     export default {
-    name: 'BarChart',
+    name: 'LoanPerEmployeeChart',
     components: { Bar },
     props: {
+        loanChartData:{
+            type: Array
+        },
         chartId: {
         type: String,
         default: 'bar-chart'
@@ -51,6 +54,7 @@
         type: Array,
         default: () => []
         }
+
     },
     data() {
         return {
@@ -60,7 +64,7 @@
             label: 'Avg. Loans of Employee',
 
             //TODO:  Replace Dummy Data with backend data
-            data: [40, 20, 12], 
+            data: this.loanChartData, 
             backgroundColor: [
                 'rgba(255, 159, 64, 0.2)'
             ],
