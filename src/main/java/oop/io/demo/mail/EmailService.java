@@ -49,11 +49,11 @@ public class EmailService {
             message.setFrom(new InternetAddress("oopg2t4@outlook.com"));
             message.setRecipients(
                     Message.RecipientType.TO,
-                    InternetAddress.parse("oopg2t4@outlook.com")
+                    InternetAddress.parse(mail.getTo())
+                    //InternetAddress.parse("oopg2t4@outlook.com")
             );
-            message.setSubject("Testing Outlook TLS");
-            message.setText("Dear Mail Crawler,"
-                    + "\n\n Please do not spam my email!");
+            message.setSubject(mail.getSubject());
+            message.setText(mail.getContent());
 
             Transport.send(message);
 

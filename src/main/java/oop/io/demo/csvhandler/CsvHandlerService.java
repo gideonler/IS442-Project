@@ -8,13 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import oop.io.demo.auth.AuthService;
+import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenRepository;
+import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.SignupRequest;
+import oop.io.demo.mail.EmailService;
 import oop.io.demo.user.UserRepository;
+import oop.io.demo.user.UserService;
 
 @Service
 public class CsvHandlerService {
     @Autowired
 	UserRepository repository;
+
+	@Autowired
+	ConfirmationTokenRepository confirmationTokenRepository;
 
 	// Store Csv File's data to database
 	public ArrayList<String> store(InputStream file) {
@@ -25,7 +32,7 @@ public class CsvHandlerService {
 			
 			int successfulSignUps = 0;
 			// Save users to database
-			AuthService authService = new AuthService(repository);
+			AuthService authService = new AuthService(repository, confirmationTokenRepository);
 			for(SignupRequest request: signupRequest) {
 				if (repository.existsByEmail(request.getEmail())) {
 					messages.add(request.getEmail()+" already exists");
