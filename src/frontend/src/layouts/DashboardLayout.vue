@@ -17,7 +17,7 @@
       </sidebar-link>
       <sidebar-link to="/corporate-pass-management">
         <i class="nc-icon nc-badge"></i>
-        <p>Manage Passes</p>
+        <p>Create Passes</p>
       </sidebar-link>
       <sidebar-link to="/notifications">
         <i class="nc-icon nc-bell-55"></i>

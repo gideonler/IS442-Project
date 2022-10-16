@@ -1,7 +1,6 @@
 <template>
     <div class="content">
     <div class="container-fluid">
-        <h2>Attraction/Pass Creation</h2>
         <div class="row">
             
         </div>
