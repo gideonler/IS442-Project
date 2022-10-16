@@ -15,9 +15,13 @@
         <i class="nc-icon nc-chart-bar-32"></i>
         <p>Analytics</p>
       </sidebar-link>
-      <sidebar-link to="/corporate-pass-management">
+      <sidebar-link to="/corporate-pass-creation">
         <i class="nc-icon nc-badge"></i>
         <p>Create Passes</p>
+      </sidebar-link>
+      <sidebar-link to="/corporate-pass-management">
+        <i class="nc-icon nc-ruler-pencil"></i>
+        <p>Manage Passes</p>
       </sidebar-link>
       <sidebar-link to="/notifications">
         <i class="nc-icon nc-bell-55"></i>

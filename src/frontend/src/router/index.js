@@ -12,6 +12,7 @@ import Notifications from '../views/Notifications.vue'
 import Booking from '../views/Booking.vue'
 import Analytics from '../views/Analytics.vue'
 import AdminCorpPass from '../views/AdminCorpPass.vue'
+import AdminCorpPassManagement from '../views/AdminCorpPassManagement.vue'
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
 
@@ -28,8 +29,9 @@ const routes = [
   { path: '/notifications', component: Notifications },
   { path: '/analytics', component: Analytics},
   { path: '/booking', component: Booking },
-  { path: '/corporate-pass-management', component: AdminCorpPass},
-  { path: '/login', component: Login }
+  { path: '/login', component: Login },
+  { path: '/corporate-pass-creation', component: AdminCorpPass},
+  { path: '/corporate-pass-management', component: AdminCorpPassManagement},
 ]
 
 const router = new VueRouter({
