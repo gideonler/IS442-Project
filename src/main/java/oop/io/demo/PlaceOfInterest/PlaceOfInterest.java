@@ -1,4 +1,4 @@
-package oop.io.demo.PlaceOfInterest;
+package oop.io.demo.placeOfInterest;
 
 import javax.persistence.Column;
 import javax.persistence.Id;

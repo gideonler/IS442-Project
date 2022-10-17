@@ -1,4 +1,4 @@
-package oop.io.demo.PlaceOfInterest;
+package oop.io.demo.placeOfInterest;
 
 import java.util.List;
 import java.util.Optional;
