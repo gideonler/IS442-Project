@@ -15,6 +15,7 @@ public class UserService {
         if(_user.isPresent()) {
             User user= _user.get();
             user.setVerified(true);
+            userRepository.save(user);
         }
     }
 }

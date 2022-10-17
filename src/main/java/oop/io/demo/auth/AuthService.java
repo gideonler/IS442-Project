@@ -8,9 +8,11 @@ import javax.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import oop.io.demo.auth.ConfirmationToken.ConfirmationToken;
-import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenRepository;
-import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenService;
+import io.micrometer.core.ipc.http.HttpSender.Response;
+import net.bytebuddy.asm.Advice.Local;
+import oop.io.demo.auth.confirmationToken.ConfirmationToken;
+import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
+import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.SignupRequest;
 import oop.io.demo.auth.payload.response.MessageResponse;
 import oop.io.demo.mail.Email;
@@ -46,6 +48,10 @@ public class AuthService {
         user.setUserType(USERTYPE.STAFF);
         user.setVerified(false);
         repository.save(user);
+        return generateAndSendConfirmationTokenEmail(user);
+    }
+
+    public ResponseEntity<?> generateAndSendConfirmationTokenEmail(User user) {
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
             token,
@@ -69,20 +75,24 @@ public class AuthService {
     }
 
     @Transactional
-    public String confirmToken(String token){
+    public ResponseEntity<?> confirmToken(String token){
         confirmationTokenService = new ConfirmationTokenService(confirmationTokenRepository);
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token);
         if(confirmationToken==null) {
-            throw new IllegalStateException("token not found!");
+            System.out.println("Token not found!");
+            throw new IllegalStateException("Token not found!");
         }
         if(confirmationToken.getConfirmedAt() != null) {
-            throw new IllegalStateException("email already exists!");
+            throw new IllegalStateException("Email already exists!");
+        }
+        if(LocalDateTime.now().isAfter(confirmationToken.getExpiresAt())) {
+            return ResponseEntity.ok("Token has expired.");
         }
         confirmationTokenService.setConfirmedAt(token);
 
         userService = new UserService(repository);
         userService.enableUser(confirmationToken.getUser().getEmail());
 
-        return "confirmed";
+        return ResponseEntity.ok("confirmed");
     }
 }

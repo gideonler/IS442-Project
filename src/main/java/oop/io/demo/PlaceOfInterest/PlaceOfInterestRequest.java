@@ -1,11 +1,16 @@
-package oop.io.demo.PlaceOfInterest;
+package oop.io.demo.placeOfInterest;
+
+import javax.validation.constraints.NotBlank;
 
 public class PlaceOfInterestRequest{
     
+    @NotBlank
     private String placeOfInterest;
 
+    @NotBlank
     private double replacementFee;
 
+    @NotBlank
     private String passType;
 
     public PlaceOfInterestRequest(String placeOfInterest, double replacementFee, String passType) {

@@ -25,7 +25,7 @@ public class UserDetailImplementation implements UserDetails {
 
     private String name;
   
-    //private Collection<? extends GrantedAuthority> authorities;
+    
     GrantedAuthority authority;
 
     private boolean isVerified;
