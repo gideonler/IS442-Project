@@ -2,17 +2,11 @@ package oop.io.demo.auth.security.jwt;
 
 import java.util.Date;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.security.core.Authentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.WebUtils;
 
 import io.jsonwebtoken.*;
 import oop.io.demo.auth.security.services.UserDetailImplementation;
@@ -62,12 +56,4 @@ public class JwtUtils {
         return false;
     }
     
-    public static String generateTokenFromEmail(String email) {   
-        return Jwts.builder()
-            .setSubject(email)
-            .setIssuedAt(new Date())
-            .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-            .signWith(SignatureAlgorithm.HS512, jwtSecret)
-            .compact();
-    }
 }

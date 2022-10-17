@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
 
-import oop.io.demo.PlaceOfInterest.PlaceOfInterestRepository;
+import oop.io.demo.placeOfInterest.PlaceOfInterestRepository;
 
 
 public class PassService {

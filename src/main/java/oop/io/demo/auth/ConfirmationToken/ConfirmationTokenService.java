@@ -1,4 +1,4 @@
-package oop.io.demo.auth.ConfirmationToken;
+package oop.io.demo.auth.confirmationToken;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -19,6 +19,7 @@ public class ConfirmationTokenService {
         if(_confirmationToken.isPresent()){
             ConfirmationToken confirmationToken = _confirmationToken.get();
             confirmationToken.setConfirmedAt(LocalDateTime.now());
+            confirmationTokenRepository.save(confirmationToken);
         }
     }
 

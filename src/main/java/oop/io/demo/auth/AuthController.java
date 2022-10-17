@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenRepository;
-import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenService;
+import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
+import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.LoginRequest;
 import oop.io.demo.auth.payload.request.SignupRequest;
 import oop.io.demo.auth.payload.response.JwtResponse;
@@ -88,7 +88,7 @@ public class AuthController {
         }
 
         @GetMapping("/confirm")
-        public String confirmUser(@RequestParam("token") String token) {
+        public ResponseEntity<?> confirmUser(@RequestParam("token") String token) {
             AuthService authService = new AuthService(repository, confirmationTokenRepository);
             return authService.confirmToken(token);
         }
