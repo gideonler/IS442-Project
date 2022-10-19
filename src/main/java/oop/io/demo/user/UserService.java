@@ -2,6 +2,10 @@ package oop.io.demo.user;
 
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
+
+import oop.io.demo.auth.payload.request.PasswordRequest;
+
 public class UserService {
     
     private final UserRepository userRepository;
