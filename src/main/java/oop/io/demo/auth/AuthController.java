@@ -1,7 +1,10 @@
 package oop.io.demo.auth;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
+import org.hibernate.type.VersionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,19 +20,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import oop.io.demo.auth.confirmationToken.ConfirmationToken;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.LoginRequest;
+import oop.io.demo.auth.payload.request.PasswordRequest;
 import oop.io.demo.auth.payload.request.SignupRequest;
+import oop.io.demo.auth.payload.request.VerificationRequest;
 import oop.io.demo.auth.payload.response.JwtResponse;
 import oop.io.demo.auth.payload.response.MessageResponse;
 import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.auth.security.services.UserDetailImplementation;
 import oop.io.demo.mail.EmailService;
+import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.user.UserService;
 
-@CrossOrigin(maxAge = 3600)
+//@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -42,12 +49,16 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
 
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
+    private ConfirmationTokenService confirmationTokenService;
+
+    private UserService userService;
+
     public AuthController(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository) {
-        this.repository = userRepository;
+        this.userRepository = userRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
     }
 
@@ -78,19 +89,45 @@ public class AuthController {
         //this is the first step to signing up (just using name and email)
         @PostMapping("/signup")
         public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-            if (repository.existsByEmail(signUpRequest.getEmail())) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+            AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
+            if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+                User u = userRepository.findByEmail(signUpRequest.getEmail()).get();
+                if(!u.isVerified()){
+                    authService.generateAndSendConfirmationTokenEmail(u);
+                    return ResponseEntity.badRequest().body(new MessageResponse("Error: User with this email is already registered. Please check email for verification link."));
+                }
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use! Please log in instead."));
             } /* else if(!(signUpRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(signUpRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
             } */
-            AuthService authService = new AuthService(repository, confirmationTokenRepository);
             return authService.signUpOneUser(signUpRequest);
         }
 
         @GetMapping("/confirm")
-        public ResponseEntity<?> confirmUser(@RequestParam("token") String token) {
-            AuthService authService = new AuthService(repository, confirmationTokenRepository);
-            return authService.confirmToken(token);
+        public ResponseEntity<?> confirmUser(@RequestBody VerificationRequest verificationRequest) {
+            AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
+            String token = verificationRequest.getToken();
+            ConfirmationToken confirmationToken = authService.confirmToken(token);
+            //set password
+            User user = confirmationToken.getUser();
+            try {
+            authService.setPassword(user, verificationRequest);
+            }
+            catch(Exception e) {
+                e.getMessage();
+            }
+            //set contact no- can frontend check whether it exists?
+            user.setContactNo(verificationRequest.getContactNo());
+            
+            //set confirmedAt to now
+            confirmationTokenService = new ConfirmationTokenService(confirmationTokenRepository);
+            confirmationTokenService.setConfirmedAt(token);
+
+            //set isVerified to equal true
+            userService = new UserService(userRepository);
+            userService.enableUser(confirmationToken.getUser().getEmail());
+
+            return ResponseEntity.ok("Confirmed");
         }
 
         @PostMapping("/signout")
@@ -99,4 +136,5 @@ public class AuthController {
             .body(new MessageResponse("You've been signed out!"));
 
         }
+
 }
