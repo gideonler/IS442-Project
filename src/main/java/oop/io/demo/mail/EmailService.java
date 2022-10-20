@@ -1,6 +1,13 @@
 package oop.io.demo.mail;
 
+import freemarker.core.ParseException;
 import freemarker.template.Configuration;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
@@ -16,6 +23,9 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import java.util.Properties;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -26,45 +36,8 @@ public class EmailService {
     @Autowired
     Configuration fmConfiguration;
 
-    public void send(Email mail) {
-        final String username = "oopg2t4@outlook.com";
-        final String password = "g2t4OOP!";
-
-        Properties prop = new Properties();
-		prop.put("mail.smtp.host", "smtp.office365.com");
-        prop.put("mail.smtp.port", "587");
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.starttls.enable", "true"); //TLS
-        
-        Session session = Session.getInstance(prop,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
-                });
-
-        try {
-
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("oopg2t4@outlook.com"));
-            message.setRecipients(
-                    Message.RecipientType.TO,
-                    InternetAddress.parse(mail.getTo())
-                    //InternetAddress.parse("oopg2t4@outlook.com")
-            );
-            message.setSubject(mail.getSubject());
-            message.setText(mail.getContent());
-
-            Transport.send(message);
-
-            System.out.println("Done");
-
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            System.out.println("OOPS...");
-        }
-    }
-
+    // EMAIL FUNCTIONS THAT WORK ----------------------------------------------------------------------
+    // Normal Email
     public void sendEmail(Email mail) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(mail.getTo());
@@ -74,49 +47,72 @@ public class EmailService {
         javaMailSender.send(msg);
     }
 
-    public void sendEmailWithAttachment(Email mail) throws MessagingException, IOException {
-        MimeMessage msg = javaMailSender.createMimeMessage();
-        // true = multipart message
-        MimeMessageHelper helper = new MimeMessageHelper(msg, true);
-
-        helper.setTo(mail.getTo());
-        helper.setFrom(mail.getFrom());
-        helper.setSubject(mail.getSubject());
-        helper.setText(mail.getContent());
-
-        // hard coded a file path
-        // FileSystemResource file = new FileSystemResource(new    File("path/img.png"));
-        // helper.addAttachment("Google Photo",file);
-        helper.addAttachment("Google Photo", new ClassPathResource("img.png"));
-        javaMailSender.send(msg);
-    }
-
-    public void sendEmailWithTemplate(Email mail) {
+    // Simple template email with no modelling
+    public void sendSimpleEmailTemplate(Email mail, String template) throws Exception {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
+            Template t = fmConfiguration.getTemplate(template);
+
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
 
             mimeMessageHelper.setSubject(mail.getSubject());
             mimeMessageHelper.setFrom(mail.getFrom());
             mimeMessageHelper.setTo(mail.getTo());
-            mail.setContent(geContentFromTemplate(mail.getModel()));
-            mimeMessageHelper.setText(mail.getContent(), true);
+            mimeMessageHelper.setText(text, true);
 
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
-        } catch (MessagingException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public String geContentFromTemplate(Map<String, Object> model) {
-        StringBuffer content = new StringBuffer();
-
+    // Template email with modelling
+    public void sendEmailTemplate(Email mail,  String template) throws Exception {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(fmConfiguration.getTemplate("email-template.flth"), model));
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
+            Template t = fmConfiguration.getTemplate(template);
+
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
+
+            mimeMessageHelper.setSubject(mail.getSubject());
+            mimeMessageHelper.setFrom(mail.getFrom());
+            mimeMessageHelper.setTo(mail.getTo());
+            mimeMessageHelper.setText(text, true);
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return content.toString();
+    }
+
+    public void sendEmailWithAttachment(Email mail, String template) throws MessagingException, IOException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
+            Template t = fmConfiguration.getTemplate(template);
+
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
+
+            mimeMessageHelper.setSubject(mail.getSubject());
+            mimeMessageHelper.setFrom(mail.getFrom());
+            mimeMessageHelper.setTo(mail.getTo());
+            mimeMessageHelper.setText(text, true);
+            mimeMessageHelper.addAttachment("pug.jpg", new ClassPathResource("attachments/pug.jpg"));
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
