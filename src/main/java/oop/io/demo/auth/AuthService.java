@@ -26,8 +26,6 @@ public class AuthService {
 
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
-    private UserService userService;
-
     private ConfirmationTokenService confirmationTokenService;
 
     private EmailService emailService;
@@ -46,11 +44,16 @@ public class AuthService {
         user.setUserType(USERTYPE.STAFF);
         user.setVerified(false);
         userRepository.save(user);
-        return generateAndSendConfirmationTokenEmail(user);
+        return sendConfirmationTokenEmail(user);
     }
 
-    public ResponseEntity<?> generateAndSendConfirmationTokenEmail(User user) {
+    public String generateConfirmationToken(String email) {
         String token = UUID.randomUUID().toString();
+        Optional<User> u = userRepository.findByEmail(email);
+        if(!u.isPresent()){
+            return "User with this email doesn't exist!";
+        }
+        User user = u.get();
         ConfirmationToken confirmationToken = new ConfirmationToken(
             token,
             LocalDateTime.now(),
@@ -59,7 +62,11 @@ public class AuthService {
             );
         confirmationTokenService = new ConfirmationTokenService(confirmationTokenRepository);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
+        return token;
+    }
 
+    public ResponseEntity<?> sendConfirmationTokenEmail(User user) {
+        String token = generateConfirmationToken(user.getEmail());
         //send email
         Email mail = new Email();
         mail.setTo(user.getEmail());
@@ -67,8 +74,21 @@ public class AuthService {
         //TODO: replace with email template; could create email builder service to integrate link and email
         mail.setContent("Please use this token to complete registration process" + token);
         emailService= new EmailService();
-        emailService.send(mail);
+        emailService.sendEmail(mail);
         return ResponseEntity.ok(new MessageResponse("Please check email to complete registration"));
+    }
+
+    public ResponseEntity<?> sendForgotPasswordEmail(String email) throws PasswordsDoNotMatchException{
+        String token = generateConfirmationToken(email);
+        //send email
+        Email mail = new Email();
+        mail.setTo(email);
+        mail.setSubject("Reset password for Singapore Sports School Employee Pass Booking website");
+        //TODO: replace with email template; could create email builder service to integrate link and email
+        mail.setContent("Please use this token to reset password" + token);
+        emailService= new EmailService();
+        emailService.sendEmail(mail);
+        return ResponseEntity.ok(new MessageResponse("Please check email to reset password"));
     }
 
     public ResponseEntity<?> setPassword(User user, VerificationRequest verificationRequest) throws PasswordsDoNotMatchException{
@@ -78,6 +98,13 @@ public class AuthService {
         user.setPassword(verificationRequest.getPassword());
         userRepository.save(user);
         return ResponseEntity.ok("Password set succesfully!");
+    }
+
+    public void changePassword(String password, String token) {
+        ConfirmationToken confirmationToken = confirmToken(token);
+        User user = confirmationToken.getUser();
+        user.setPassword(password);
+        userRepository.save(user);
     }
 
     @Transactional
@@ -94,7 +121,6 @@ public class AuthService {
         if(LocalDateTime.now().isAfter(confirmationToken.getExpiresAt())) {
             throw new IllegalStateException("Token has expired");
         }
-
         return confirmationToken;
     }
 }
