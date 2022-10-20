@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
@@ -35,21 +36,20 @@ public class PasswordController {
     private final UserRepository userRepository;
 
     private final ConfirmationTokenRepository confirmationTokenRepository;
-
     
     public PasswordController (UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository) {
         this.userRepository= userRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
     }
 
-
     @PostMapping("/reset")
-    public ResponseEntity<?> resetPassword(){
-        
+    public ResponseEntity<?> resetPassword(@RequestBody String email){
+        AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
+        authService.sendForgotPasswordEmail(email);
     }
 
     @GetMapping("/change")
-    public ResponseEntity<?> changePassword() {
+    public ResponseEntity<?> changePassword(@RequestParam(required= false), String token, RedirectAttributes redirectAttributes) {
 
     }
 

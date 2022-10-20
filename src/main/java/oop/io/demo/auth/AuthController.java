@@ -93,7 +93,7 @@ public class AuthController {
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
                 User u = userRepository.findByEmail(signUpRequest.getEmail()).get();
                 if(!u.isVerified()){
-                    authService.generateAndSendConfirmationTokenEmail(u);
+                    authService.sendConfirmationTokenEmail(u);
                     return ResponseEntity.badRequest().body(new MessageResponse("Error: User with this email is already registered. Please check email for verification link."));
                 }
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use! Please log in instead."));
