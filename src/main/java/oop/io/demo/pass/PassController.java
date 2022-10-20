@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.auth.security.jwt.JwtUtils;
-import oop.io.demo.placeOfInterest.PlaceOfInterestRepository;
+import oop.io.demo.PlaceOfInterest.PlaceOfInterestRepository;
 @CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/pass")

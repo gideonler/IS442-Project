@@ -1,4 +1,4 @@
-package oop.io.demo.placeOfInterest;
+package oop.io.demo.PlaceOfInterest;
 
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
