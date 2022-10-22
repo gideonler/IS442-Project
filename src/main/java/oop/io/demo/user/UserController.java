@@ -50,7 +50,7 @@ public class UserController {
             return ResponseEntity.ok(user);
         }
         else {
-            return ResponseEntity.ok("User with username:"+ username +" was not found.");
+            return ResponseEntity.badRequest().body("User with username:"+ username +" was not found.");
         }
     }
 
@@ -61,7 +61,7 @@ public class UserController {
             return ResponseEntity.ok(users);
         }
         else{
-            return ResponseEntity.ok("No users with staff type: "+ userType +" wwere not found.");
+            return ResponseEntity.badRequest().body("No users with staff type: "+ userType +" wwere not found.");
         }
     }
 
@@ -81,7 +81,7 @@ public class UserController {
             return ResponseEntity.ok("Successfully deleted.");
         }
         else {
-            return ResponseEntity.ok("User with username: " + username + " was not found.");
+            return ResponseEntity.badRequest().body("User with username: " + username + " was not found.");
         }
     }
 

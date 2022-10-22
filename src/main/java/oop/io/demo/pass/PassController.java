@@ -49,19 +49,19 @@ public class PassController {
     @PostMapping("/{placeofinterestname}/new")
     public ResponseEntity createPasses(@PathVariable("placeofinterestname") String placeOfInterestName, @RequestBody PassRequest passRequest) {
         PassService passService = new PassService(repository, placeOfInterestRepository);
-        ResponseEntity r = passService.createPass(passRequest);
-        return r;
+        ResponseEntity responseEntity = passService.createPass(passRequest);
+        return responseEntity;
     }
     
     @GetMapping("/{passid}/deactivate")
     public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
-        ResponseEntity r = new PassService(repository, placeOfInterestRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
-        return r;
+        ResponseEntity responseEntity = new PassService(repository, placeOfInterestRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
+        return responseEntity;
     }
 
     @GetMapping("/{passid}/activate")
     public ResponseEntity activatePass(@PathVariable("passid") String passId) {
-        ResponseEntity r = new PassService(repository, placeOfInterestRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
-        return r;
+        ResponseEntity responseEntity = new PassService(repository, placeOfInterestRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
+        return responseEntity;
     }
 }

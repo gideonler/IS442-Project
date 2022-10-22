@@ -1,37 +1,24 @@
-package oop.io.demo.PlaceOfInterest;
+package oop.io.demo.placeOfInterest;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
-import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 
-@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/placeofinterest")
 public class PlaceOfInterestController {
-
-    @Autowired
-    AuthenticationManager autenticationManager;
-
-    @Autowired
-    JwtUtils jwtUtils;
 
     private final PlaceOfInterestRepository repository;
 
@@ -42,8 +29,8 @@ public class PlaceOfInterestController {
         this.passRepository = passRepository;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity getPlacesOfInterest() {
+    @GetMapping("/placesofinterest")
+    public ResponseEntity<List<PlaceOfInterest>> getAllPlacesOfInterest() {
         return ResponseEntity.ok(repository.findAll());
     }
 
@@ -54,7 +41,7 @@ public class PlaceOfInterestController {
             return ResponseEntity.ok(placeOfInterest.get());
         }
         else {
-            return ResponseEntity.ok("Place Of Interest not found!");
+            return ResponseEntity.badRequest().body("Place Of Interest not found!");
         }
     }
     
@@ -77,7 +64,7 @@ public class PlaceOfInterestController {
             if(placeOfInterestRequest.getReplacementFee()!=0.0) placeOfInterest.setReplacementFee(placeOfInterestRequest.getReplacementFee());
             return ResponseEntity.ok(repository.save(placeOfInterest));
         } else {
-            return ResponseEntity.ok("Place of interest not found.");
+            return ResponseEntity.badRequest().body("Place of interest not found.");
         }
     }
 
@@ -87,7 +74,8 @@ public class PlaceOfInterestController {
         if(_placeOfInterest.isPresent()){
             PlaceOfInterest placeOfInterest = _placeOfInterest.get();
             placeOfInterest.setActive(false);
-            List<Pass> passes = passRepository.findPassesByPlaceOfInterestName(placeOfInterestName);
+            List<Pass> passes = passRepository.findByPlaceOfInterestName(placeOfInterestName).get();
+            if(passes.isEmpty()) return ResponseEntity.ok("No passes to deactivate.");
             for(Pass p: passes){
                 p.setPassStatus(PASSSTATUS.DEACTIVATED);
             }
@@ -95,7 +83,7 @@ public class PlaceOfInterestController {
             repository.save(placeOfInterest);
             return ResponseEntity.ok("Deactivated "+ placeOfInterestName + " attraction and all passes under "+ placeOfInterestName+".");
         } else {
-            return ResponseEntity.ok("Place of interest not found.");
+            return ResponseEntity.badRequest().body("Place of interest not found.");
         }
     }
 }

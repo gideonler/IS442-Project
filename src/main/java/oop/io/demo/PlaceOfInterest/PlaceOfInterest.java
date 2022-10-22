@@ -1,9 +1,8 @@
-package oop.io.demo.PlaceOfInterest;
+package oop.io.demo.placeOfInterest;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("PlaceOfInterest")
@@ -12,7 +11,7 @@ public class PlaceOfInterest {
     @Id
     private String id;
 
-    @Indexed(unique=true)
+    @Column(unique=true)
     private String placeOfInterestName;
 
     private double replacementFee;
