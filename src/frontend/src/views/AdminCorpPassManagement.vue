@@ -1,16 +1,14 @@
 <template>
     <div>
-        <h1>Pass Management</h1>
-        <PassDataTable></PassDataTable>
+        <h1>Attraction Management</h1>
+        <AttractionPasses></AttractionPasses>
     </div>
-
-
 </template>
 
 
 <script>
 import DashboardLayout from '../layouts/DashboardLayout'
-import PassDataTable from '@/components/AdminCorpPassManagement/PassDataTable.vue';
+import AttractionPasses from '@/components/AdminCorpPassManagement/AttractionPasses.vue';
 
 
 export default {
@@ -18,7 +16,7 @@ export default {
     created() {
         this.$emit("update:layout", DashboardLayout);
     },
-    components: { PassDataTable }
+    components: { AttractionPasses }
 };
 
 </script>

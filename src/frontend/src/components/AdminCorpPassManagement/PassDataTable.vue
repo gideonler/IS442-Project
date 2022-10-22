@@ -1,5 +1,6 @@
 <template>
     <b-container fluid>
+      <h3 v-bind="placeOfInterest">{{placeOfInterest}}</h3>
       <!-- User Interface controls -->
       <b-row>
         <b-col lg="6" class="my-1">
@@ -97,9 +98,9 @@
               :aria-describedby="ariaDescribedby"
               class="mt-1"
             >
-              <b-form-checkbox value="name">Name</b-form-checkbox>
-              <b-form-checkbox value="age">Age</b-form-checkbox>
-              <b-form-checkbox value="isActive">Active</b-form-checkbox>
+              <b-form-checkbox value="placeOfInterestName">Name</b-form-checkbox>
+              <b-form-checkbox value="passNo">Pass Number</b-form-checkbox>
+              <b-form-checkbox value="passStatus">Pass Status</b-form-checkbox>
             </b-form-checkbox-group>
           </b-form-group>
         </b-col>
@@ -138,7 +139,7 @@
   
       <!-- Main table element -->
       <b-table
-        :items="items"
+        :items="pass_list"
         :fields="fields"
         :current-page="currentPage"
         :per-page="perPage"
@@ -157,10 +158,11 @@
         </template>
   
         <template #cell(actions)="row">
-          <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-            Info modal
+          <b-button class="mx-1" variant="success" size="sm" @click="row.editDetails">
+            <i class="fa fa-pencil"></i>
+            Edit Details
           </b-button>
-          <b-button size="sm" @click="row.toggleDetails">
+          <b-button class="mx-1" size="sm" @click="row.toggleDetails">
             {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
           </b-button>
         </template>
@@ -182,42 +184,18 @@
   </template>
   
   <script>
+    // import axios from 'axios'
+
     export default {
       data() {
         return {
-          items: [
-            { isActive: true, age: 40, name: { first: 'Dickerson', last: 'Macdonald' } },
-            { isActive: false, age: 21, name: { first: 'Larsen', last: 'Shaw' } },
-            {
-              isActive: false,
-              age: 9,
-              name: { first: 'Mini', last: 'Navarro' },
-              _rowVariant: 'success'
-            },
-            { isActive: false, age: 89, name: { first: 'Geneva', last: 'Wilson' } },
-            { isActive: true, age: 38, name: { first: 'Jami', last: 'Carney' } },
-            { isActive: false, age: 27, name: { first: 'Essie', last: 'Dunlap' } },
-            { isActive: true, age: 40, name: { first: 'Thor', last: 'Macdonald' } },
-            {
-              isActive: true,
-              age: 87,
-              name: { first: 'Larsen', last: 'Shaw' },
-              _cellVariants: { age: 'danger', isActive: 'warning' }
-            },
-            { isActive: false, age: 26, name: { first: 'Mitzi', last: 'Navarro' } },
-            { isActive: false, age: 22, name: { first: 'Genevieve', last: 'Wilson' } },
-            { isActive: true, age: 38, name: { first: 'John', last: 'Carney' } },
-            { isActive: false, age: 29, name: { first: 'Dick', last: 'Dunlap' } }
-          ],
+          all_pass: [],
+          pass_list: [],
           fields: [
-            { key: 'name', label: 'Person full name', sortable: true, sortDirection: 'desc' },
-            { key: 'age', label: 'Person age', sortable: true, class: 'text-center' },
+            { key: 'placeOfInterestName', label: 'Attraction Name', sortable: true, sortDirection: 'desc' },
+            { key: 'passNo', label: 'Pass Number', sortable: true, sortDirection: 'desc' },
+            { key: 'passStatus', label: 'Pass Status', sortable: true, sortDirection: 'desc' },
             {
-              key: 'isActive',
-              label: 'Is Active',
-              formatter: (value) => {
-                return value ? 'Yes' : 'No'
-              },
               sortable: true,
               sortByFormatted: true,
               filterByFormatted: true
@@ -237,7 +215,8 @@
             id: 'info-modal',
             title: '',
             content: ''
-          }
+          },
+     
         }
       },
       computed: {
@@ -252,9 +231,44 @@
       },
       mounted() {
         // Set the initial number of items
-        this.totalRows = this.items.length
+        // axios
+        //     .get("http://localhost:8080/pass/passes")
+        //     .then((response) => {
+        //         var pass_list = response.data;
+        //         this.pass_list= pass_list
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     })
+        let style = document.createElement('link');
+        style.type = "text/css";
+        style.rel = "stylesheet";
+        style.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css';
+        document.head.appendChild(style);
+        this.pass_list= [
+          {
+          "passId": "Night Safari3",
+          "passNo": "3",
+          "placeOfInterestName": "Night Safari",
+          "passStatus": "INOFFICE"
+          },
+          {
+          "passId": "Night Safari2",
+          "passNo": "2",
+          "placeOfInterestName": "Night Safari",
+          "passStatus": "DEACTIVATED"
+          },
+          ]
+        this.totalRows = this.pass_list.length
       },
+      created() {
+        this.$root.$refs.PassDataTable= this;
+        },
       methods: {
+        viewPass(placeofinterest){
+          //TODO: replacee
+          this.placeOfInterest= placeofinterest;
+        },
         info(item, index, button) {
           this.infoModal.title = `Row index: ${index}`
           this.infoModal.content = JSON.stringify(item, null, 2)
@@ -268,7 +282,7 @@
           // Trigger pagination to update the number of buttons/pages due to filtering
           this.totalRows = filteredItems.length
           this.currentPage = 1
-        }
-      }
+        },
+      },
     }
   </script>

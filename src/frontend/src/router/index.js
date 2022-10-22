@@ -13,6 +13,7 @@ import Booking from '../views/Booking.vue'
 import Analytics from '../views/Analytics.vue'
 import AdminCorpPass from '../views/AdminCorpPass.vue'
 import AdminCorpPassManagement from '../views/AdminCorpPassManagement.vue'
+import AdminCorpPassDisplay from '../views/AdminCorpPassDisplay.vue'
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
 
@@ -32,6 +33,7 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/corporate-pass-creation', component: AdminCorpPass},
   { path: '/corporate-pass-management', component: AdminCorpPassManagement},
+  { path: '/corporate-pass-management/passes', component: AdminCorpPassDisplay}, 
 ]
 
 const router = new VueRouter({
