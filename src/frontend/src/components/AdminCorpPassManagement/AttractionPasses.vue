@@ -39,7 +39,7 @@
                     <small class="text-muted">{{pass.passStatus}}</small>
                     <br>
                     <b-button @click="editDetails('Night Safari', 'Night Safari', 30, '','','')" variant="success" class="mx-1">Edit Details</b-button>
-                    <b-button @click=viewPasses(pass.placeOfInterestName) class="mx-1">View Passes</b-button>
+                    <b-button @click="viewPasses('hello')" class="mx-1">View Passes</b-button>
 
                 </template>
             </b-card>
@@ -64,7 +64,7 @@
   </template>
 
   <script>
-    import axios from 'axios'
+    // import axios from 'axios'
     import PassDataTable from './PassDataTable.vue'
     import EditAttractionModal from './EditAttractionModal.vue'
     

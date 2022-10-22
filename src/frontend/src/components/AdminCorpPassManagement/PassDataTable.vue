@@ -1,14 +1,14 @@
 <template>
-    <b-container fluid>
-      <h3 v-bind="placeOfInterest">{{placeOfInterest}}</h3>
-      <!-- User Interface controls -->
-      <b-row>
+  <div class="table-container">
+    <h1>{{placeOfInterest}}</h1>
+          <!-- User Interface controls -->
+          <b-row>
         <b-col lg="6" class="my-1">
           <b-form-group
             label="Sort"
             label-for="sort-by-select"
-            label-cols-sm="3"
-            label-align-sm="right"
+            label-cols-sm="1"
+            label-align-sm="left"
             label-size="sm"
             class="mb-0"
             v-slot="{ ariaDescribedby }"
@@ -40,30 +40,16 @@
           </b-form-group>
         </b-col>
   
-        <b-col lg="6" class="my-1">
-          <b-form-group
-            label="Initial sort"
-            label-for="initial-sort-select"
-            label-cols-sm="3"
-            label-align-sm="right"
-            label-size="sm"
-            class="mb-0"
-          >
-            <b-form-select
-              id="initial-sort-select"
-              v-model="sortDirection"
-              :options="['asc', 'desc', 'last']"
-              size="sm"
-            ></b-form-select>
-          </b-form-group>
+        <b-col lg="4" class="my-1 mx-5">
+          <b-button variant="success" @click="handleAdd()">Create New Pass</b-button>
         </b-col>
   
         <b-col lg="6" class="my-1">
           <b-form-group
             label="Filter"
             label-for="filter-input"
-            label-cols-sm="3"
-            label-align-sm="right"
+            label-cols-sm="1"
+            label-align-sm="left"
             label-size="sm"
             class="mb-0"
           >
@@ -111,8 +97,8 @@
             label-for="per-page-select"
             label-cols-sm="6"
             label-cols-md="4"
-            label-cols-lg="3"
-            label-align-sm="right"
+            label-cols-lg="2"
+            label-align-sm="left"
             label-size="sm"
             class="mb-0"
           >
@@ -136,73 +122,192 @@
           ></b-pagination>
         </b-col>
       </b-row>
-  
-      <!-- Main table element -->
-      <b-table
-        :items="pass_list"
-        :fields="fields"
-        :current-page="currentPage"
-        :per-page="perPage"
-        :filter="filter"
-        :filter-included-fields="filterOn"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        :sort-direction="sortDirection"
-        stacked="md"
-        show-empty
-        small
-        @filtered="onFiltered"
-      >
-        <template #cell(name)="row">
-          {{ row.value.first }} {{ row.value.last }}
-        </template>
-  
-        <template #cell(actions)="row">
-          <b-button class="mx-1" variant="success" size="sm" @click="row.editDetails">
-            <i class="fa fa-pencil"></i>
-            Edit Details
-          </b-button>
-          <b-button class="mx-1" size="sm" @click="row.toggleDetails">
-            {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-          </b-button>
-        </template>
-  
-        <template #row-details="row">
-          <b-card>
-            <ul>
-              <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-            </ul>
-          </b-card>
-        </template>
-      </b-table>
-  
-      <!-- Info modal -->
-      <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-        <pre>{{ infoModal.content }}</pre>
-      </b-modal>
-    </b-container>
-  </template>
-  
-  <script>
-    // import axios from 'axios'
+    <b-editable-table
+      head-variant="dark"
+      disableDefaultEdit
+      :rowUpdate="rowUpdate"
+      :editMode="'row'"
+      bordered
+      class="editable-table"
+      v-model="items"
+      :fields="fields"
+      :current-page="currentPage"
+      :per-page="perPage"
+      :filter="filter"
+      :filter-included-fields="filterOn"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+      :sort-direction="sortDirection"
+      stacked="md"
+      show-empty
+      small
+      @filtered="onFiltered"
+    >
+      <template #cell(isActive)="data">
+        <span v-if="data.value">Yes</span>
+        <span v-else>No</span>
+      </template>
+      <template #cell(edit)="data">
+        <div v-if="data.isEdit">
+          <BIconX class="edit-icon" @click="handleSubmit(data, false)"></BIconX>
+          <BIconCheck
+            class="edit-icon"
+            @click="handleSubmit(data, true)"
+          ></BIconCheck>
+        </div>
+        <BIconPencil
+          v-else
+          class="edit-icon"
+          @click="handleEdit(data, true)"
+        ></BIconPencil>
+      </template>
+      <template #cell(delete)="data">
+        <BIconTrash
+          class="remove-icon"
+          @click="handleDelete(data)"
+        ></BIconTrash>
+      </template>
+    </b-editable-table>
+  </div>
+</template>
 
-    export default {
-      data() {
-        return {
-          all_pass: [],
-          pass_list: [],
-          fields: [
-            { key: 'placeOfInterestName', label: 'Attraction Name', sortable: true, sortDirection: 'desc' },
-            { key: 'passNo', label: 'Pass Number', sortable: true, sortDirection: 'desc' },
-            { key: 'passStatus', label: 'Pass Status', sortable: true, sortDirection: 'desc' },
-            {
-              sortable: true,
-              sortByFormatted: true,
-              filterByFormatted: true
-            },
-            { key: 'actions', label: 'Actions' }
+<script>
+import BEditableTable from "bootstrap-vue-editable-table";
+import {
+  BIconTrash,
+  BIconPencil,
+  BIconX,
+  BIconCheck,
+  BButton,
+} from "bootstrap-vue";
+export default {
+  components: {
+    BEditableTable,
+    BIconX,
+    BIconTrash,
+    BIconPencil,
+    BIconCheck,
+    BButton,
+  },
+  data() {
+    return {
+      placeOfInterest: '',
+      fields: [
+        { key: "delete", label: "" },
+        {
+          key: "name",
+          label: "Name",
+          type: "text",
+          editable: true,
+          placeholder: "Enter Name...",
+          class: "name-col",
+          validate: this.validateName
+        },
+        {
+          key: "department",
+          label: "Department",
+          type: "select",
+          editable: true,
+          class: "department-col",
+          options: [
+            { value: 1, text: "HR" },
+            { value: 2, text: "Engineer" },
+            { value: 3, text: "VP" },
+            { value: 4, text: "CEO" },
           ],
-          totalRows: 1,
+        },
+        {
+          key: "age",
+          label: "Age",
+          type: "range",
+          min: "0",
+          max: "100",
+          editable: true,
+          placeholder: "Enter Age...",
+          class: "age-col",
+        },
+        {
+          key: "dateOfBirth",
+          label: "Date Of Birth",
+          type: "date",
+          editable: true,
+          class: "date-col",
+          locale: "en",
+          "date-format-options": {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+          },
+        },
+        {
+          key: "isActive",
+          label: "Is Active",
+          type: "checkbox",
+          editable: true,
+          class: "is-active-col",
+        },
+        { key: "edit", label: "" },
+      ],
+      items: [
+        {
+          id: 1,
+          age: 40,
+          name: "Dickerson",
+          department: 1,
+          dateOfBirth: "1984-05-20",
+          isActive: true,
+        },
+        {
+          id: 2,
+          age: 21,
+          name: "Larsen",
+          department: 2,
+          dateOfBirth: "1972-07-25",
+          isActive: false,
+        },
+        {
+          id: 3,
+          age: 89,
+          name: "Geneva",
+          department: 3,
+          dateOfBirth: "1981-02-02",
+          isActive: false,
+        },
+        {
+          id: 1,
+          age: 40,
+          name: "Dickerson",
+          department: 1,
+          dateOfBirth: "1984-05-20",
+          isActive: true,
+        },
+        {
+          id: 2,
+          age: 21,
+          name: "Larsen",
+          department: 2,
+          dateOfBirth: "1972-07-25",
+          isActive: false,
+        },
+        {
+          id: 3,
+          age: 89,
+          name: "Geneva",
+          department: 3,
+          dateOfBirth: "1981-02-02",
+          isActive: false,
+        },
+        {
+          id: 4,
+          age: 38,
+          name: "Jami",
+          department: 4,
+          dateOfBirth: "1964-10-19",
+          isActive: true,
+        },
+      ],
+      rowUpdate: {},
+      totalRows: 1,
           currentPage: 1,
           perPage: 5,
           pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
@@ -211,61 +316,48 @@
           sortDirection: 'asc',
           filter: null,
           filterOn: [],
-          infoModal: {
-            id: 'info-modal',
-            title: '',
-            content: ''
-          },
-     
-        }
-      },
-      computed: {
-        sortOptions() {
-          // Create an options list from our fields
-          return this.fields
-            .filter(f => f.sortable)
-            .map(f => {
-              return { text: f.label, value: f.key }
-            })
-        }
-      },
-      mounted() {
-        // Set the initial number of items
-        // axios
-        //     .get("http://localhost:8080/pass/passes")
-        //     .then((response) => {
-        //         var pass_list = response.data;
-        //         this.pass_list= pass_list
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     })
-        let style = document.createElement('link');
-        style.type = "text/css";
-        style.rel = "stylesheet";
-        style.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css';
-        document.head.appendChild(style);
-        this.pass_list= [
-          {
-          "passId": "Night Safari3",
-          "passNo": "3",
-          "placeOfInterestName": "Night Safari",
-          "passStatus": "INOFFICE"
-          },
-          {
-          "passId": "Night Safari2",
-          "passNo": "2",
-          "placeOfInterestName": "Night Safari",
-          "passStatus": "DEACTIVATED"
-          },
-          ]
-        this.totalRows = this.pass_list.length
-      },
-      created() {
-        this.$root.$refs.PassDataTable= this;
+    };
+  },
+  methods: {
+    handleAdd() {
+      const newId = Date.now();
+      this.rowUpdate = {
+        edit: true,
+        id: newId,
+        action: "add",
+        data: {
+          id: newId,
+          age: null,
+          name: "",
+          department: 1,
+          dateOfBirth: null,
+          isActive: false,
         },
-      methods: {
-        viewPass(placeofinterest){
+      };
+    },
+    handleSubmit(data, update) {
+      this.rowUpdate = {
+        edit: false,
+        id: data.id,
+        action: update ? "update" : "cancel",
+      };
+    },
+    handleEdit(data) {
+      this.rowUpdate = { edit: true, id: data.id };
+    },
+    handleDelete(data) {
+      this.rowUpdate = { id: data.id, action: "delete" };
+    },
+    validateName(value) {
+        if (value === '') {
+          return {
+            valid: false,
+            errorMessage: 'Please enter name'
+          }
+        }
+        return {valid: true};
+      },
+      viewPass(placeofinterest){
           //TODO: replacee
           this.placeOfInterest= placeofinterest;
         },
@@ -283,6 +375,77 @@
           this.totalRows = filteredItems.length
           this.currentPage = 1
         },
+  },
+  computed: {
+        sortOptions() {
+          // Create an options list from our fields
+          return this.fields
+            .filter(f => f.sortable)
+            .map(f => {
+              return { text: f.label, value: f.key }
+            })
+        }
       },
-    }
-  </script>
+  created(){
+    this.$root.$refs.PassDataTable= this;
+  },
+  mounted(){
+    this.totalRows = this.items.length
+  }
+};
+</script>
+
+<style>
+.table-container {
+  margin: 10px;
+}
+
+table.editable-table {
+  margin-top: 10px;
+}
+
+table.editable-table td {
+  vertical-align: middle;
+}
+
+.editable-table .data-cell {
+  padding: 8px;
+  vertical-align: middle;
+}
+
+.editable-table .custom-checkbox {
+  width: 50px;
+}
+
+.remove-icon {
+  color: red;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.edit-icon {
+  color: rgb(4, 83, 158);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.name-col {
+  width:  20%;
+}
+
+.department-col {
+  width: 20%;
+}
+
+.age-col {
+  width:  10%;
+}
+
+.date-col {
+  width:  20%;
+}
+
+.is-active-col {
+  width:  10%;
+}
+</style>
