@@ -26,12 +26,12 @@ public class PassService {
         String passId = placeOfInterestName + passNo;
         if (placeOfInterestName==null || passNo ==null) {
             //can throw exception due to null value of field
-            return ResponseEntity.ok("Place of Interest Name and Pass Number can't be empty");
+            return ResponseEntity.badRequest().body("Place of Interest Name and Pass Number can't be empty");
         } else if (!placeOfInterestRepository.findByPlaceOfInterestName(placeOfInterestName).isPresent()) {
             //can throw exception due to nonexistence of entity
-            return ResponseEntity.ok("Place of interest " + placeOfInterestName + " does not exist.");
+            return ResponseEntity.badRequest().body("Place of interest " + placeOfInterestName + " does not exist.");
         } else if (repository.findById(passId).isPresent()) {
-            return ResponseEntity.ok("Pass with pass number: '" + passNo + "' for place of interest: '" + placeOfInterestName + "' already exists.");
+            return ResponseEntity.badRequest().body("Pass with pass number: '" + passNo + "' for place of interest: '" + placeOfInterestName + "' already exists.");
         }
         Pass pass = new Pass(passNo, placeOfInterestName);
         return ResponseEntity.ok(repository.save(pass));
@@ -40,7 +40,7 @@ public class PassService {
     public ResponseEntity changePassStatus(String passId, PASSSTATUS passStatus){
         Optional<Pass> p = repository.findById(passId);
         if(!p.isPresent()) {
-            return ResponseEntity.ok("Pass does not exist");
+            return ResponseEntity.badRequest().body("Pass does not exist");
         }
         Pass pass = p.get();
         pass.setPassStatus(passStatus);
