@@ -14,10 +14,10 @@ import Analytics from '../views/Analytics.vue'
 import AdminCorpPass from '../views/AdminCorpPass.vue'
 import AdminCorpPassManagement from '../views/AdminCorpPassManagement.vue'
 import AdminCorpPassDisplay from '../views/AdminCorpPassDisplay.vue'
+import Login from '../views/Login.vue'
+
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
-
-import Login from '../views/Login.vue'
 
 Vue.use(VueRouter);
 

@@ -2,7 +2,7 @@
   <div class="body">
     <div class="row">
       <div class="col-md-6 mx-auto p-0">
-        <div class="card">
+        <div class="login-card">
           <div class="login-box">
             <div class="login-snip">
               <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1"
@@ -124,7 +124,7 @@ export default {
 	max-width:525px;
 	min-height:670px;
 	position:relative;
-	background:url('C:\wamp64\www\SampleVue3-Springboot\src\frontend\src\assets\images\river_safari.jpg') no-repeat center;
+	background:url('../../assets/images/river_safari.jpg') no-repeat center;
 	box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
 }
 .login-snip{
@@ -263,7 +263,7 @@ a{color:inherit;text-decoration:none}
 .foot{
 	text-align:center;
 }
-.card{
+.login-card{
 	width: 500px;
 }
 
