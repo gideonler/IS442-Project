@@ -1,6 +1,4 @@
-package oop.io.demo.placeOfInterest;
-
-import javax.validation.constraints.NotBlank;
+package oop.io.demo.PlaceOfInterest;
 
 import javax.validation.constraints.NotBlank;
 
