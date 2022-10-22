@@ -19,6 +19,8 @@ import Login from '../views/Login.vue'
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
 
+import Authentication from '../views/Authentication.vue'
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -33,7 +35,8 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/corporate-pass-creation', component: AdminCorpPass},
   { path: '/corporate-pass-management', component: AdminCorpPassManagement},
-  { path: '/corporate-pass-management/passes', component: AdminCorpPassDisplay}, 
+  { path: '/corporate-pass-management/passes', component: AdminCorpPassDisplay}, ,
+  { path: '/authentication', component: Authentication },
 ]
 
 const router = new VueRouter({
