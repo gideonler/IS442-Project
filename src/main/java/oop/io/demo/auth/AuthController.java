@@ -82,7 +82,7 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(),
-                                    userDetails.getEmail(), userDetails.getName(),
+                                    userDetails.getName(),
                                     userDetails.getAuthority()));
         }
 
@@ -108,16 +108,19 @@ public class AuthController {
             AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
             String token = verificationRequest.getToken();
             ConfirmationToken confirmationToken = authService.confirmToken(token);
-            //set password
+            //set password           
             User user = confirmationToken.getUser();
-            try {
-            authService.setPassword(user, verificationRequest);
+            /*try {
+                authService.setPassword(user, verificationRequest);
             }
             catch(Exception e) {
                 e.getMessage();
-            }
+            }*/
+            //Password validation to do on frontend
+            user.setPassword(encoder.encode(verificationRequest.getPassword()));
             //set contact no- can frontend check whether it exists?
             user.setContactNo(verificationRequest.getContactNo());
+            userRepository.save(user);
             
             //set confirmedAt to now
             confirmationTokenService = new ConfirmationTokenService(confirmationTokenRepository);

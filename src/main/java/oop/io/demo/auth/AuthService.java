@@ -19,8 +19,10 @@ import oop.io.demo.user.USERTYPE;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.user.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class AuthService {
+    
     
     private final UserRepository userRepository;
 
@@ -72,7 +74,7 @@ public class AuthService {
         mail.setTo(user.getEmail());
         mail.setSubject("Complete your registration for the Singapore Sports School Employee Pass Booking website");
         //TODO: replace with email template; could create email builder service to integrate link and email
-        mail.setContent("Please use this token to complete registration process" + token);
+        mail.setContent("Please use this token to complete registration process: " + token);
         emailService= new EmailService();
         emailService.sendEmail(mail);
         return ResponseEntity.ok(new MessageResponse("Please check email to complete registration"));
@@ -85,20 +87,21 @@ public class AuthService {
         mail.setTo(email);
         mail.setSubject("Reset password for Singapore Sports School Employee Pass Booking website");
         //TODO: replace with email template; could create email builder service to integrate link and email
-        mail.setContent("Please use this token to reset password" + token);
+        mail.setContent("Please use this token to reset password: " + token);
         emailService= new EmailService();
         emailService.sendEmail(mail);
         return ResponseEntity.ok(new MessageResponse("Please check email to reset password"));
     }
 
+    /* to check if passwords are equal if not done on frontend
     public ResponseEntity<?> setPassword(User user, VerificationRequest verificationRequest) throws PasswordsDoNotMatchException{
         if(verificationRequest.getPassword()!=verificationRequest.getRetypePassword()) {
             throw new PasswordsDoNotMatchException("Passwords do not match");
         }
-        user.setPassword(verificationRequest.getPassword());
+        user.setPassword(encoder.encode(verificationRequest.getPassword()));
         userRepository.save(user);
         return ResponseEntity.ok("Password set succesfully!");
-    }
+    }*/
 
     public void changePassword(String password, String token) {
         ConfirmationToken confirmationToken = confirmToken(token);

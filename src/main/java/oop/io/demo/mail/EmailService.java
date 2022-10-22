@@ -36,16 +36,54 @@ public class EmailService {
     @Autowired
     Configuration fmConfiguration;
 
+    public void sendEmail(Email mail) {
+        final String username = "oopg2t4@outlook.com";
+        final String password = "g2t4OOP!";
+
+        Properties prop = new Properties();
+		prop.put("mail.smtp.host", "smtp.office365.com");
+        prop.put("mail.smtp.port", "587");
+        prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.starttls.enable", "true"); //TLS
+        
+        Session session = Session.getInstance(prop,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+
+        try {
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("oopg2t4@outlook.com"));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(mail.getTo())
+                    //InternetAddress.parse("oopg2t4@outlook.com")
+            );
+            message.setSubject(mail.getSubject());
+            message.setText(mail.getContent());
+
+            Transport.send(message);
+
+            System.out.println("Done");
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            System.out.println("OOPS...");
+        }
+    }
     // EMAIL FUNCTIONS THAT WORK ----------------------------------------------------------------------
     // Normal Email
-    public void sendEmail(Email mail) {
+    /*public void sendEmail(Email mail) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(mail.getTo());
         msg.setFrom(mail.getFrom());
         msg.setSubject(mail.getSubject());
         msg.setText(mail.getContent());
         javaMailSender.send(msg);
-    }
+    }*/
 
     // Simple template email with no modelling
     public void sendSimpleEmailTemplate(Email mail, String template) throws Exception {

@@ -1,28 +1,18 @@
 package oop.io.demo.pass;
 import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.auth.security.jwt.JwtUtils;
-import oop.io.demo.PlaceOfInterest.PlaceOfInterestRepository;
-@CrossOrigin(maxAge = 3600)
+import oop.io.demo.placeOfInterest.PlaceOfInterestRepository;
 @RestController
 @RequestMapping("/pass")
 public class PassController {
-    @Autowired
-    AuthenticationManager autenticationManager;
-
-    @Autowired
-    JwtUtils jwtUtils;
 
     private final PassRepository repository;
 
@@ -47,6 +37,12 @@ public class PassController {
     @GetMapping("/passes")
     public ResponseEntity<List<Pass>> getAllPasses() {
         return ResponseEntity.ok(repository.findAll());
+    }
+
+    @GetMapping("/passes/status")
+    public ResponseEntity<List<Pass>> getPassesByPassStatus(@RequestParam(value="status") String passStatus) {
+        PASSSTATUS status = PASSSTATUS.valueOf(passStatus.toUpperCase());
+        return ResponseEntity.ok(repository.findByPassStatus(status).get());
     }
     
     //for creating new passes for an existing attraction
