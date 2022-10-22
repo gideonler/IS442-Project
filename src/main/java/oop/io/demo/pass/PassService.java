@@ -1,21 +1,17 @@
 package oop.io.demo.pass;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
 
-import oop.io.demo.PlaceOfInterest.PlaceOfInterestRepository;
+import oop.io.demo.placeOfInterest.PlaceOfInterest;
+import oop.io.demo.placeOfInterest.PlaceOfInterestRepository;
 
 
 public class PassService {
 
     private final PassRepository repository;
-
-    private MongoTemplate mongoTemplate;
 
     private PlaceOfInterestRepository placeOfInterestRepository;
     
@@ -53,17 +49,17 @@ public class PassService {
     }
 
     public List<Pass> getPassesByPlaceOfInterest(String placeOfInterest) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("placeofinterest").is(placeOfInterest));
-        return mongoTemplate.find(query, Pass.class);
+        return repository.findByPlaceOfInterestName(placeOfInterest).get();
     }
 
     public List<Pass> getAvailablePassesByPlaceOfInterest(String placeOfInterest) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("placeofinterest").is(placeOfInterest));
-        query.addCriteria(Criteria.where("status").is("INOFFICE"));
-        return mongoTemplate.find(query, Pass.class);
-
+        List<Pass> passes = repository.findByPlaceOfInterestName(placeOfInterest).get();
+        if(passes==null) return null;
+        List<Pass> passesByStatus = new ArrayList<>();
+        for(Pass p : passes){
+            if(p.getPassStatus()==PASSSTATUS.INOFFICE) passesByStatus.add(p);
+        }
+        return passesByStatus;
     }
 
     // public List<Pass> getPassesByPlaceOfInterestAndType(String placeOfInterest, PASSTYPE passtype){

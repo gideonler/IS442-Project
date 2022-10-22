@@ -1,11 +1,16 @@
 package oop.io.demo.auth.payload.request;
 
+import javax.validation.constraints.NotBlank;
+
 public class PasswordRequest {
 
-    String email;
-    
-    String password;
+    String token;
 
+    String oldPassword;
+    
+    @NotBlank
+    String password;
+    @NotBlank
     String retypePassword;
 
     
@@ -25,12 +30,20 @@ public class PasswordRequest {
         this.retypePassword = retypePassword;
     }
 
-    public String getEmail() {
-        return email;
+    public String getToken() {
+        return token;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 
     

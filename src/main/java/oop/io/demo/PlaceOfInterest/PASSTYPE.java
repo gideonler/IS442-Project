@@ -1,4 +1,4 @@
-package oop.io.demo.PlaceOfInterest;
+package oop.io.demo.placeOfInterest;
 
 public enum PASSTYPE {
     ELECTRONICPASS,

@@ -1,12 +1,15 @@
 package oop.io.demo.auth.payload.request;
 
+import javax.validation.constraints.NotBlank;
+
 public class VerificationRequest {
+    @NotBlank
     String token;
-    
+    @NotBlank
     String password;
-
+    @NotBlank
     String retypePassword;
-
+    @NotBlank
     String contactNo;
 
     
