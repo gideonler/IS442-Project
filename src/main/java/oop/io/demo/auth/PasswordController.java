@@ -55,12 +55,12 @@ public class PasswordController {
         String email = json.get("email");
         AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
         if(!userRepository.existsByEmail(email)){
-            return ResponseEntity.ok("User not found");
+            return ResponseEntity.badRequest().body("User not found");
         }
         try {
             return authService.sendForgotPasswordEmail(email);
         } catch (Exception e) {
-            return ResponseEntity.ok(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -79,7 +79,7 @@ public class PasswordController {
             userRepository.save(user);
             return ResponseEntity.ok("Changed password");
         } catch (Exception e) {
-            return ResponseEntity.ok(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

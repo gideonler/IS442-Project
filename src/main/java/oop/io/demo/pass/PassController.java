@@ -29,7 +29,7 @@ public class PassController {
     }
   
     @GetMapping("/passes/{placeofinterest}")
-    public ResponseEntity<List<Pass>> getAvailablePassesByPlaceOfInterest(@PathVariable("placeofinterest") String placeOfInterest) {
+    public ResponseEntity getAvailablePassesByPlaceOfInterest(@PathVariable("placeofinterest") String placeOfInterest) {
         List<Pass> passes = new PassService(repository, placeOfInterestRepository).getAvailablePassesByPlaceOfInterest(placeOfInterest);
         return ResponseEntity.ok(passes);
     }
