@@ -65,6 +65,18 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-12">
+                <label>Pass Image</label>
+                <b-form-file
+                v-model="email_file"
+                :state="Boolean(email_file)"
+                placeholder="Upload Photo Here..."
+                drop-placeholder="Drop file here..."
+                ></b-form-file>
+            </div>
+        </div>
+
         <div class="text-center">
           <b-button type="submit" variant="primary" class="float-right" @click.prevent="createAttraction">
             Create Attraction
