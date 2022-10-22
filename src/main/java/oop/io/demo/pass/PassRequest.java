@@ -4,10 +4,8 @@ import javax.validation.constraints.NotBlank;
 
 public class PassRequest {
     
-    @NotBlank
     private String passNo;
 
-    @NotBlank
     private String placeOfInterestName;
 
     public PassRequest(String passNo, String placeOfInterestName) {
