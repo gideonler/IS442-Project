@@ -1,37 +1,26 @@
 package oop.io.demo.pass;
 import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.SequenceGeneratorService;
-import oop.io.demo.auth.security.jwt.JwtUtils;
-@CrossOrigin(maxAge = 3600)
+import oop.io.demo.attraction.AttractionRepository;
 @RestController
 @RequestMapping("/pass")
 public class PassController {
 
-    //@Autowired
-    //AuthenticationManager authenticationManager;
-
-    @Autowired
-    JwtUtils jwtUtils;
-
     private final PassRepository repository;
 
-    //remove if not needed
-    private SequenceGeneratorService sequenceGenerator;
+    private final AttractionRepository attractionRepository;
 
-    public PassController(PassRepository passRepository, SequenceGeneratorService sequenceGenerator) {
+    public PassController(PassRepository passRepository, AttractionRepository attractionRepository) {
         this.repository = passRepository;
-        this.sequenceGenerator = sequenceGenerator;
+        this.attractionRepository = attractionRepository; 
     }
 
     @GetMapping("/{passid}")
@@ -39,9 +28,9 @@ public class PassController {
         return ResponseEntity.ok(repository.findById(passId));
     }
   
-    @GetMapping("/passes/{PlaceOfInterest}")
-    public ResponseEntity<List<Pass>> getAvailablePassesByPlaceOfInterest(@PathVariable("placeofinterest") String placeOfInterest) {
-        List<Pass> passes = new PassService(repository).getAvailablePassesByPlaceOfInterest(placeOfInterest);
+    @GetMapping("/passes/{attraction}")
+    public ResponseEntity getAvailablePassesByAttraction(@PathVariable("attraction") String attraction) {
+        List<Pass> passes = new PassService(repository, attractionRepository).getAvailablePassesByAttraction(attraction);
         return ResponseEntity.ok(passes);
     }
     
@@ -49,20 +38,31 @@ public class PassController {
     public ResponseEntity<List<Pass>> getAllPasses() {
         return ResponseEntity.ok(repository.findAll());
     }
+
+    @GetMapping("/passes/status")
+    public ResponseEntity<List<Pass>> getPassesByPassStatus(@RequestParam(value="status") String passStatus) {
+        PASSSTATUS status = PASSSTATUS.valueOf(passStatus.toUpperCase());
+        return ResponseEntity.ok(repository.findByPassStatus(status).get());
+    }
     
     //for creating new passes for an existing attraction
-    @PostMapping("{placeOfInterest}/newpass")
-    public ResponseEntity createPasses(@PathVariable("placeOfInterest") String placeOfInterest, @RequestBody PassRequest passRequest) {
-        PassService passService = new PassService(repository);
-        passService.createPass(placeOfInterest, passRequest);
-        return ResponseEntity.ok("Uploaded");
+    @PostMapping("/{attractionname}/new")
+    public ResponseEntity createPasses(@PathVariable("attractionname") String attractionName, @RequestBody PassRequest passRequest) {
+        PassService passService = new PassService(repository, attractionRepository);
+        ResponseEntity responseEntity = passService.createPass(passRequest);
+        return responseEntity;
+    }
+    
+    @GetMapping("/{passid}/deactivate")
+    public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
+        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
+        return responseEntity;
     }
 
-    
-    @PutMapping("/deactivatepass")
-    public ResponseEntity deactivatePass(@RequestBody String passId) {
-        new PassService(repository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
-        return ResponseEntity.ok("Deactivated");
+    @GetMapping("/{passid}/activate")
+    public ResponseEntity activatePass(@PathVariable("passid") String passId) {
+        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
+        return responseEntity;
     }
 
 }

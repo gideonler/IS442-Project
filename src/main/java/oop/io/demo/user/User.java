@@ -1,14 +1,9 @@
 package oop.io.demo.user;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-//import oop.io.demo.auth.registrationtoken.RegistrationToken;
-
 
 @Document("User")
 public class User {

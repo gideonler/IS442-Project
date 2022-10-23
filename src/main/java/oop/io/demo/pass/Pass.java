@@ -1,34 +1,44 @@
 package oop.io.demo.pass;
 
-import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("Pass")
 public class Pass {
-    @Transient
-    public static final String SEQUENCE_NAME = "pass_sequence";
 
     @Id
     private String passId;
 
+    @NotNull(message = "Pass Number is compulsory")
     private String passNo;
 
-    private String placeOfInterest;
+    @NotNull(message = "Place of Interest is compulsory")
+    private String attractionName;
 
     private PASSSTATUS passStatus;
 
-    public Pass(){ 
+    public Pass() {
+        
+    }
+
+    public Pass(String passNo, String attractionName){
+        this.passNo = passNo;
+        this.attractionName = attractionName;
+        this.passId = attractionName+ passNo;
+        this.passStatus = PASSSTATUS.INOFFICE;
+    }
+
+    public Pass(String passNo, String attractionName, String passId){
+        this.passNo = passNo;
+        this.attractionName = attractionName;
+        this.passId = passId;
         this.passStatus = PASSSTATUS.INOFFICE;
     }
 
     public String getPassId() {
         return passId;
-    }
-
-    public void setPassID(String passId) {
-        this.passId = passId;
     }
 
     public void setPassId(String passId) {
@@ -43,12 +53,12 @@ public class Pass {
         this.passNo = passNo;
     }
 
-    public String getPlaceOfInterest() {
-        return placeOfInterest;
+    public String getAttractionName() {
+        return attractionName;
     }
 
-    public void setPlaceOfInterest(String placeOfInterest) {
-        this.placeOfInterest = placeOfInterest;
+    public void setAttractionName(String attractionName) {
+        this.attractionName = attractionName;
     }
 
     public PASSSTATUS getPassStatus() {

@@ -1,6 +1,6 @@
 <template>
-    <div class="Home">
-        <h1>Home</h1>
+    <div>
+        <h1>Notifications</h1>
     </div>
 
 
@@ -12,7 +12,7 @@ import DashboardLayout from '../layouts/DashboardLayout'
 
 
 export default {
-        name: "home-page",
+        name: "admin-coporate-pass-page",
 
         created() {
             this.$emit('update:layout', DashboardLayout);

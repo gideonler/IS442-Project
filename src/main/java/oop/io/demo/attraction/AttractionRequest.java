@@ -1,25 +1,26 @@
-package oop.io.demo.PlaceOfInterest;
+package oop.io.demo.attraction;
 
-public class PlaceOfInterestRequest{
+
+public class AttractionRequest{
     
-    private String placeOfInterest;
+    private String attraction;
 
     private double replacementFee;
 
     private String passType;
 
-    public PlaceOfInterestRequest(String placeOfInterest, double replacementFee, String passType) {
-        this.placeOfInterest=placeOfInterest;
+    public AttractionRequest(String attraction, double replacementFee, String passType) {
+        this.attraction=attraction;
         this.replacementFee=replacementFee;
         this.passType= passType;
     }
 
-    public String getPlaceOfInterest() {
-        return placeOfInterest;
+    public String getAttraction() {
+        return attraction;
     }
 
-    public void setPlaceOfInterest(String placeOfInterest) {
-        this.placeOfInterest = placeOfInterest;
+    public void setAttraction(String attraction) {
+        this.attraction = attraction;
     }
 
     public double getReplacementFee() {

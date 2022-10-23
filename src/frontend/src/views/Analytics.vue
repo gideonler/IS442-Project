@@ -57,14 +57,14 @@
         </div>
       </div>
       <div class="row">
-        <MonthlyLoanChart class="col-lg-6"></MonthlyLoanChart>
-        <LoanPerEmployeeChart class="col-lg-6"></LoanPerEmployeeChart>
+        <MonthlyLoanChart  class="col-lg-6"></MonthlyLoanChart>
+        <LoanPerEmployeeChart v-bind:loanChartData="monthlyLoan" class="col-lg-6"></LoanPerEmployeeChart>
       </div>
       <div class="row">
         <MonthlyBorrowerChart class="col-lg-12"></MonthlyBorrowerChart>
       </div>
     </div>
-
+    
 </div>
 </template>
 
@@ -75,19 +75,30 @@ import MonthlyBorrowerChart from '../components/Analytics/MonthlyLoanChart.vue'
 import LoanPerEmployeeChart from '../components/Analytics/LoanPerEmployeeChart.vue';
 import StatsCard from '../components/Cards/StatsCard.vue';
 
+
   const curr_year = new Date().getFullYear()
-  console.log(curr_year)
+  const monthlyLoanData= {2021: [40, 20, 12], 2022: [56, 11, 60]}
+  // const monthlyBorrowsData= {2021: [19, 20, 30], 2022: [36, 21, 50]}
+
   export default {
-    name: "analytics-page",
+    name: "analytizcs-page",
     data(){
       return {
       selected_year:curr_year,
       options: [
-          { value: '2022', text: '2022' },
-          { value: '2021', text: '2021' },
-        ]
+          { value: 2022, text: '2022' },
+          { value: 2021, text: '2021' },
+        ],
+        monthlyLoan: [],
       }
     },
+    watch: {
+      selected_year() {
+        console.log(this.selected_year)
+        this.monthlyLoan=  monthlyLoanData[this.selected_year]
+      
+    }
+  },
     created() {
         this.$emit("update:layout", DashboardLayout);
     },

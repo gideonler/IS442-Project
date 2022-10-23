@@ -8,11 +8,18 @@ import TopNavBar from '../layouts/TopNavBar.vue'
 // General Views
 
 // User pages
-import Home from '../views/Home.vue'
+import Notifications from '../views/Notifications.vue'
 import Booking from '../views/Booking.vue'
-import Analyics from '../views/Analytics.vue'
+import Analytics from '../views/Analytics.vue'
+import AdminCorpPass from '../views/AdminCorpPass.vue'
+import AdminCorpPassManagement from '../views/AdminCorpPassManagement.vue'
+import AdminCorpPassDisplay from '../views/AdminCorpPassDisplay.vue'
+import Login from '../views/Login.vue'
+
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
+
+import Authentication from '../views/Authentication.vue'
 
 Vue.use(VueRouter);
 
@@ -20,37 +27,17 @@ const routes = [
   {
     path: '/',
     component: TopNavBar,
-    redirect: '/home'
+    redirect: '/booking'
   },
-  { path: '/home', component: Home },
-  { path: '/analytics', component: Analyics },
-  { path: '/booking', component: Booking }
+  { path: '/notifications', component: Notifications },
+  { path: '/analytics', component: Analytics},
+  { path: '/booking', component: Booking },
+  { path: '/login', component: Login },
+  { path: '/corporate-pass-creation', component: AdminCorpPass},
+  { path: '/corporate-pass-management', component: AdminCorpPassManagement},
+  { path: '/corporate-pass-management/passes', component: AdminCorpPassDisplay}, ,
+  { path: '/authentication', component: Authentication },
 ]
-
-
-// const routes = [
-//   {
-//     path: '/',
-//     component: DashboardLayout,
-//     redirect: '/admin/overview'
-//   },
-//   {
-//     path: '/admin',
-//     component: DashboardLayout,
-//     redirect: '/admin/overview',
-//     children: [
-//       {
-//         path: 'overview',
-//         name: 'Overview',
-//         component: Overview
-//       },
-//     { path: '/home', component: Home },
-//     { path: '/about', component: About },
-//     { path: '/booking', component: Booking }
-//     ]
-//   },
-//   { path: '*', component: NotFound }
-// ]
 
 const router = new VueRouter({
   mode: 'history',
