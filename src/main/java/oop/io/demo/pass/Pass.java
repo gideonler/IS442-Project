@@ -35,7 +35,7 @@ public class Pass {
         this.passId = passId;
     }
 
-    public String getPassNo() {
+    public  String getPassNo() {
         return passNo;
     }
 

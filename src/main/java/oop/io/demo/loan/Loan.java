@@ -1,11 +1,13 @@
 package oop.io.demo.loan;
 
-import java.util.Calendar;
+
 import java.util.Date;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+
+
+import oop.io.demo.pass.Pass;
 
 public class Loan {
 
@@ -16,7 +18,10 @@ public class Loan {
 
     @CreatedBy
     private String userEmail;
-    private String loanID;
+    private String loanId=loanDate+userEmail;
+    private String name;
+    private int contactNo;
+
     private LOANSTATUS status;
 
     
@@ -32,9 +37,16 @@ public class Loan {
         this.bookingMadeDate = bookingMadeDate;
         this.attractionName = attractionName;
         this.userEmail = userEmail;
-        this.loanID=loanDate+userEmail;
+        this.name=name;
+        this.contactNo=contactNo;
+        this.loanId=loanId;
+    
     }
 
+    public String getPassNo(){
+        Pass newpassno=new Pass();
+        return newpassno.getPassNo();
+    }
 
     
     public Date getLoanDate() {
@@ -49,8 +61,17 @@ public class Loan {
         return attractionName;
     }
 
-    
- 
+    public String getLoanID(){
+        return loanId;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public int getContactNo(){
+        return contactNo;
+    }
 
     public void setLoanDate(Date loanDate) {
         this.loanDate = loanDate;
@@ -72,4 +93,6 @@ public class Loan {
     public void setStatus(LOANSTATUS status) {
         this.status = status;
     }
+    
+
 }

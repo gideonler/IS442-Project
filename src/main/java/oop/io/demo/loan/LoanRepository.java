@@ -1,24 +1,23 @@
 package oop.io.demo.loan;
 import java.util.*;
 
-import javax.transaction.Transactional;
+
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-import oop.io.demo.pass.Pass;
 
+
+@Repository
 //by extending MongoRepository, we can use MongoRepository’s methods: save(), findOne(), findById(), findAll(), count(), delete(), deleteById()
 public interface LoanRepository extends MongoRepository<Loan, String>{
 
-    
+//Attribute first letter has to be in caps e.g UserEmail    
    
-    ArrayList<Loan> findAllByEmail(String userEmail);
-    ArrayList<Loan> findAllByAttraction(String attractionName);
-    Loan findbyLoanID(String loanID);
-    ArrayList<Loan> findAllByPassNo(int passNo);
+    ArrayList<Loan> findAllByUserEmail(String userEmail);
+    ArrayList<Loan> findAllByAttractionName(String attractionName);
+    Loan findByLoanId(String loanId);//hmm
+    Loan findByUserEmail(String userEmail);
+    ArrayList<Loan> findAllByPassNo(String passNo);
 
-    
-
-
-    
 }

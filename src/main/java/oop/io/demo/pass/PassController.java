@@ -64,4 +64,5 @@ public class PassController {
         new PassService(repository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
         return ResponseEntity.ok("Deactivated");
     }
+
 }
