@@ -64,4 +64,5 @@ public class PassController {
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
         return responseEntity;
     }
+
 }
