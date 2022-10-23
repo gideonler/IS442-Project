@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.placeOfInterest.PlaceOfInterestRepository;
+import oop.io.demo.attraction.AttractionRepository;
 @RestController
 @RequestMapping("/pass")
 public class PassController {
 
     private final PassRepository repository;
 
-    private final PlaceOfInterestRepository placeOfInterestRepository;
+    private final AttractionRepository attractionRepository;
 
-    public PassController(PassRepository passRepository, PlaceOfInterestRepository placeOfInterestRepository) {
+    public PassController(PassRepository passRepository, AttractionRepository attractionRepository) {
         this.repository = passRepository;
-        this.placeOfInterestRepository = placeOfInterestRepository; 
+        this.attractionRepository = attractionRepository; 
     }
 
     @GetMapping("/{passid}")
@@ -28,9 +28,9 @@ public class PassController {
         return ResponseEntity.ok(repository.findById(passId));
     }
   
-    @GetMapping("/passes/{placeofinterest}")
-    public ResponseEntity getAvailablePassesByPlaceOfInterest(@PathVariable("placeofinterest") String placeOfInterest) {
-        List<Pass> passes = new PassService(repository, placeOfInterestRepository).getAvailablePassesByPlaceOfInterest(placeOfInterest);
+    @GetMapping("/passes/{attraction}")
+    public ResponseEntity getAvailablePassesByAttraction(@PathVariable("attraction") String attraction) {
+        List<Pass> passes = new PassService(repository, attractionRepository).getAvailablePassesByAttraction(attraction);
         return ResponseEntity.ok(passes);
     }
     
@@ -46,22 +46,22 @@ public class PassController {
     }
     
     //for creating new passes for an existing attraction
-    @PostMapping("/{placeofinterestname}/new")
-    public ResponseEntity createPasses(@PathVariable("placeofinterestname") String placeOfInterestName, @RequestBody PassRequest passRequest) {
-        PassService passService = new PassService(repository, placeOfInterestRepository);
-        ResponseEntity r = passService.createPass(passRequest);
-        return r;
+    @PostMapping("/{attractionname}/new")
+    public ResponseEntity createPasses(@PathVariable("attractionname") String attractionName, @RequestBody PassRequest passRequest) {
+        PassService passService = new PassService(repository, attractionRepository);
+        ResponseEntity responseEntity = passService.createPass(passRequest);
+        return responseEntity;
     }
     
     @GetMapping("/{passid}/deactivate")
     public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
-        ResponseEntity r = new PassService(repository, placeOfInterestRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
-        return r;
+        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
+        return responseEntity;
     }
 
     @GetMapping("/{passid}/activate")
     public ResponseEntity activatePass(@PathVariable("passid") String passId) {
-        ResponseEntity r = new PassService(repository, placeOfInterestRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
-        return r;
+        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
+        return responseEntity;
     }
 }

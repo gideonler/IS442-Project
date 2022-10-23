@@ -63,7 +63,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         /* if(!(loginRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(loginRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));

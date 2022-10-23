@@ -5,35 +5,34 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
-import oop.io.demo.placeOfInterest.PlaceOfInterest;
-import oop.io.demo.placeOfInterest.PlaceOfInterestRepository;
+import oop.io.demo.attraction.AttractionRepository;
 
 
 public class PassService {
 
     private final PassRepository repository;
 
-    private PlaceOfInterestRepository placeOfInterestRepository;
+    private AttractionRepository attractionRepository;
     
-    public PassService(PassRepository passRepository, PlaceOfInterestRepository placeOfInterestRepository){
+    public PassService(PassRepository passRepository, AttractionRepository attractionRepository){
         this.repository = passRepository;
-        this.placeOfInterestRepository = placeOfInterestRepository;
+        this.attractionRepository = attractionRepository;
     }
 
     public ResponseEntity createPass(PassRequest createPassRequest){
-        String placeOfInterestName = createPassRequest.getPlaceOfInterestName();
+        String attractionName = createPassRequest.getAttractionName();
         String passNo = createPassRequest.getPassNo();
-        String passId = placeOfInterestName + passNo;
-        if (placeOfInterestName==null || passNo ==null) {
+        String passId = attractionName + passNo;
+        if (attractionName==null || passNo ==null) {
             //can throw exception due to null value of field
             return ResponseEntity.badRequest().body("Place of Interest Name and Pass Number can't be empty");
-        } else if (!placeOfInterestRepository.findByPlaceOfInterestName(placeOfInterestName).isPresent()) {
+        } else if (!attractionRepository.findByAttractionName(attractionName).isPresent()) {
             //can throw exception due to nonexistence of entity
-            return ResponseEntity.badRequest().body("Place of interest " + placeOfInterestName + " does not exist.");
+            return ResponseEntity.badRequest().body("Place of interest " + attractionName + " does not exist.");
         } else if (repository.findById(passId).isPresent()) {
-            return ResponseEntity.badRequest().body("Pass with pass number: '" + passNo + "' for place of interest: '" + placeOfInterestName + "' already exists.");
+            return ResponseEntity.badRequest().body("Pass with pass number: '" + passNo + "' for place of interest: '" + attractionName + "' already exists.");
         }
-        Pass pass = new Pass(passNo, placeOfInterestName);
+        Pass pass = new Pass(passNo, attractionName);
         return ResponseEntity.ok(repository.save(pass));
     }
 
@@ -48,12 +47,12 @@ public class PassService {
         return ResponseEntity.ok("Changed status of pass successfully to: " + passStatus.toString());
     }
 
-    public List<Pass> getPassesByPlaceOfInterest(String placeOfInterest) {
-        return repository.findByPlaceOfInterestName(placeOfInterest).get();
+    public List<Pass> getPassesByAttraction(String attraction) {
+        return repository.findByAttractionName(attraction).get();
     }
 
-    public List<Pass> getAvailablePassesByPlaceOfInterest(String placeOfInterest) {
-        List<Pass> passes = repository.findByPlaceOfInterestName(placeOfInterest).get();
+    public List<Pass> getAvailablePassesByAttraction(String attraction) {
+        List<Pass> passes = repository.findByAttractionName(attraction).get();
         if(passes==null) return null;
         List<Pass> passesByStatus = new ArrayList<>();
         for(Pass p : passes){
@@ -62,11 +61,11 @@ public class PassService {
         return passesByStatus;
     }
 
-    // public List<Pass> getPassesByPlaceOfInterestAndType(String placeOfInterest, PASSTYPE passtype){
+    // public List<Pass> getPassesByAttractionAndType(String attraction, PASSTYPE passtype){
 
     // }
 
-    // public List<Pass> getAvailablePassesByPlaceOfInterestAndType(String placeOfInterest, PASSTYPE passtype) {
+    // public List<Pass> getAvailablePassesByAttractionAndType(String attraction, PASSTYPE passtype) {
 
     // }
 
