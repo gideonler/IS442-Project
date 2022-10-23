@@ -3,7 +3,7 @@
         
         <b-card no-body>
     <b-tabs card>
-      <b-tab title="In Office" style="background-color: #f7f7f8;" active>
+      <b-tab title="Active" style="background-color: #f7f7f8;" active>
             <b-carousel
         class="mx-5"
         id="all-passes-carousel"
@@ -30,7 +30,7 @@
     </b-carousel>
       </b-tab>
 
-      <b-tab title="Deactivated" style="background-color: #f7f7f8;" active>
+      <b-tab title="Inactive" style="background-color: #f7f7f8;" active>
             <b-carousel
         class="mx-5"
         id="all-passes-carousel"
