@@ -26,7 +26,7 @@ public class EmailService {
     @Autowired
     Configuration fmConfiguration;
 
-    public void sendEmail(Email mail) {
+    public Session session(){
         final String username = "oopg2t4@outlook.com";
         final String password = "g2t4OOP!";
 
@@ -36,16 +36,17 @@ public class EmailService {
         prop.put("mail.smtp.auth", "true");
         prop.put("mail.smtp.starttls.enable", "true"); //TLS
         
-        Session session = Session.getInstance(prop,
-                new javax.mail.Authenticator() {
+        return Session.getInstance(prop, new javax.mail.Authenticator(){
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password);
                     }
                 });
+    }
 
+    public void sendEmail(Email mail) {
         try {
-
-            Message message = new MimeMessage(session);
+            
+            Message message = new MimeMessage(session());
             message.setFrom(new InternetAddress("oopg2t4@outlook.com"));
             message.setRecipients(
                     Message.RecipientType.TO,
@@ -56,12 +57,30 @@ public class EmailService {
             message.setText(mail.getContent());
 
             Transport.send(message);
-
             System.out.println("Done");
 
         } catch (MessagingException e) {
             e.printStackTrace();
-            System.out.println("OOPS...");
+        }
+    }
+
+    public void sendTemplateEmail(Email mail) {
+        try {
+            Message message = new MimeMessage(session());
+            message.setFrom(new InternetAddress("oopg2t4@outlook.com"));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(mail.getTo())
+                    //InternetAddress.parse("oopg2t4@outlook.com")
+            );
+            message.setSubject(mail.getSubject());
+            message.setText(mail.getContent());
+
+            Transport.send(message);
+            System.out.println("Done");
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
     }
 
