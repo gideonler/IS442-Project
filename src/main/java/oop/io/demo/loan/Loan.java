@@ -31,15 +31,12 @@ public class Loan {
     public Loan(){}
 
 
-    public Loan(String userEmail, Date loanDate) {
+    public Loan(String userEmail, Date loanDate, String attractionName) {
     
         this.loanDate = loanDate;//the date where the user is making the booking
-        this.bookingMadeDate = bookingMadeDate;
         this.attractionName = attractionName;
         this.userEmail = userEmail;
-        this.name=name;
-        this.contactNo=contactNo;
-        this.loanId=loanId;
+   
     
     }
 
@@ -93,6 +90,6 @@ public class Loan {
     public void setStatus(LOANSTATUS status) {
         this.status = status;
     }
-    
+
 
 }

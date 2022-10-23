@@ -16,7 +16,7 @@ public interface LoanRepository extends MongoRepository<Loan, String>{
    
     ArrayList<Loan> findAllByUserEmail(String userEmail);
     ArrayList<Loan> findAllByAttractionName(String attractionName);
-    Loan findByLoanId(String loanId);//hmm
+    Loan findByLoanId(String loanId);
     Loan findByUserEmail(String userEmail);
     ArrayList<Loan> findAllByPassNo(String passNo);
 

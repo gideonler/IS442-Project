@@ -6,10 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,14 +41,24 @@ public class LoanController {
     @Autowired
     JwtUtils jwtUtils;
     @PostMapping("/book")
-    public String addBooking(@RequestBody Loan loan){
-        return loanService.addBooking(loan);
+    public String addBooking(@RequestBody LoanRequest loanRequest){
+        String userEmail = loanRequest.getUserEmail();
+        Date loanDate = loanRequest.getLoanDate();
+        String attractionName = loanRequest.getAttractionName();
+        LoanService loanService= new LoanService(repository);
+        return loanService.addBooking(userEmail, loanDate, attractionName);
 
     }
     
+    // //for creating new passes for an existing attraction
+    // @PostMapping("{placeOfInterest}/newpass")
+    // public ResponseEntity createPasses(@PathVariable("placeOfInterest") String placeOfInterest, @RequestBody PassRequest passRequest) {
+    //     PassService passService = new PassService(repository);
+    //     passService.createPass(placeOfInterest, passRequest);
+    //     return ResponseEntity.ok("Uploaded");
+    // }
 
-
-    @DeleteMapping("/loan/all/{loanId}")
+    @DeleteMapping("/all/{loanId}")
     public ResponseEntity deleteBooking(@PathVariable String loanID) {
         Optional<Loan> loan = this.repository.findById(loanID);
         if(loan.isPresent()){
@@ -70,11 +80,11 @@ public class LoanController {
 
 
 
-    // @PutMapping("/cancellLoan")
-    // public ResponseEntity cancellLoan(@RequestBody String loanID) {
-    //     String cancel=new LoanService(repository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
-    //     return ResponseEntity.ok("Pass has been cancelled");
-    // }
+    @PutMapping("/cancellLoan")
+    public ResponseEntity cancellLoan(@RequestBody String loanID) {
+        String cancel=new LoanService(repository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
+        return ResponseEntity.ok("Pass has been cancelled");
+    }
 
     
 
