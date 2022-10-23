@@ -36,7 +36,7 @@ import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.user.UserService;
 
-//@CrossOrigin(maxAge = 3600)
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

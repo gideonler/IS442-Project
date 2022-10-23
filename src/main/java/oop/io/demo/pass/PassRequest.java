@@ -1,6 +1,5 @@
 package oop.io.demo.pass;
 
-import javax.validation.constraints.NotBlank;
 
 public class PassRequest {
     

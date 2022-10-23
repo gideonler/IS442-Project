@@ -1,17 +1,11 @@
 package oop.io.demo.mail;
 
-import freemarker.core.ParseException;
 import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.TemplateNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -23,10 +17,6 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import java.util.Properties;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class EmailService {
@@ -74,16 +64,7 @@ public class EmailService {
             System.out.println("OOPS...");
         }
     }
-    // EMAIL FUNCTIONS THAT WORK ----------------------------------------------------------------------
-    // Normal Email
-    /*public void sendEmail(Email mail) {
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setTo(mail.getTo());
-        msg.setFrom(mail.getFrom());
-        msg.setSubject(mail.getSubject());
-        msg.setText(mail.getContent());
-        javaMailSender.send(msg);
-    }*/
+
 
     // Simple template email with no modelling
     public void sendSimpleEmailTemplate(Email mail, String template) throws Exception {
