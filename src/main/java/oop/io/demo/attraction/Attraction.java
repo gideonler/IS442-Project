@@ -3,6 +3,7 @@ package oop.io.demo.attraction;
 import javax.persistence.Column;
 import javax.persistence.Id;
 
+import org.bson.types.Binary;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("Attraction")
@@ -18,6 +19,10 @@ public class Attraction {
     private PASSTYPE passType;
 
     private boolean active;
+
+    private Binary image;
+
+    private Binary attachmentPDF;
 
     public Attraction(String attractionName, double replacementFee, PASSTYPE passType) {
         this.attractionName=attractionName;
@@ -57,4 +62,21 @@ public class Attraction {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public Binary getImage() {
+        return image;
+    }
+
+    public void setImage(Binary image) {
+        this.image = image;
+    }
+
+    public Binary getAttachmentPDF() {
+        return attachmentPDF;
+    }
+
+    public void setAttachmentPDF(Binary attachmentPDF) {
+        this.attachmentPDF = attachmentPDF;
+    }
+    
 }

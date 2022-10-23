@@ -1,7 +1,11 @@
 package oop.io.demo.attraction;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.Pass;
@@ -107,5 +113,39 @@ public class AttractionController {
         } else {
             return ResponseEntity.badRequest().body("Attraction not found.");
         }
+    }
+
+    @PutMapping("/{attraction}/uploadphoto")
+    public ResponseEntity uploadPhoto(@PathVariable("attraction") String attractionName, @RequestParam("image") MultipartFile file) {
+        Attraction attraction = repository.findByAttractionName(attractionName).get();
+        if(attraction ==null) return ResponseEntity.badRequest().body("Attraction not found.");
+        try {
+        attraction.setImage(
+          new Binary(BsonBinarySubType.BINARY, file.getBytes())); 
+        repository.save(attraction);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("Upload failed!");
+        }
+        return ResponseEntity.ok("Upload successful!");
+    }
+
+    @GetMapping("/{attraction}/getimage")
+    public ResponseEntity getPhoto(@PathVariable("attraction") String attractionName) {
+        Attraction attraction = repository.findByAttractionName(attractionName).get();
+        return ResponseEntity.ok(Base64.getEncoder().encodeToString(attraction.getImage().getData()));
+    }
+
+    @PutMapping("/{attraction}/uploadattachement")
+    public ResponseEntity uploadAttachmentTemplate(@PathVariable("attraction") String attractionName, @RequestParam("attachmenttemplate") MultipartFile file) {
+        Attraction attraction = repository.findByAttractionName(attractionName).get();
+        if(attraction ==null) return ResponseEntity.badRequest().body("Attraction not found.");
+        try {
+        attraction.setAttachmentPDF(
+          new Binary(BsonBinarySubType.BINARY, file.getBytes())); 
+        repository.save(attraction);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("Upload failed!");
+        }
+        return ResponseEntity.ok("Upload successful!");
     }
 }

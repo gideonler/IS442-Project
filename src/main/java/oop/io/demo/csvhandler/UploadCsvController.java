@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 
 @RestController
-@RequestMapping("/api/upload/csv")
+@RequestMapping("/uploadcsv")
 public class UploadCsvController {
     @Autowired
 	CsvHandlerService csvHandlerService;
