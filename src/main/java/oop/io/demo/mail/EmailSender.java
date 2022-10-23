@@ -29,11 +29,29 @@ public class EmailSender {
         email.setSubject("[Notification] Pass Collected");
         email.setContent("Sending mail");
 
-        String t = "collected_email.flth";
+        String t = "Pass Collected Email.html";
 
         emailService.sendSimpleEmailTemplate(email, t);
     }
-    // Sending Email Templates --> just need to find attraction and get the templates from there!
+
+    // Send Email for Password Reset and Verification
+    @PostMapping("/password")
+    public void sendPasswordMessage(String toEmail, String token, String subject) throws Exception {
+        Email email = new Email();
+        email.setTo(toEmail);
+        email.setFrom("oopg2t4@outlook.com");
+        email.setSubject(subject);
+        email.setContent("Sending mail");
+        Map<String, Object> model = new HashMap<>();
+        model.put("token", token);
+        email.setModel(model);
+
+        String t = "Password Email.html";
+
+        emailService = new EmailService();
+        emailService.sendEmailTemplate(email, t);
+    }
+    // Sending Email Templates Without Attachmenet--> just need to find attraction and get the templates from there!
     @PostMapping("/email")
     public void sendMessage() throws Exception {
         Email email = new Email();
@@ -46,12 +64,12 @@ public class EmailSender {
         model.put("lastName", "g2t4slay");
         email.setModel(model);
 
-        String t = "email.ftl";
+        String t = "email.html";
 
         emailService.sendEmailTemplate(email, t);
     }
 
-    // Sending Email Attachments
+    // Sending Email Templates With Attachments
     @PostMapping("/attachment")
     public void sendAttachmentMessage() throws Exception {
         Email email = new Email();
@@ -62,11 +80,14 @@ public class EmailSender {
         Map<String, Object> model = new HashMap<>();
         model.put("firstName", "oop");
         model.put("lastName", "g2t4slay");
+        model.put("attractionName", "Mandai Wildlife Reserves");
+        model.put("corpPassNumber", "S123456Z");
         email.setModel(model);
 
-        String t = "email.ftl";
+        String template = "Physical Email Confirmation.html";
+        String attachment = "Authorisation Letter - Premium Corporate Friends of the Zoo.pdf";
 
-        emailService.sendEmailWithAttachment(email, t);
+        emailService.sendEmailWithAttachment(email, template, attachment);
     }
 
     

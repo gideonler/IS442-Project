@@ -14,6 +14,7 @@ import oop.io.demo.auth.payload.request.VerificationRequest;
 import oop.io.demo.auth.payload.response.MessageResponse;
 import oop.io.demo.exception.PasswordsDoNotMatchException;
 import oop.io.demo.mail.Email;
+import oop.io.demo.mail.EmailSender;
 import oop.io.demo.mail.EmailService;
 import oop.io.demo.user.USERTYPE;
 import oop.io.demo.user.User;
@@ -37,7 +38,7 @@ public class AuthService {
         this.confirmationTokenRepository = confirmationTokenRepository;
     }
 
-    public ResponseEntity<?> signUpOneUser(SignupRequest signUpRequest) {
+    public ResponseEntity<?> signUpOneUser(SignupRequest signUpRequest) throws Exception {
         // Create new user's account
         User user = new User(
                             signUpRequest.getName(),
@@ -67,9 +68,11 @@ public class AuthService {
         return token;
     }
 
-    public ResponseEntity<?> sendConfirmationTokenEmail(User user) {
+    public ResponseEntity<?> sendConfirmationTokenEmail(User user) throws Exception {
         String token = generateConfirmationToken(user.getEmail());
         //send email
+
+        /*
         Email mail = new Email();
         mail.setTo(user.getEmail());
         mail.setSubject("Complete your registration for the Singapore Sports School Employee Pass Booking website");
@@ -77,6 +80,11 @@ public class AuthService {
         mail.setContent("Please use this token to complete registration process: " + token);
         emailService= new EmailService();
         emailService.sendEmail(mail);
+         */
+        EmailSender email = new EmailSender();
+        String toEmail = user.getEmail();
+        String subject = "Complete your registration for the Singapore Sports School Employee Pass Booking website";
+        email.sendPasswordMessage(toEmail,token,subject);
         return ResponseEntity.ok(new MessageResponse("Please check email to complete registration"));
     }
 

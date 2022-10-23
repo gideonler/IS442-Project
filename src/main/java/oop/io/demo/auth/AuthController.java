@@ -88,7 +88,7 @@ public class AuthController {
 
         //this is the first step to signing up (just using name and email)
         @PostMapping("/signup")
-        public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws Exception {
             AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
                 User u = userRepository.findByEmail(signUpRequest.getEmail()).get();

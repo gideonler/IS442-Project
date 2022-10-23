@@ -131,7 +131,7 @@ public class EmailService {
         }
     }
 
-    public void sendEmailWithAttachment(Email mail, String template) throws MessagingException, IOException {
+    public void sendEmailWithAttachment(Email mail, String template, String attachment) throws MessagingException, IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
@@ -145,7 +145,9 @@ public class EmailService {
             mimeMessageHelper.setFrom(mail.getFrom());
             mimeMessageHelper.setTo(mail.getTo());
             mimeMessageHelper.setText(text, true);
-            mimeMessageHelper.addAttachment("pug.jpg", new ClassPathResource("attachments/pug.jpg"));
+
+            String path = "attachments/" + attachment;
+            mimeMessageHelper.addAttachment(attachment, new ClassPathResource(path));
 
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
 
