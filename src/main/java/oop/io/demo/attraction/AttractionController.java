@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/attraction")
 public class AttractionController {
@@ -83,6 +85,25 @@ public class AttractionController {
             }
             passRepository.saveAll(passes);
             return ResponseEntity.ok("Deactivated "+ attractionName + " attraction and all passes under "+ attractionName+".");
+        } else {
+            return ResponseEntity.badRequest().body("Attraction not found.");
+        }
+    }
+
+    @PutMapping("/{attraction}/reactivate")
+    public ResponseEntity reactivateAttraction(@PathVariable("attraction") String attractionName) {
+        Optional<Attraction> _attraction = repository.findByAttractionName(attractionName);
+        if(_attraction.isPresent()){
+            Attraction attraction = _attraction.get();
+            attraction.setActive(true);
+            repository.save(attraction);
+            List<Pass> passes = passRepository.findByAttractionName(attractionName).get();
+            if(passes.isEmpty()) return ResponseEntity.ok("Reactivated Attraction. No passes to reactivate.");
+            for(Pass p: passes){
+                p.setPassStatus(PASSSTATUS.INOFFICE);
+            }
+            passRepository.saveAll(passes);
+            return ResponseEntity.ok("Reactivated "+ attractionName + " attraction and all passes under "+ attractionName+".");
         } else {
             return ResponseEntity.badRequest().body("Attraction not found.");
         }
