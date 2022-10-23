@@ -3,10 +3,8 @@ package oop.io.demo.auth.payload.request;
 import javax.validation.constraints.NotBlank;
 
 public class LoginRequest {
-    @NotBlank
 	private String email;
 
-	@NotBlank
 	private String password;
 
 

@@ -52,7 +52,7 @@ public class PasswordController {
     }
 
     @PostMapping("/reset")
-    public ResponseEntity<?> resetPasswordEmail(@RequestBody Map<String, String> json){
+    public ResponseEntity resetPasswordEmail(@RequestBody Map<String, String> json){
         String email = json.get("email");
         AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
         if(!userRepository.existsByEmail(email)){

@@ -1,20 +1,28 @@
 package oop.io.demo.attraction;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/attraction")
 public class AttractionController {
@@ -86,5 +94,58 @@ public class AttractionController {
         } else {
             return ResponseEntity.badRequest().body("Attraction not found.");
         }
+    }
+
+    @PutMapping("/{attraction}/reactivate")
+    public ResponseEntity reactivateAttraction(@PathVariable("attraction") String attractionName) {
+        Optional<Attraction> _attraction = repository.findByAttractionName(attractionName);
+        if(_attraction.isPresent()){
+            Attraction attraction = _attraction.get();
+            attraction.setActive(true);
+            repository.save(attraction);
+            List<Pass> passes = passRepository.findByAttractionName(attractionName).get();
+            if(passes.isEmpty()) return ResponseEntity.ok("Reactivated Attraction. No passes to reactivate.");
+            for(Pass p: passes){
+                p.setPassStatus(PASSSTATUS.INOFFICE);
+            }
+            passRepository.saveAll(passes);
+            return ResponseEntity.ok("Reactivated "+ attractionName + " attraction and all passes under "+ attractionName+".");
+        } else {
+            return ResponseEntity.badRequest().body("Attraction not found.");
+        }
+    }
+
+    @PutMapping("/{attraction}/uploadphoto")
+    public ResponseEntity uploadPhoto(@PathVariable("attraction") String attractionName, @RequestParam("image") MultipartFile file) {
+        Attraction attraction = repository.findByAttractionName(attractionName).get();
+        if(attraction ==null) return ResponseEntity.badRequest().body("Attraction not found.");
+        try {
+        attraction.setImage(
+          new Binary(BsonBinarySubType.BINARY, file.getBytes())); 
+        repository.save(attraction);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("Upload failed!");
+        }
+        return ResponseEntity.ok("Upload successful!");
+    }
+
+    @GetMapping("/{attraction}/getimage")
+    public ResponseEntity getPhoto(@PathVariable("attraction") String attractionName) {
+        Attraction attraction = repository.findByAttractionName(attractionName).get();
+        return ResponseEntity.ok(Base64.getEncoder().encodeToString(attraction.getImage().getData()));
+    }
+
+    @PutMapping("/{attraction}/uploadattachement")
+    public ResponseEntity uploadAttachmentTemplate(@PathVariable("attraction") String attractionName, @RequestParam("attachmenttemplate") MultipartFile file) {
+        Attraction attraction = repository.findByAttractionName(attractionName).get();
+        if(attraction ==null) return ResponseEntity.badRequest().body("Attraction not found.");
+        try {
+        attraction.setAttachmentPDF(
+          new Binary(BsonBinarySubType.BINARY, file.getBytes())); 
+        repository.save(attraction);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("Upload failed!");
+        }
+        return ResponseEntity.ok("Upload successful!");
     }
 }
