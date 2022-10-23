@@ -76,6 +76,8 @@ public class AuthService {
         mail.setSubject("Complete your registration for the Singapore Sports School Employee Pass Booking website");
         //TODO: replace with email template; could create email builder service to integrate link and email
         mail.setContent("Please use this token to complete registration process: " + token);
+        emailService= new EmailService();
+        emailService.sendEmail(mail);
         return ResponseEntity.ok(new MessageResponse("Please check email to complete registration"));
     }
 
