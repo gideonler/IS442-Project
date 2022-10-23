@@ -26,6 +26,7 @@ import oop.io.demo.exception.PasswordsDoNotMatchException;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/password")
 public class PasswordController {
