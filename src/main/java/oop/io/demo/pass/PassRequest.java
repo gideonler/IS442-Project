@@ -6,11 +6,11 @@ public class PassRequest {
     
     private String passNo;
 
-    private String placeOfInterestName;
+    private String attractionName;
 
-    public PassRequest(String passNo, String placeOfInterestName) {
+    public PassRequest(String passNo, String attractionName) {
         this.passNo = passNo;
-        this.placeOfInterestName = placeOfInterestName;
+        this.attractionName = attractionName;
     }
 
     public String getPassNo() {
@@ -21,12 +21,12 @@ public class PassRequest {
         this.passNo = passNo;
     }
 
-    public String getPlaceOfInterestName() {
-        return placeOfInterestName;
+    public String getAttractionName() {
+        return attractionName;
     }
 
-    public void setPlaceOfInterestName(String placeOfInterestName) {
-        this.placeOfInterestName = placeOfInterestName;
+    public void setAttractionName(String attractionName) {
+        this.attractionName = attractionName;
     }
     
 }

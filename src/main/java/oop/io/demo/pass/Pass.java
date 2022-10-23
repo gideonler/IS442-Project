@@ -15,7 +15,7 @@ public class Pass {
     private String passNo;
 
     @NotNull(message = "Place of Interest is compulsory")
-    private String placeOfInterestName;
+    private String attractionName;
 
     private PASSSTATUS passStatus;
 
@@ -23,16 +23,16 @@ public class Pass {
         
     }
 
-    public Pass(String passNo, String placeOfInterestName){
+    public Pass(String passNo, String attractionName){
         this.passNo = passNo;
-        this.placeOfInterestName = placeOfInterestName;
-        this.passId = placeOfInterestName+ passNo;
+        this.attractionName = attractionName;
+        this.passId = attractionName+ passNo;
         this.passStatus = PASSSTATUS.INOFFICE;
     }
 
-    public Pass(String passNo, String placeOfInterestName, String passId){
+    public Pass(String passNo, String attractionName, String passId){
         this.passNo = passNo;
-        this.placeOfInterestName = placeOfInterestName;
+        this.attractionName = attractionName;
         this.passId = passId;
         this.passStatus = PASSSTATUS.INOFFICE;
     }
@@ -53,12 +53,12 @@ public class Pass {
         this.passNo = passNo;
     }
 
-    public String getPlaceOfInterestName() {
-        return placeOfInterestName;
+    public String getAttractionName() {
+        return attractionName;
     }
 
-    public void setPlaceOfInterestName(String placeOfInterestName) {
-        this.placeOfInterestName = placeOfInterestName;
+    public void setAttractionName(String attractionName) {
+        this.attractionName = attractionName;
     }
 
     public PASSSTATUS getPassStatus() {

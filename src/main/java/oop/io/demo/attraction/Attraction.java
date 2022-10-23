@@ -1,18 +1,17 @@
-package oop.io.demo.placeOfInterest;
+package oop.io.demo.attraction;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("PlaceOfInterest")
-public class PlaceOfInterest {
-    
+@Document("Attraction")
+public class Attraction {
     @Id
     private String id;
 
     @Column(unique=true)
-    private String placeOfInterestName;
+    private String attractionName;
 
     private double replacementFee;
 
@@ -20,19 +19,19 @@ public class PlaceOfInterest {
 
     private boolean active;
 
-    public PlaceOfInterest(String placeOfInterestName, double replacementFee, PASSTYPE passType) {
-        this.placeOfInterestName=placeOfInterestName;
+    public Attraction(String attractionName, double replacementFee, PASSTYPE passType) {
+        this.attractionName=attractionName;
         this.replacementFee=replacementFee;
         this.passType= passType;
         this.active = true;
     }
 
-    public String getPlaceOfInterestName() {
-        return placeOfInterestName;
+    public String getAttractionName() {
+        return attractionName;
     }
 
-    public void setPlaceOfInterestName(String placeOfInterestName) {
-        this.placeOfInterestName = placeOfInterestName;
+    public void setAttractionName(String attractionName) {
+        this.attractionName = attractionName;
     }
 
     public double getReplacementFee() {
@@ -58,6 +57,4 @@ public class PlaceOfInterest {
     public void setActive(boolean active) {
         this.active = active;
     }
-
-    
 }
