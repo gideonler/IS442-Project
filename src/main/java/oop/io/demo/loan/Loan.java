@@ -1,37 +1,51 @@
 package oop.io.demo.loan;
 
-import java.util.Calendar;
+
 import java.util.Date;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+
+
+import oop.io.demo.pass.Pass;
 
 public class Loan {
 
     private Date loanDate;
     @CreatedDate
     private Date bookingMadeDate;
-    @LastModifiedDate
-    private Date lastModifiedDate;
     private String attractionName;
 
     @CreatedBy
     private String userEmail;
-    //what type should passNo be?
-    private int passNo;
+    private String loanId=loanDate+userEmail;
+    private String name;
+    private int contactNo;
+
     private LOANSTATUS status;
 
+    
+
     //constructor with attributes required to create a new loan
-    public Loan(Date loanDate, Date bookingMadeDate, String attractionName, String userEmail) {
-        Calendar cal = Calendar.getInstance();
-        this.loanDate = loanDate;
-        this.bookingMadeDate = bookingMadeDate;
+
+    public Loan(){}
+
+
+    public Loan(String userEmail, Date loanDate, String attractionName) {
+    
+        this.loanDate = loanDate;//the date where the user is making the booking
         this.attractionName = attractionName;
         this.userEmail = userEmail;
-        this.lastModifiedDate=cal.getTime();
+   
+    
     }
 
+    public String getPassNo(){
+        Pass newpassno=new Pass();
+        return newpassno.getPassNo();
+    }
+
+    
     public Date getLoanDate() {
         return loanDate;
     }
@@ -44,12 +58,28 @@ public class Loan {
         return attractionName;
     }
 
-    public int getPassNo() {
-        return passNo;
+    public String getLoanID(){
+        return loanId;
     }
-    public void setPassNo(int passNo) {
-        this.passNo = passNo;
+
+    public String getName(){
+        return name;
     }
+
+    public int getContactNo(){
+        return contactNo;
+    }
+
+    public void setLoanDate(Date loanDate) {
+        this.loanDate = loanDate;
+    }
+    public void setBookingMadeDate(Date bookingMadeDate) {
+        this.bookingMadeDate = bookingMadeDate;
+    }
+    public void setEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+    
     public String getUserEmail() {
         return userEmail;
     }
@@ -60,4 +90,6 @@ public class Loan {
     public void setStatus(LOANSTATUS status) {
         this.status = status;
     }
+
+
 }
