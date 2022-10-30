@@ -18,7 +18,7 @@ public class Loan {
 
     @CreatedBy
     private String userEmail;
-    private String loanId=loanDate+userEmail;
+    private String loanId;
     private String name;
     private int contactNo;
 
@@ -36,6 +36,7 @@ public class Loan {
         this.loanDate = loanDate;//the date where the user is making the booking
         this.attractionName = attractionName;
         this.userEmail = userEmail;
+        this.loanId=this.loanDate+this.userEmail;
    
     
     }
@@ -67,6 +68,8 @@ public class Loan {
     }
 
     public int getContactNo(){
+        Pass p=new Pass();
+       
         return contactNo;
     }
 
