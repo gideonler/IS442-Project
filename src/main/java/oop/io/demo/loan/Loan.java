@@ -48,29 +48,29 @@ public class Loan {
 
     
     public Date getLoanDate() {
-        return loanDate;
+        return this.loanDate;
     }
 
     public Date getBookingMadeDate() {
-        return bookingMadeDate;
+        return this.bookingMadeDate;
     }
 
     public String getAttractionName() {
-        return attractionName;
+        return this.attractionName;
     }
 
     public String getLoanID(){
-        return loanId;
+        return this.loanId;
     }
 
     public String getName(){
-        return name;
+        return this.name;
     }
 
     public int getContactNo(){
         Pass p=new Pass();
        
-        return contactNo;
+        return this.contactNo;
     }
 
     public void setLoanDate(Date loanDate) {
@@ -84,11 +84,11 @@ public class Loan {
     }
     
     public String getUserEmail() {
-        return userEmail;
+        return this.userEmail;
     }
 
     public LOANSTATUS getStatus() {
-        return status;
+        return this.status;
     }
     public void setStatus(LOANSTATUS status) {
         this.status = status;
