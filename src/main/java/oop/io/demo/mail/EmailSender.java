@@ -8,9 +8,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import oop.io.demo.csvhandler.Response;
+import oop.io.demo.loan.Loan;
+import oop.io.demo.loan.LoanRepository;
 import oop.io.demo.mail.payload.BookingRequest;
 import oop.io.demo.mail.payload.ConfirmRequest;
+import oop.io.demo.user.User;
+import oop.io.demo.user.UserRepository;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,21 +27,38 @@ import javax.validation.Valid;
 public class EmailSender {
     @Autowired
     EmailService emailService;
+
+    private final UserRepository userRepository;
+
+    private final LoanRepository loanRepository;
+
+    public EmailSender(UserRepository userRepository, LoanRepository loanRepository) {
+        this.userRepository = userRepository;
+        this.loanRepository = loanRepository;
+    }
     
     // Sending Email Templates With/Without Attachments
+        // YOU NEED TO ADD THE DATE IN THE MODEL AND GET AS REQUEST
     @PostMapping("/booking")
-    // YOU NEED TO ADD THE DATE IN THE MODEL AND GET AS REQUEST
     public ResponseEntity sendAttachmentMessage(@Valid @RequestBody BookingRequest bookingRequest) throws Exception {
         try{
+            String emailTo = bookingRequest.getEmail();
+            String loanId = bookingRequest.getLoanId();
+            User user = userRepository.findByEmail(emailTo).get();
+            Loan loan = loanRepository.findByLoanId(loanId).get();
             Email email = new Email();
-            email.setTo(bookingRequest.getEmail());
+            email.setTo(emailTo);
             email.setFrom("oopg2t4@outlook.com");
             email.setSubject("Booking Confirmation");
             email.setContent("Sending mail");
             Map<String, Object> model = new HashMap<>();
-            model.put("name", bookingRequest.getName());
-            model.put("attractionName", bookingRequest.getAttractionName());
-            model.put("corpPassNumber", bookingRequest.getCorpPassNumber());
+            model.put("name", user.getName());
+            model.put("attractionName", loan.getAttractionName());
+            model.put("corpPassNumber", loan.getPassNo());
+            Date loanDate = loan.getLoanDate();
+            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");  
+            String strDate = formatter.format(loanDate);  
+            model.put("loanDate", strDate);
             email.setModel(model);
     
             String template = bookingRequest.getTemplate();

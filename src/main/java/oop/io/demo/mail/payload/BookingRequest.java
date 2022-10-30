@@ -6,11 +6,11 @@ public class BookingRequest {
     @NotBlank
 	private String email;
 	@NotBlank
-	private String name;
-	@NotBlank
-	private String attractionName;
+	private String loanId;
+	/* 
 	@NotBlank
 	private String corpPassNumber;
+	*/
 	@NotBlank
 	private String template;
 	private String attachment;
@@ -21,24 +21,20 @@ public class BookingRequest {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getName() {
-		return name;
+	public String getLoanId() {
+		return loanId;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setLoanId(String loanId) {
+		this.loanId = loanId;
 	}
-	public String getAttractionName() {
-		return attractionName;
-	}
-	public void setAttractionName(String attractionName) {
-		this.attractionName = attractionName;
-	}
+	/* 
 	public String getCorpPassNumber() {
 		return corpPassNumber;
 	}
 	public void setCorpPassNumber(String corpPassNumber) {
 		this.corpPassNumber = corpPassNumber;
 	}
+	*/
 	public String getTemplate() {
 		return template;
 	}

@@ -95,4 +95,9 @@ public class Loan {
     }
 
 
+    public Loan get() {
+        return null;
+    }
+
+
 }
