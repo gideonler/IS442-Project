@@ -1,4 +1,4 @@
-package oop.io.demo.auth.confirmationToken;
+package oop.io.demo.auth.ConfirmationToken;
 
 import java.time.LocalDateTime;
 
