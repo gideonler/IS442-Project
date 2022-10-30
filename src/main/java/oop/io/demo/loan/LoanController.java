@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.auth.security.jwt.JwtUtils;
+import oop.io.demo.pass.PassRepository;
+import oop.io.demo.user.UserRepository;
 
 
 
@@ -34,6 +36,10 @@ public class LoanController {
     @Autowired
     private LoanRepository repository;
     @Autowired
+    private UserRepository userrepository;
+    @Autowired
+    private PassRepository passrepository;
+    @Autowired
     private LoanService loanService;
 
 
@@ -45,9 +51,15 @@ public class LoanController {
         String userEmail = loanRequest.getUserEmail();
         Date loanDate = loanRequest.getLoanDate();
         String attractionName = loanRequest.getAttractionName();
-        LoanService loanService= new LoanService(repository);
+        LoanService loanService= new LoanService(repository,passrepository,userrepository);
         return loanService.addBooking(userEmail, loanDate, attractionName);
 
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity cancellLoan(@RequestBody String loanID) {
+        String cancel=new LoanService(repository,passrepository,userrepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
+        return ResponseEntity.ok("Pass has been cancelled");
     }
     
     // //for creating new passes for an existing attraction
@@ -80,11 +92,7 @@ public class LoanController {
 
 
 
-    @PutMapping("/cancellLoan")
-    public ResponseEntity cancellLoan(@RequestBody String loanID) {
-        String cancel=new LoanService(repository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
-        return ResponseEntity.ok("Pass has been cancelled");
-    }
+
 
     
 
@@ -106,9 +114,7 @@ public class LoanController {
 
     //have method endpoint: "loans" calls loanservice to retrieve loan for a user by email
     ////access: staff can only see their own but admin can see for any selected user
-
-
-    //have method to retrieve all bookings made on a certain date for a certain attraction
+//have method to retrieve all bookings made on a certain date for a certain attraction
     ////access: all because it is for calendar display- should this be under service then?
     
     

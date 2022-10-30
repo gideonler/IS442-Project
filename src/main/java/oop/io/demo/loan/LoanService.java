@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import oop.io.demo.pass.Pass;
-
+import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.User;
+import oop.io.demo.user.UserRepository;
+import oop.io.demo.pass.PASSSTATUS;
 
 import java.util.*;
 
@@ -17,13 +19,43 @@ public class LoanService {
 
     @Autowired
     private LoanRepository repository;
+    private final PassRepository passRepository;
+    private final UserRepository userRepository;
 
     Pass p = new Pass();
     User u = new User();
 
-    public LoanService(LoanRepository loanRepository) {
+    public LoanService(LoanRepository loanRepository, PassRepository PassRepository, UserRepository UserRepository) {
         this.repository = loanRepository;
+        this.passRepository = PassRepository;
+        this.userRepository = UserRepository;
     }
+
+
+    public String extractPassNo(String attractionName){
+        String passNo = "";
+        Optional<List<Pass>> passList = passRepository.findByAttractionName(attractionName);
+            if (passList.isPresent()){
+                for (Pass pass: passList.get()){
+                    if (pass.getPassStatus() == PASSSTATUS.INOFFICE){
+                        passNo = pass.getPassNo();
+                        break;
+                    }
+                }
+            }
+            return passNo;
+    }
+
+    public String extractContactNo(String userEmail){
+        String contactNo = "";
+        Optional<User> user = userRepository.findByEmail(userEmail);
+        if (user.isPresent()){
+            contactNo = user.get().getContactNo();
+        }
+        return contactNo;
+    }
+
+
 
     // LoanRepository lr=new LoanRepository();
     // loan service should:
@@ -40,6 +72,12 @@ public class LoanService {
 
         if (checkPass) {
             Loan loan = new Loan(userEmail, loanDate, attractionName);
+            loan.setLoanId();
+            loan.setStatus(LOANSTATUS.CONFIRMED);
+            String passNo = extractPassNo(attractionName);
+            String contactNo = extractContactNo(userEmail);
+            loan.setPassNo(passNo);
+            loan.setContactNo(contactNo);
             repository.save(loan);
             return "Booking to " +loanDate+ " made for " +
             attractionName+ " has been added.";
@@ -77,8 +115,7 @@ public class LoanService {
         return "Loan has been collected by the user";
 
     }
-
-    // GO to check whether booking presents or not
+    
     public String checkLoan(String userEmail) {
         ArrayList<Loan> loanlist = repository.findAllByUserEmail(userEmail);
         Calendar cal = Calendar.getInstance();
@@ -133,7 +170,7 @@ public class LoanService {
                 String uEmail = loan.getUserEmail();
                 Loan booked_user = repository.findByUserEmail(uEmail);
                 String userName = booked_user.getName();
-                Integer contactNo = booked_user.getContactNo();
+                String contactNo = booked_user.getContactNo();
 
                 toReturn = "The booking for pass " + passNo + " is already loaned by " + userName + " (Contact No: "
                         + contactNo + ")";
@@ -158,6 +195,7 @@ public class LoanService {
         return "";
 
     }
+    
 
     // Method to cancel all loans
     public String cancelAllLoans(String passNo, Date date) {
@@ -173,4 +211,4 @@ public class LoanService {
         }
         return "All changes have been made";
     }
-}
+} 

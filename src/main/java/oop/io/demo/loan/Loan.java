@@ -1,13 +1,15 @@
 package oop.io.demo.loan;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import javax.persistence.Column;
 
-import java.util.Date;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 
-import oop.io.demo.pass.Pass;
 
 public class Loan {
 
@@ -18,33 +20,64 @@ public class Loan {
 
     @CreatedBy
     private String userEmail;
+
+    @Column(unique = true)
     private String loanId;
+
     private String name;
-    private int contactNo;
+    private String contactNo;
+    private String passNo;
+
 
     private LOANSTATUS status;
 
-    
+    // constructor with attributes required to create a new loan
 
-    //constructor with attributes required to create a new loan
-
-    public Loan(){}
-
+    public Loan() {
+    }
 
     public Loan(String userEmail, Date loanDate, String attractionName) {
-    
-        this.loanDate = loanDate;//the date where the user is making the booking
+
+        this.loanDate = loanDate;// the date where the user is making the booking
         this.attractionName = attractionName;
         this.userEmail = userEmail;
-        this.loanId=this.loanDate+this.userEmail;
+        
+
+    }
+    public void setLoanId() {
+        SimpleDateFormat dateFor = new SimpleDateFormat("dd/MM/yyyy");
+        String date=dateFor.format(this.loanDate);
+        this.loanId=date+this.userEmail;
     }
 
-    public String getPassNo(){
-        Pass newpassno=new Pass();
-        return newpassno.getPassNo();
+    public void setLoanDate(Date loanDate) {
+        this.loanDate = loanDate;
     }
 
-    
+    public void setBookingMadeDate(Date bookingMadeDate) {
+        this.bookingMadeDate = bookingMadeDate;
+    }
+
+    public void setEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserEmail() {
+        return this.userEmail;
+    }
+
+    public LOANSTATUS getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(LOANSTATUS status) {
+        this.status = status;
+    }
+
+    public void setPassNo(String passNo){
+        this.passNo = passNo;
+    }
+
     public Date getLoanDate() {
         return this.loanDate;
     }
@@ -57,45 +90,23 @@ public class Loan {
         return this.attractionName;
     }
 
-    public String getLoanID(){
+    public String getLoanID() {
         return this.loanId;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public int getContactNo(){
-        Pass p=new Pass();
-       
+    public String getContactNo() {
         return this.contactNo;
     }
 
-    public void setLoanDate(Date loanDate) {
-        this.loanDate = loanDate;
-    }
-    public void setBookingMadeDate(Date bookingMadeDate) {
-        this.bookingMadeDate = bookingMadeDate;
-    }
-    public void setEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-    
-    public String getUserEmail() {
-        return this.userEmail;
+    public String getPassNo() {
+        return this.passNo;
     }
 
-    public LOANSTATUS getStatus() {
-        return this.status;
+    public void setContactNo(String contactNo) {
+        this.contactNo = contactNo;
+            }
     }
-    public void setStatus(LOANSTATUS status) {
-        this.status = status;
-    }
-
-
-    public Loan get() {
-        return null;
-    }
-
-
-}
