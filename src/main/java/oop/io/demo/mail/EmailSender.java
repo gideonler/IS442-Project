@@ -45,7 +45,8 @@ public class EmailSender {
             String emailTo = bookingRequest.getEmail();
             String loanId = bookingRequest.getLoanId();
             User user = userRepository.findByEmail(emailTo).get();
-            Loan loan = loanRepository.findByLoanId(loanId).get();
+            Loan loan = loanRepository.findByLoanId(loanId);
+
             Email email = new Email();
             email.setTo(emailTo);
             email.setFrom("oopg2t4@outlook.com");
@@ -54,13 +55,17 @@ public class EmailSender {
             Map<String, Object> model = new HashMap<>();
             model.put("name", user.getName());
             model.put("attractionName", loan.getAttractionName());
-            model.put("corpPassNumber", loan.getPassNo());
+
+            // TODO GET CORPPASS NO using loan.getPassNo() !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            model.put("corpPassNumber", "123456");
+
             Date loanDate = loan.getLoanDate();
-            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");  
+            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy");
             String strDate = formatter.format(loanDate);  
             model.put("loanDate", strDate);
             email.setModel(model);
     
+            // TODO put in the template from attraction collection
             String template = bookingRequest.getTemplate();
             
             if (bookingRequest.getAttachment() == null){
@@ -70,6 +75,7 @@ public class EmailSender {
                 emailService.sendEmailWithAttachment(email, template, attachment);
             }
             return ResponseEntity.ok("Check your email for your booking information!");
+            
         } catch (Exception e){
             return ResponseEntity.badRequest().body("Booking was unsuccessful.");
         }
@@ -86,14 +92,29 @@ public class EmailSender {
     
             String t = "Pass Collected Email.html";
             emailService.sendSimpleEmailTemplate(email, t);
-            return ResponseEntity.ok("Collection noted!");
+            return ResponseEntity.ok("Email sent!");
         } catch (Exception e){
-            return ResponseEntity.badRequest().body("Email is not valid.");
+            return ResponseEntity.badRequest().body("Email is not sent.");
         }
     }
 
     //Reminder Emails
-
+    @PostMapping("/tocollect")
+    public ResponseEntity sendToCollectMessage(@Valid @RequestBody ConfirmRequest confirmRequest) throws Exception {
+        try {
+            Email email = new Email();
+            email.setTo(confirmRequest.getEmail());
+            email.setFrom("oopg2t4@outlook.com");
+            email.setSubject("[Notification] Collect your Pass");
+            email.setContent("Sending mail");
+    
+            String t = "To Collect Pass Email.html";
+            emailService.sendSimpleEmailTemplate(email, t);
+            return ResponseEntity.ok("Email sent!");
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Email is not sent.");
+        }
+    }
 
     /* Sending Email Templates Without Attachmenet--> just need to find attraction and get the templates from there!
     @PostMapping("/email")

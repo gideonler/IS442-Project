@@ -37,8 +37,6 @@ public class Loan {
         this.attractionName = attractionName;
         this.userEmail = userEmail;
         this.loanId=this.loanDate+this.userEmail;
-   
-    
     }
 
     public String getPassNo(){
