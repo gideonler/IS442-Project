@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.auth.confirmationToken.ConfirmationToken;
-import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
-import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
+import oop.io.demo.auth.ConfirmationToken.ConfirmationToken;
+import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenRepository;
+import oop.io.demo.auth.ConfirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.LoginRequest;
 import oop.io.demo.auth.payload.request.SignupRequest;
 import oop.io.demo.auth.payload.request.VerificationRequest;
