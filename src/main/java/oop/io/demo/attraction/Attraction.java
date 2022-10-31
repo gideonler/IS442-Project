@@ -2,6 +2,7 @@ package oop.io.demo.attraction;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import org.bson.types.Binary;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -20,9 +21,11 @@ public class Attraction {
 
     private boolean active;
 
-    private Binary image;
+    private String templateFilename;
 
-    private Binary attachmentPDF;
+    private String imageFilename;
+
+    private String attachmentPDFFilename;
 
     public Attraction(String attractionName, double replacementFee, PASSTYPE passType) {
         this.attractionName=attractionName;
@@ -30,6 +33,14 @@ public class Attraction {
         this.passType= passType;
         this.active = true;
     }
+
+    /*public Attraction(String attractionName, String templateFilename, double replacementFee, PASSTYPE passType) {
+        this.attractionName=attractionName;
+        this.templateFilename=templateFilename;
+        this.replacementFee=replacementFee;
+        this.passType= passType;
+        this.active = true;
+    }*/
 
     public String getAttractionName() {
         return attractionName;
@@ -63,20 +74,42 @@ public class Attraction {
         this.active = active;
     }
 
-    public Binary getImage() {
-        return image;
+    public String getTemplateFilename() {
+        return templateFilename;
     }
 
-    public void setImage(Binary image) {
-        this.image = image;
+    public void setTemplateFilename(String templateFilename) {
+        this.templateFilename = templateFilename;
     }
 
-    public Binary getAttachmentPDF() {
-        return attachmentPDF;
+    public String getImageFilename() {
+        return imageFilename;
     }
 
-    public void setAttachmentPDF(Binary attachmentPDF) {
-        this.attachmentPDF = attachmentPDF;
+    public void setImageFilename(String imageFilename) {
+        this.imageFilename = imageFilename;
+    }
+
+    public String getAttachmentPDFFilename() {
+        return attachmentPDFFilename;
+    }
+
+    public void setAttachmentPDFFilename(String attachmentPDFFilename) {
+        this.attachmentPDFFilename = attachmentPDFFilename;
+    }
+
+    @Transient
+    public String getTemplateFilePath() {
+        return "/templates/" + attractionName + "/" + templateFilename;
+    }
+
+    @Transient
+    public String getImageFilePath() {
+        return "/templates/" + attractionName + "/" + imageFilename;
     }
     
+    @Transient
+    public String geAttachmentPDFFilePath() {
+        return "/templates/" + attractionName + "/" + attachmentPDFFilename;
+    }
 }

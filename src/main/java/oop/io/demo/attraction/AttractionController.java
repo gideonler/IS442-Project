@@ -1,12 +1,10 @@
 package oop.io.demo.attraction;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,13 +53,92 @@ public class AttractionController {
     }
     
     @PostMapping("/new")
-    public ResponseEntity createAttraction(@RequestBody AttractionRequest attractionRequest){
+    public ResponseEntity createAttraction(@RequestBody AttractionRequest attractionRequest, 
+    @RequestParam(name="image", required = false) MultipartFile imageFile, 
+    @RequestParam(name= "emailtemplate") MultipartFile emailTemplateFile, 
+    @RequestParam(name="attachment", required = false) MultipartFile attachmentPDFFile) throws IOException {
+        AttractionService attractionService = new AttractionService();
+
         String attractionName = attractionRequest.getAttraction();
         double replacementFee = attractionRequest.getReplacementFee();
         PASSTYPE passtype = PASSTYPE.valueOf(attractionRequest.getPassType().toUpperCase());
-        Attraction attraction = new Attraction(attractionName,replacementFee,passtype);
+        //String emailTemplateFilename = StringUtils.cleanPath(emailTemplateFile.getOriginalFilename());
+        
+        Attraction attraction = new Attraction(attractionName, replacementFee, passtype);
+
+        /*attractionService.uploadEmailTemplate(attractionName, emailTemplateFile, emailTemplateFilename);
+
+        if(!imageFile.isEmpty()) {
+            String imageFilename = StringUtils.cleanPath(imageFile.getOriginalFilename());
+            attractionService.uploadImage(attractionName, imageFile, imageFilename);
+            attraction.setImageFilename(imageFilename);
+        }
+
+        if(!attachmentPDFFile.isEmpty()) {
+            String attachmentPDFFilename = StringUtils.cleanPath(attachmentPDFFile.getOriginalFilename());
+            attractionService.uploadAttachmentPDF(attractionName, attachmentPDFFile, attachmentPDFFilename);
+            attraction.setAttachmentPDFFilename(attachmentPDFFilename);
+        }*/
+
         return ResponseEntity.ok(repository.save(attraction));
     }
+
+    @PutMapping("/{attraction}/uploadfiles")
+    public ResponseEntity createAttraction(@PathVariable("attraction") String attractionName, 
+    @RequestParam(name= "emailtemplate") MultipartFile emailTemplateFile, 
+    @RequestParam(name="attachment", required = false) MultipartFile attachmentPDFFile){
+        AttractionService attractionService = new AttractionService();
+        Optional<Attraction> a = repository.findByAttractionName(attractionName);
+        if(!a.isPresent()) {
+            return ResponseEntity.badRequest().body("Attraction not found!");
+        }
+
+        Attraction attraction = a.get();
+
+        if(attraction.getTemplateFilename()==null && emailTemplateFile==null){
+            return ResponseEntity.badRequest().body("Please include an email template");
+        }
+
+        try {
+            if(emailTemplateFile!=null) {
+                String emailTemplateFilename = StringUtils.cleanPath(emailTemplateFile.getOriginalFilename());
+                attractionService.uploadEmailTemplate(attractionName, emailTemplateFile, emailTemplateFilename);
+                attraction.setTemplateFilename(emailTemplateFilename);
+            }
+
+            if(attachmentPDFFile!=null) {
+                String attachmentPDFFilename = StringUtils.cleanPath(attachmentPDFFile.getOriginalFilename());
+                attractionService.uploadAttachmentPDF(attractionName, attachmentPDFFile, attachmentPDFFilename);
+                attraction.setAttachmentPDFFilename(attachmentPDFFilename);
+            }
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("Failed to upload files");
+        }
+
+        return ResponseEntity.ok(repository.save(attraction));
+    }
+
+    @PutMapping("/{attraction}/uploadimage")
+    public ResponseEntity uploadImage(@PathVariable("attraction") String attractionName, @RequestParam("image") MultipartFile imageFile) {
+        AttractionService attractionService = new AttractionService();
+        Optional<Attraction> a = repository.findByAttractionName(attractionName);
+        if(!a.isPresent()) {
+            return ResponseEntity.badRequest().body("Attraction not found");
+        }
+        Attraction attraction = a.get();
+        if(imageFile==null) {
+            return ResponseEntity.badRequest().body("Please select an image");
+        }
+        String imageFilename = StringUtils.cleanPath(imageFile.getOriginalFilename());
+        try {
+            attractionService.uploadImage(attractionName, imageFile, imageFilename);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        attraction.setImageFilename(imageFilename);
+        return ResponseEntity.ok(repository.save(attraction));
+    }
+
 
     @PutMapping("/{attraction}/edit")
     public ResponseEntity editAttraction(@PathVariable("attraction") String attractionName, @RequestBody AttractionRequest attractionRequest) {
@@ -115,37 +192,4 @@ public class AttractionController {
         }
     }
 
-    @PutMapping("/{attraction}/uploadphoto")
-    public ResponseEntity uploadPhoto(@PathVariable("attraction") String attractionName, @RequestParam("image") MultipartFile file) {
-        Attraction attraction = repository.findByAttractionName(attractionName).get();
-        if(attraction ==null) return ResponseEntity.badRequest().body("Attraction not found.");
-        try {
-        attraction.setImage(
-          new Binary(BsonBinarySubType.BINARY, file.getBytes())); 
-        repository.save(attraction);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("Upload failed!");
-        }
-        return ResponseEntity.ok("Upload successful!");
-    }
-
-    @GetMapping("/{attraction}/getimage")
-    public ResponseEntity getPhoto(@PathVariable("attraction") String attractionName) {
-        Attraction attraction = repository.findByAttractionName(attractionName).get();
-        return ResponseEntity.ok(Base64.getEncoder().encodeToString(attraction.getImage().getData()));
-    }
-
-    @PutMapping("/{attraction}/uploadattachement")
-    public ResponseEntity uploadAttachmentTemplate(@PathVariable("attraction") String attractionName, @RequestParam("attachmenttemplate") MultipartFile file) {
-        Attraction attraction = repository.findByAttractionName(attractionName).get();
-        if(attraction ==null) return ResponseEntity.badRequest().body("Attraction not found.");
-        try {
-        attraction.setAttachmentPDF(
-          new Binary(BsonBinarySubType.BINARY, file.getBytes())); 
-        repository.save(attraction);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("Upload failed!");
-        }
-        return ResponseEntity.ok("Upload successful!");
-    }
 }
