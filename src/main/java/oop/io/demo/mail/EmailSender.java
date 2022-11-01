@@ -26,7 +26,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/send")
+@RequestMapping("/email")
 public class EmailSender {
     @Autowired
     EmailService emailService;
