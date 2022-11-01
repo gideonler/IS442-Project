@@ -13,7 +13,7 @@ import oop.io.demo.csvhandler.Response;
 import oop.io.demo.loan.Loan;
 import oop.io.demo.loan.LoanRepository;
 import oop.io.demo.mail.payload.BookingRequest;
-import oop.io.demo.mail.payload.ConfirmRequest;
+import oop.io.demo.mail.payload.CollectedRequest;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 
@@ -93,10 +93,10 @@ public class EmailSender {
     }
     // Sending Pass Collected Emails
     @PostMapping("/collected")
-    public ResponseEntity sendCollectedMessage(@Valid @RequestBody ConfirmRequest confirmRequest) throws Exception {
+    public ResponseEntity sendCollectedMessage(@Valid @RequestBody CollectedRequest collectedRequest) throws Exception {
         try {
             Email email = new Email();
-            email.setTo(confirmRequest.getEmail());
+            email.setTo(collectedRequest.getEmail());
             email.setFrom("oopg2t4@outlook.com");
             email.setSubject("[Notification] Pass Collected");
             email.setContent("Sending mail");
@@ -111,7 +111,7 @@ public class EmailSender {
 
     //Reminder Emails
     @PostMapping("/tocollect")
-    public ResponseEntity sendToCollectMessage(@Valid @RequestBody ConfirmRequest confirmRequest) throws Exception {
+    public ResponseEntity sendToCollectMessage(@Valid @RequestBody CollectedRequest confirmRequest) throws Exception {
         try {
             Email email = new Email();
             email.setTo(confirmRequest.getEmail());
