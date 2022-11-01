@@ -84,7 +84,7 @@ public class EmailService {
     }
 
 
-    // Simple template email with no modelling
+    // Simple template email with no modelling --> "Collected Email"
     public void sendSimpleEmailTemplate(Email mail, String template) throws Exception {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
@@ -107,7 +107,33 @@ public class EmailService {
         }
     }
 
-    // Template email with modelling
+    // TODO BELOW ARE ALL THE EMAILS I USE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    // Collected Email
+    public void sendCollectedEmail(String email) throws Exception {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            mimeMessageHelper.setTo(email);
+            mimeMessageHelper.setFrom("oopg2t4@outlook.com");
+            mimeMessageHelper.setSubject("[Notification] Pass Collected");
+    
+            String template = "Pass Collected Email.html";
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
+            Template t = fmConfiguration.getTemplate(template);
+
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, null);
+            mimeMessageHelper.setText(text, true);
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Template email with modelling --> "Booking Email without Attachment"
     public void sendEmailTemplate(Email mail,  String template, String templatePath) throws Exception {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
@@ -130,6 +156,7 @@ public class EmailService {
         }
     }
 
+    // Template email with modelling and attachment --> "Booking Email with Attachment"
     public void sendEmailWithAttachment(Email mail, String template, String templatePath, String attachment, String attachmentPath) throws MessagingException, IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
@@ -153,4 +180,30 @@ public class EmailService {
             e.printStackTrace();
         }
     }
+
+    /* 
+    // To Collect Email
+    public void sendToCollectEmail(Email mail,  String template) throws Exception {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), templatePath);
+            Template t = fmConfiguration.getTemplate(template);
+
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
+
+            mimeMessageHelper.setSubject(mail.getSubject());
+            mimeMessageHelper.setFrom(mail.getFrom());
+            mimeMessageHelper.setTo(mail.getTo());
+            mimeMessageHelper.setText(text, true);
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+    */
 }

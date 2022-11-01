@@ -95,14 +95,9 @@ public class EmailSender {
     @PostMapping("/collected")
     public ResponseEntity sendCollectedMessage(@Valid @RequestBody CollectedRequest collectedRequest) throws Exception {
         try {
-            Email email = new Email();
-            email.setTo(collectedRequest.getEmail());
-            email.setFrom("oopg2t4@outlook.com");
-            email.setSubject("[Notification] Pass Collected");
-            email.setContent("Sending mail");
-    
-            String t = "Pass Collected Email.html";
-            emailService.sendSimpleEmailTemplate(email, t);
+            //Take user email to direct the collected message to the user
+            String email = collectedRequest.getEmail();
+            emailService.sendCollectedEmail(email);
             return ResponseEntity.ok("Email sent!");
         } catch (Exception e){
             return ResponseEntity.badRequest().body("Email is not sent.");
@@ -111,10 +106,10 @@ public class EmailSender {
 
     //Reminder Emails
     @PostMapping("/tocollect")
-    public ResponseEntity sendToCollectMessage(@Valid @RequestBody CollectedRequest confirmRequest) throws Exception {
+    public ResponseEntity sendToCollectMessage(@Valid @RequestBody CollectedRequest collectedRequest) throws Exception {
         try {
             Email email = new Email();
-            email.setTo(confirmRequest.getEmail());
+            email.setTo(collectedRequest.getEmail());
             email.setFrom("oopg2t4@outlook.com");
             email.setSubject("[Notification] Collect your Pass");
             email.setContent("Sending mail");
