@@ -45,7 +45,6 @@ public class EmailService {
 
     public void sendEmail(Email mail) {
         try {
-            
             Message message = new MimeMessage(session());
             message.setFrom(new InternetAddress("oopg2t4@outlook.com"));
             message.setRecipients(
@@ -109,12 +108,12 @@ public class EmailService {
     }
 
     // Template email with modelling
-    public void sendEmailTemplate(Email mail,  String template) throws Exception {
+    public void sendEmailTemplate(Email mail,  String template, String templatePath) throws Exception {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
-            fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), templatePath);
             Template t = fmConfiguration.getTemplate(template);
 
             String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
@@ -131,12 +130,12 @@ public class EmailService {
         }
     }
 
-    public void sendEmailWithAttachment(Email mail, String template, String attachment) throws MessagingException, IOException {
+    public void sendEmailWithAttachment(Email mail, String template, String templatePath, String attachment, String attachmentPath) throws MessagingException, IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
-            fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), templatePath);
             Template t = fmConfiguration.getTemplate(template);
 
             String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
@@ -146,8 +145,7 @@ public class EmailService {
             mimeMessageHelper.setTo(mail.getTo());
             mimeMessageHelper.setText(text, true);
 
-            String path = "attachments/" + attachment;
-            mimeMessageHelper.addAttachment(attachment, new ClassPathResource(path));
+            mimeMessageHelper.addAttachment(attachment, new ClassPathResource(attachmentPath));
 
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
 
