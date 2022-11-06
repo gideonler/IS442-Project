@@ -5,18 +5,9 @@
         <div class="row">
           <div class="col-md-12">
             <base-input type="text"
-                      label="Corporate Pass Name"
+                      label="Attraction Name"
                       placeholder="eg. Singapore Gardens"
-                      v-model="passname">
-            </base-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <base-input type="text"
-                      label="Place of Interest"
-                      placeholder="eg. Gardens by the Bay"
-                      v-model="interest">
+                      v-model="attractionname">
             </base-input>
           </div>
         </div>
@@ -28,7 +19,7 @@
                     type="number"
                     min="0"
                     v-model="replacementfee"
-                ></b-form-input>
+                ></b-form-input> 
             </b-input-group>
           </div>
           <div class="col-md-6">
@@ -37,7 +28,6 @@
                 id="radio-group-1"
                 v-model="selected_passtype"
                 :options="options"
-                :aria-describedby="ariaDescribedby"
                 name="radio-options"
             ></b-form-radio-group>
           </div>
@@ -69,8 +59,9 @@
             <div class="col-md-12">
                 <label>Pass Image</label>
                 <b-form-file
-                v-model="email_file"
-                :state="Boolean(email_file)"
+                v-model="image"
+                accept=".jpg, .jpeg, .png"
+                :state="Boolean(image)"
                 placeholder="Upload Photo Here..."
                 drop-placeholder="Drop file here..."
                 ></b-form-file>
@@ -92,7 +83,8 @@
   <script>
     import Card from '../Cards/Card.vue'
     import AttractionCreationConfirmation from './AttractionCreationConfirmation.vue'
-  
+    import axios from 'axios';
+
     export default {
       components: {
         Card,
@@ -101,40 +93,108 @@
       data () {
         return {
           //TODO: Replace with data
-          passname: '',
-          interest: '',
-          replacementfee: '',
-          email_file: '',
-          pdf_file:'',
+          attractionname: '',
+          replacementfee: 0,
+          email_file: null,
+          pdf_file: null,
+          image: null,
+          email_file_name: null,
+          pdf_file_name: null,
+          image_name: null,
           selected_passtype: '',
-            options: [
-            { text: 'Physical Card', value: 'physical' },
-            { text: 'E-card', value: 'digital' }
-            ],
-
+          options: [
+          { text: 'Physical Card', value: 'PHYSICALPASS' },
+          { text: 'E-card', value: 'ELECTRONICPASS' }
+          ],
+          api: {
+            create_attraction: "http://localhost:8080/attraction/new" ,
+            upload_files:  "",
+            upload_image: ""
+          },
         }
       },
+      watch: {
+        attractionname() {
+            this.api.upload_files =  "http://localhost:8080/attraction/" + this.attractionname + "/uploadfiles"
+            this.api.upload_image =  "http://localhost:8080/attraction/" + this.attractionname + "/uploadimage"
+        },
+      },
+
+      
       methods: {
         isFormValid(){
-        return this.passname!= '' &&
-          this.interest!= '' &&
-          this.replacementfee!= '' &&
-          this.email_file!= ''&&
-          this.pdf_file!='' &&
+        return this.attractionname!= '' &&
+          this.replacementfee!= -1 &&
+          this.email_file!= null &&
+          this.pdf_file!= null &&
+          this.image!= null &&
           this.selected_passtype!= ''
         },
         formReset(){
-          this.passname= ''
-          this.interest= ''
-          this.replacementfee= ''
-          this.email_file= ''
-          this.pdf_file=''
+          this.attractionname= ''
+          this.replacementfee= 0
+          this.email_file= null
+          this.pdf_file= null,
+          this.image= null,
           this.selected_passtype= ''
         },
-        createAttraction () {
+        getBase64(file) {
+          return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = error => reject(error);
+        });
+        },
+        async createAttraction () {
           //TODO: API Call to update database
           if(this.isFormValid()){
-            this.$root.$refs.AttractionCreationConfirmation.showModal(this.passname);
+
+            //1. create attraction details
+            // await axios 
+            // .post(this.api.create_attraction, 
+            //   {
+            //     "attraction" : this.attractionname,
+            //     "replacementFee" : parseFloat(this.replacementfee),
+            //     "passType" : this.selected_passtype
+            //   }
+            //   )
+            // .then((response) => {
+            //   console.log(response);
+            // }); 
+
+            // let email_file = await this.getBase64(this.email_file);
+            // let pdf_file = await this.getBase64(this.pdf_file);
+            // let image = await this.getBase64(this.image);
+
+            console.log(this.api.upload_files)
+            console.log(this.api.upload_image)
+            console.log(this.email_file)
+            console.log(this.image)
+            //2. upload templates
+            await axios 
+            .put(this.api.upload_files, 
+              {
+                "emailtemplate" : this.email_file,
+                "attachment" : this.pdf_file
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+
+            //3. upload image
+            await axios 
+            .put(this.api.upload_image, 
+              {
+                "image" : this.image
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+
+            this.$root.$refs.AttractionCreationConfirmation.showModal(this.attractionname);
           }
           this.formReset()
         },

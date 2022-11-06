@@ -91,6 +91,11 @@
       createPass () {
         //TODO: API Call to update database
         if(this.isFormValid()){
+          
+
+
+
+
           this.$root.$refs.PassCreationConfirmation.showModal(this.no_passes, this.selected_attraction);
         }
         this.formReset()
