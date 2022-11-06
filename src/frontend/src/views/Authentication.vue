@@ -125,6 +125,7 @@ export default {
     align-items: center;
 }
 
+<<<<<<< Updated upstream
 .login-box {
     width: 100%;
     margin: auto;
@@ -142,6 +143,16 @@ export default {
     padding: 90px 70px 50px 70px;
     background: rgba(0, 77, 77, .9);
 }
+=======
+    <b-form @submit.stop.prevent="onSubmit">
+      <b-form-group id="example-input-group-1" label="Contact Number" label-for="example-input-1">
+        <b-form-input id="example-input-1" name="example-input-1" v-model="$v.form.contact.$model"
+          :state="validateState('contact')" aria-describedby="input-1-live-feedback"></b-form-input>
+
+        <b-form-invalid-feedback id="input-1-live-feedback">This is a required field and must only contain numerical
+          values.</b-form-invalid-feedback>
+      </b-form-group>
+>>>>>>> Stashed changes
 
 .login-snip .login
 
@@ -163,6 +174,7 @@ export default {
     display: none;
 } */
 
+<<<<<<< Updated upstream
 .login-snip .tab,
 .login-space .group .label,
 .login-space .group .button {
@@ -177,6 +189,16 @@ export default {
     display: inline-block;
     border-bottom: 2px solid transparent;
 }
+=======
+        <b-form-invalid-feedback id="input-3-live-feedback">This is a required field and must be the same as password.
+        </b-form-invalid-feedback>
+      </b-form-group>
+
+      <b-form-group id="example-input-group-4" label="Check your email for the token and paste it here"
+        label-for="example-input-4">
+        <b-form-input id="example-input-4" name="example-input-4" v-model="$v.form.activation.$model"
+          :state="validateState('activation')" aria-describedby="input-4-live-feedback"></b-form-input>
+>>>>>>> Stashed changes
 
 .login-snip .sign-in:checked+.tab,
 .login-snip .sign-up:checked+.tab {
@@ -191,9 +213,14 @@ export default {
     transform-style: preserve-3d;
 }
 
+<<<<<<< Updated upstream
 .login-space .group {
     margin-bottom: 15px;
 }
+=======
+      <input type="button" class="btn btn-outline-primary btnDisable" id="myBtn" value="Resend activation link"
+        @click="resend">
+>>>>>>> Stashed changes
 
 .login-space .group .label,
 .login-space .group .input,
@@ -225,6 +252,7 @@ export default {
     background: #e0b50c;
 }
 
+<<<<<<< Updated upstream
 .login-space .group label .icon {
     width: 15px;
     height: 15px;
@@ -350,3 +378,99 @@ a {
     color: #b3b3b3;
 }
 </style>
+=======
+<script>
+import { validationMixin } from "vuelidate";
+import { required, numeric, sameAs, minLength } from "vuelidate/lib/validators";
+
+
+export default {
+  mixins: [validationMixin],
+  data() {
+    return {
+      form: {
+        contact: null,
+        password: null,
+        cpassword: null,
+        activation: null,
+      },
+    };
+  },
+  validations: {
+    form: {
+      contact: {
+        required,
+        numeric
+      },
+      password: {
+        required,
+        minLength: minLength(6)
+      },
+      cpassword: {
+        required,
+        minLength: minLength(6),
+        sameAsPassword: sameAs('password')
+      },
+      activation: {
+        required
+      }
+    }
+  },
+  methods: {
+    validateState(contact) {
+      const { $dirty, $error } = this.$v.form[contact];
+      return $dirty ? !$error : null;
+    },
+    validateState(password) {
+      const { $dirty, $error } = this.$v.form[password];
+      return $dirty ? !$error : null;
+    },
+    validateState(cpassword) {
+      const { $dirty, $error } = this.$v.form[cpassword];
+      return $dirty ? !$error : null;
+    },
+    validateState(activation) {
+      const { $dirty, $error } = this.$v.form[activation];
+      return $dirty ? !$error : null;
+    },
+    // resetForm() {
+    //   this.form = {
+    //     email: null,
+    //     food: null
+    //   };
+
+    //   this.$nextTick(() => {
+    //     this.$v.$reset();
+    //   });
+    // },
+    onSubmit() {
+      this.$v.form.$touch();
+      if (this.$v.form.$anyError) {
+        return;
+      }
+      alert("Form submitted!");
+      this.$router.push('/booking')
+    },
+    resend(event) {
+      event.preventDefault()
+      alert("Please check your email for the activation link")
+    }
+  }
+};
+
+var timeleft = 10;
+var downloadTimer = setInterval(function () {
+  const btn = document.getElementById("myBtn")
+  if (timeleft <= 0) {
+    clearInterval(downloadTimer);
+    btn.disabled = false;
+    document.getElementById("countdown").innerHTML = "";
+  } else {
+    btn.disabled = true;
+    document.getElementById("countdown").innerHTML = "Didn't receive the link? Resend in " + timeleft + " seconds";
+  }
+  timeleft -= 1;
+}, 1000);
+
+</script>
+>>>>>>> Stashed changes
