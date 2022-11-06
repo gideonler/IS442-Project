@@ -53,11 +53,7 @@ public class AttractionController {
     }
     
     @PostMapping("/new")
-    public ResponseEntity createAttraction(@RequestBody AttractionRequest attractionRequest, 
-    @RequestParam(name="image", required = false) MultipartFile imageFile, 
-    @RequestParam(name= "emailtemplate") MultipartFile emailTemplateFile, 
-    @RequestParam(name="attachment", required = false) MultipartFile attachmentPDFFile) throws IOException {
-        AttractionService attractionService = new AttractionService();
+    public ResponseEntity createAttraction(@RequestBody AttractionRequest attractionRequest) {
 
         String attractionName = attractionRequest.getAttraction();
         double replacementFee = attractionRequest.getReplacementFee();
