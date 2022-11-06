@@ -34,11 +34,11 @@ public class LoanController {
 
     LOANSTATUS passStatus =LOANSTATUS.ACTIVE;
     @Autowired
-    private LoanRepository repository;
+    private LoanRepository loanRepository;
     @Autowired
-    private UserRepository userrepository;
+    private UserRepository userRepository;
     @Autowired
-    private PassRepository passrepository;
+    private PassRepository passRepository;
     @Autowired
     private LoanService loanService;
 
@@ -51,30 +51,26 @@ public class LoanController {
         String userEmail = loanRequest.getUserEmail();
         Date loanDate = loanRequest.getLoanDate();
         String attractionName = loanRequest.getAttractionName();
-        LoanService loanService= new LoanService(repository,passrepository,userrepository);
+        LoanService loanService= new LoanService(loanRepository,passRepository,userRepository);
         return loanService.addBooking(userEmail, loanDate, attractionName);
 
     }
 
     @PostMapping("/cancel")
     public ResponseEntity cancellLoan(@RequestBody String loanID) {
-        String cancel=new LoanService(repository,passrepository,userrepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
-        return ResponseEntity.ok("Pass has been cancelled");
+        // String cancel=new LoanService(loanRepository,passRepository,userRepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
+        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
+        return responseEntity;
+        // return ResponseEntity.ok("Pass has been cancelled");
     }
     
-    // //for creating new passes for an existing attraction
-    // @PostMapping("{placeOfInterest}/newpass")
-    // public ResponseEntity createPasses(@PathVariable("placeOfInterest") String placeOfInterest, @RequestBody PassRequest passRequest) {
-    //     PassService passService = new PassService(repository);
-    //     passService.createPass(placeOfInterest, passRequest);
-    //     return ResponseEntity.ok("Uploaded");
-    // }
+
 
     @DeleteMapping("/all/{loanId}")
     public ResponseEntity deleteBooking(@PathVariable String loanID) {
-        Optional<Loan> loan = this.repository.findById(loanID);
+        Optional<Loan> loan = this.loanRepository.findById(loanID);
         if(loan.isPresent()){
-            this.repository.deleteById(loanID);
+            this.loanRepository.deleteById(loanID);
             return ResponseEntity.ok("Successfully deleted.");
         }
         else {
@@ -82,14 +78,17 @@ public class LoanController {
         }
     }
 
-    // @GetMapping("/{userEmail}")
-    // public ResponseEntity<List<Loan>> getLoanByUserEmail(@PathVariable("userEmail") String userEmail) {
-        
-    //     List<Loan>uEmail=new LoanService(repository).checkLoan(userEmail);
-    //     return ResponseEntity.ok(uEmail);
 
-    // }
-
+    @GetMapping("/{userEmail}")
+    public ResponseEntity getLoanByUserEmail(@PathVariable("userEmail") String userEmail){
+        Optional<Loan> loan = loanRepository.findByUserEmail(userEmail);
+        if(loan.isPresent()) {
+            return ResponseEntity.ok(loan.get());
+        }
+        else {
+            return ResponseEntity.badRequest().body("User was not found!");
+        }
+    }
 
 
 
