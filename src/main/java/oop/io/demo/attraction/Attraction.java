@@ -98,9 +98,9 @@ public class Attraction {
         this.attachmentPDFFilename = attachmentPDFFilename;
     }
 
-    @Transient
+    //@Transient
     public String getTemplateFilePath() {
-        return "/templates/" + attractionName + "/" + templateFilename;
+        return "/templates/" + attractionName;
     }
 
     @Transient
@@ -108,8 +108,8 @@ public class Attraction {
         return "/templates/" + attractionName + "/" + imageFilename;
     }
     
-    @Transient
-    public String geAttachmentPDFFilePath() {
-        return "/templates/" + attractionName + "/" + attachmentPDFFilename;
+    //@Transient
+    public String getAttachmentPDFFilePath() {
+        return "/attachments/" + attractionName;
     }
 }

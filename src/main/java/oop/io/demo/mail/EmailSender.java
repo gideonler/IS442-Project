@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import oop.io.demo.attraction.Attraction;
+import oop.io.demo.attraction.AttractionRepository;
 import oop.io.demo.csvhandler.Response;
 import oop.io.demo.loan.Loan;
 import oop.io.demo.loan.LoanRepository;
 import oop.io.demo.mail.payload.BookingRequest;
-import oop.io.demo.mail.payload.ConfirmRequest;
+import oop.io.demo.mail.payload.CollectedRequest;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 
@@ -19,11 +21,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/send")
+@RequestMapping("/email")
 public class EmailSender {
     @Autowired
     EmailService emailService;
@@ -32,47 +35,55 @@ public class EmailSender {
 
     private final LoanRepository loanRepository;
 
-    public EmailSender(UserRepository userRepository, LoanRepository loanRepository) {
+    private final AttractionRepository attractionRepository;
+
+    public EmailSender(UserRepository userRepository, LoanRepository loanRepository, AttractionRepository attractionRepository) {
         this.userRepository = userRepository;
         this.loanRepository = loanRepository;
+        this.attractionRepository = attractionRepository;
     }
     
-    // Sending Email Templates With/Without Attachments
-        // YOU NEED TO ADD THE DATE IN THE MODEL AND GET AS REQUEST
+    // Sending Email Templates With/Without Attachments --> For Confirmed Bookings
     @PostMapping("/booking")
     public ResponseEntity sendAttachmentMessage(@Valid @RequestBody BookingRequest bookingRequest) throws Exception {
         try{
+            //Take user email and loanId out of Booking Request
             String emailTo = bookingRequest.getEmail();
             String loanId = bookingRequest.getLoanId();
             User user = userRepository.findByEmail(emailTo).get();
             Loan loan = loanRepository.findByLoanId(loanId);
 
+            //Create email
             Email email = new Email();
             email.setTo(emailTo);
             email.setFrom("oopg2t4@outlook.com");
             email.setSubject("Booking Confirmation");
             email.setContent("Sending mail");
+
+            //Set values into email template - name, attractionname, passno, loandate
             Map<String, Object> model = new HashMap<>();
             model.put("name", user.getName());
-            model.put("attractionName", loan.getAttractionName());
-
-            // TODO GET CORPPASS NO using loan.getPassNo() !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            model.put("corpPassNumber", "123456");
-
+            String attractionName = loan.getAttractionName();
+            model.put("attractionName", attractionName);
+            model.put("corpPassNumber", loan.getPassNo());
             Date loanDate = loan.getLoanDate();
             SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy");
             String strDate = formatter.format(loanDate);  
             model.put("loanDate", strDate);
             email.setModel(model);
     
-            // TODO put in the template from attraction collection
-            String template = bookingRequest.getTemplate();
-            
-            if (bookingRequest.getAttachment() == null){
-                emailService.sendEmailTemplate(email, template);
+            // Prepare template path and attachment path (if found)
+            Attraction attraction = attractionRepository.findByAttractionName(attractionName).get();
+            String template = attraction.getTemplateFilename();
+            String templatePath = attraction.getTemplateFilePath();
+            String attachment = attraction.getAttachmentPDFFilename();
+
+            // two ways to send email dependent on whether there is attachment or not 
+            if (attachment == null){
+                emailService.sendEmailTemplate(email, template, templatePath);
             } else {
-                String attachment = bookingRequest.getAttachment();
-                emailService.sendEmailWithAttachment(email, template, attachment);
+                String attachmentPath = attraction.getAttachmentPDFFilePath();
+                emailService.sendEmailWithAttachment(email, template, templatePath, attachment, attachmentPath);
             }
             return ResponseEntity.ok("Check your email for your booking information!");
             
@@ -82,16 +93,11 @@ public class EmailSender {
     }
     // Sending Pass Collected Emails
     @PostMapping("/collected")
-    public ResponseEntity sendCollectedMessage(@Valid @RequestBody ConfirmRequest confirmRequest) throws Exception {
+    public ResponseEntity sendCollectedMessage(@Valid @RequestBody CollectedRequest collectedRequest) throws Exception {
         try {
-            Email email = new Email();
-            email.setTo(confirmRequest.getEmail());
-            email.setFrom("oopg2t4@outlook.com");
-            email.setSubject("[Notification] Pass Collected");
-            email.setContent("Sending mail");
-    
-            String t = "Pass Collected Email.html";
-            emailService.sendSimpleEmailTemplate(email, t);
+            //Take user email to direct the collected message to the user
+            String email = collectedRequest.getEmail();
+            emailService.sendCollectedEmail(email);
             return ResponseEntity.ok("Email sent!");
         } catch (Exception e){
             return ResponseEntity.badRequest().body("Email is not sent.");
@@ -100,10 +106,10 @@ public class EmailSender {
 
     //Reminder Emails
     @PostMapping("/tocollect")
-    public ResponseEntity sendToCollectMessage(@Valid @RequestBody ConfirmRequest confirmRequest) throws Exception {
+    public ResponseEntity sendToCollectMessage(@Valid @RequestBody CollectedRequest collectedRequest) throws Exception {
         try {
             Email email = new Email();
-            email.setTo(confirmRequest.getEmail());
+            email.setTo(collectedRequest.getEmail());
             email.setFrom("oopg2t4@outlook.com");
             email.setSubject("[Notification] Collect your Pass");
             email.setContent("Sending mail");
