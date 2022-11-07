@@ -1,14 +1,17 @@
 <template>
     <card>
       <h4 slot="header" class="card-title"><strong>Create New Attraction</strong></h4>
-      <form>  
+      <form enctype="multipart/form-data">  
         <div class="row">
           <div class="col-md-12">
             <base-input type="text"
+                      class="mb-0"
                       label="Attraction Name"
                       placeholder="eg. Singapore Gardens"
-                      v-model="attractionname">
+                      v-model="attractionname"
+                      >
             </base-input>
+            <small class="text-danger" v-if="!isUniqueName">Attraction name exists. Try another name.</small>
           </div>
         </div>
         <div class="row">
@@ -37,6 +40,7 @@
             <div class="col-md-12">
                 <label>Templates</label>
                 <b-form-file
+                enctype="multipart/form-data"
                 v-model="email_file"
                 :state="Boolean(email_file)"
                 placeholder="Upload Email Template Here..."
@@ -47,6 +51,7 @@
         <div class="row">
             <div class="col-md-12">
                 <b-form-file
+                enctype="multipart/form-data"
                 v-model="pdf_file"
                 :state="Boolean(pdf_file)"
                 placeholder="Upload PDF Attachement Template Here..."
@@ -59,6 +64,7 @@
             <div class="col-md-12">
                 <label>Pass Image</label>
                 <b-form-file
+                enctype="multipart/form-data"
                 v-model="image"
                 accept=".jpg, .jpeg, .png"
                 :state="Boolean(image)"
@@ -69,7 +75,7 @@
         </div>
 
         <div class="text-center">
-          <b-button type="submit" variant="primary" class="float-right" @click.prevent="createAttraction">
+          <b-button type="submit" variant="primary" class="float-right" @click.prevent="createAttraction" :disabled="!isFormValid">
             Create Attraction
           </b-button>
         </div>
@@ -102,34 +108,57 @@
           pdf_file_name: null,
           image_name: null,
           selected_passtype: '',
+          current_attractions: [],
+          attraction_names: [],
           options: [
           { text: 'Physical Card', value: 'PHYSICALPASS' },
           { text: 'E-card', value: 'ELECTRONICPASS' }
           ],
           api: {
-            create_attraction: "http://localhost:8080/attraction/new" ,
+            create_attraction: "http://localhost:8080/attractionmanagement/new" ,
             upload_files:  "",
-            upload_image: ""
+            upload_image: "",
+            get_attractions: "http://localhost:8080/attraction/attractions"
           },
         }
       },
       watch: {
         attractionname() {
-            this.api.upload_files =  "http://localhost:8080/attraction/" + this.attractionname + "/uploadfiles"
-            this.api.upload_image =  "http://localhost:8080/attraction/" + this.attractionname + "/uploadimage"
+            this.api.upload_files =  "http://localhost:8080/attractionmanagement/" + this.attractionname + "/uploadfiles"
+            this.api.upload_image =  "http://localhost:8080/attractionmanagement/" + this.attractionname + "/uploadimage"
         },
       },
-
-      
-      methods: {
+      computed:{
         isFormValid(){
-        return this.attractionname!= '' &&
-          this.replacementfee!= -1 &&
-          this.email_file!= null &&
-          this.pdf_file!= null &&
-          this.image!= null &&
-          this.selected_passtype!= ''
+          return this.attractionname!= '' &&
+            this.isUniqueName &&
+            this.replacementfee!= -1 &&
+            this.email_file!= null &&
+            this.pdf_file!= null &&
+            this.image!= null &&
+            this.selected_passtype!= ''
+          },
+        isUniqueName(){
+          return !this.attraction_names.includes(this.attractionname)
         },
+      },
+      async mounted(){
+        await axios
+          .get(this.api.get_attractions)
+          .then((response) => {
+            this.current_attractions = response.data
+          })
+          .catch((error) => {
+              if (error) {
+                  console.log(error);
+              }
+          });
+
+        for(var attraction of this.current_attractions){
+          this.attraction_names.push(attraction["attractionName"])
+        }
+      },
+      methods: {
         formReset(){
           this.attractionname= ''
           this.replacementfee= 0
@@ -138,56 +167,51 @@
           this.image= null,
           this.selected_passtype= ''
         },
-        getBase64(file) {
-          return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = error => reject(error);
-        });
-        },
         async createAttraction () {
-          //TODO: API Call to update database
-          if(this.isFormValid()){
+          if(this.isFormValid){
 
             //1. create attraction details
-            // await axios 
-            // .post(this.api.create_attraction, 
-            //   {
-            //     "attraction" : this.attractionname,
-            //     "replacementFee" : parseFloat(this.replacementfee),
-            //     "passType" : this.selected_passtype
-            //   }
-            //   )
-            // .then((response) => {
-            //   console.log(response);
-            // }); 
-
-            // let email_file = await this.getBase64(this.email_file);
-            // let pdf_file = await this.getBase64(this.pdf_file);
-            // let image = await this.getBase64(this.image);
-
-            console.log(this.api.upload_files)
-            console.log(this.api.upload_image)
-            console.log(this.email_file)
-            console.log(this.image)
-            //2. upload templates
             await axios 
-            .put(this.api.upload_files, 
+            .post(this.api.create_attraction, 
               {
-                "emailtemplate" : this.email_file,
-                "attachment" : this.pdf_file
+                "attraction" : this.attractionname,
+                "replacementFee" : parseFloat(this.replacementfee),
+                "passType" : this.selected_passtype
               }
               )
             .then((response) => {
               console.log(response);
             }); 
 
+            //2. upload templates
+            let filesData = new FormData();
+            filesData.append('emailtemplate', this.email_file);
+            filesData.append('attachment', this.pdf_file);
+
+            await axios 
+            .put(this.api.upload_files, 
+            filesData,
+              {
+                headers: {
+                'Content-Type': 'multipart/formdata'      
+              }
+            }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+                       
             //3. upload image
+            let imageData = new FormData();
+            imageData.append('image', this.image);
+
             await axios 
             .put(this.api.upload_image, 
+               imageData,
               {
-                "image" : this.image
+                headers: {
+                'Content-Type': 'multipart/formdata'      
+              }
               }
               )
             .then((response) => {
