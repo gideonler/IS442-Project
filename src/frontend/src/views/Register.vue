@@ -17,19 +17,21 @@
         <b-form-input id="example-input-1" name="example-input-1" v-model="$v.form.name.$model"
           :state="validateState('name')" aria-describedby="input-1-live-feedback"></b-form-input>
 
-        <b-form-invalid-feedback id="input-1-live-feedback">This is a required field and must not be longer than 50 characters.</b-form-invalid-feedback>
+        <b-form-invalid-feedback id="input-1-live-feedback">This is a required field and must not be longer than 50
+          characters.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="example-input-group-3" label="Email" label-for="example-input-3">
         <b-form-input id="example-input-3" name="example-input-3" v-model="$v.form.email.$model"
           :state="validateState('email')" aria-describedby="input-3-live-feedback"></b-form-input>
 
-        <b-form-invalid-feedback id="input-3-live-feedback">This is a required field and must end with @nysi.org.sg or @sportsschool.edu.sg
+        <b-form-invalid-feedback id="input-3-live-feedback">This is a required field and must end with @nysi.org.sg or
+          @sportsschool.edu.sg
         </b-form-invalid-feedback>
       </b-form-group>
 
       <b-button type="submit" variant="primary">Get Activation Link</b-button>
-    
+
       <!-- <b-button class="ml-2" @click="resetForm()">Reset</b-button> -->
 
       <!-- <b-button variant="primary" v-b-modal.modal-prevent-closing>Get Activation Link</b-button> -->
@@ -105,7 +107,8 @@ export default {
       if (this.$v.form.$anyError) {
         return;
       }
-      this.$router.push('/authentication')
+      // this.$router.push('/authentication')
+      // console.log(this.form.email);
       alert("Form submitted!");
     }
   }
