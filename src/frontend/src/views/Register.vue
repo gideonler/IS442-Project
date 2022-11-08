@@ -4,7 +4,7 @@
     <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
       <li class="nav-item" role="presentation">
         <a class="nav-link" id="tab-login" data-mdb-toggle="pill" href="#pills-login" role="tab"
-          aria-controls="pills-login" aria-selected="false">Login</a>
+          aria-controls="pills-login" aria-selected="false" @click="login()">Login</a>
       </li>
       <li class="nav-item" role="presentation">
         <a class="nav-link active" id="tab-register" data-mdb-toggle="pill" href="#pills-register" role="tab"
@@ -55,6 +55,7 @@ body {
 </style>
 
 <script>
+import axios from "axios";
 import { validationMixin } from "vuelidate";
 import { required, maxLength, helpers } from "vuelidate/lib/validators";
 const email_validation = helpers.regex('email', /(?:[a-z0-9]+@nysi.org.sg|[a-z0-9]+@sportsschool.edu.sg)/);
@@ -64,11 +65,9 @@ export default {
   data() {
     return {
       form: {
-        name: null,
-        email: null,
+        name: '',
+        email: '',
       },
-      status: 'not_accepted',
-      link: ''
     };
   },
   validations: {
@@ -109,7 +108,23 @@ export default {
       }
       // this.$router.push('/authentication')
       // console.log(this.form.email);
-      alert("Form submitted!");
+      // alert("Form submitted!");
+
+      return axios
+        .post("http://localhost:8080/auth/signup", {
+          name: this.form.name,
+          email: this.form.email,
+        })
+        .then((response) => {
+          console.log(response.data);
+          this.$router.push('/authentication')
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    login() {
+      this.$router.push('/login')
     }
   }
 };

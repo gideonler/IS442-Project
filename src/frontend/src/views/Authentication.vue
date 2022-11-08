@@ -56,6 +56,7 @@
 </template>
   
 <script>
+import axios from "axios";
 import { validationMixin } from "vuelidate";
 import { required, minLength, numeric, sameAs } from "vuelidate/lib/validators";
 
@@ -118,16 +119,42 @@ export default {
         //     this.$v.$reset();
         //   });
         // },
+
         onSubmit() {
             this.$v.form.$touch();
             if (this.$v.form.$anyError) {
                 return;
             }
-            alert("Form submitted!");
+            // alert("Form submitted!");
+
+            return axios
+                .get("http://localhost:8080/auth/confirm", {
+                    contact: this.form.contact,
+                    password: this.form.password,
+                    cpassword: this.form.cpassword,
+                    token: this.form.token,
+                })
+                .then((response) => {
+                    console.log(response.data);
+                    this.$router.push("/login");
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         },
         resend(event) {
             event.preventDefault()
             alert("Please check your email for the token")
+            return axios
+                .post("http://localhost:8080/auth/resend", {
+                    contact: this.form.contact,
+                })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     }
 

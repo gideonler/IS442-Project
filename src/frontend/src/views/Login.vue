@@ -40,13 +40,24 @@
       <!-- <div>State: <strong>{{ status }}</strong></div> -->
 
       <b-button type="submit" variant="primary">Login</b-button>
-      <!-- <b-button class="ml-2" @click="resetForm()">Reset</b-button> -->
+
+      <br>
+
+      Forget password?
+      <b-button class="ml-2" @click="forgetPassword()">Reset Password</b-button>
+
     </b-form>
   </div>
 </template>
 
+<style>
+body {
+  padding: 1rem;
+}
+</style>
+
 <script>
-// import axios from "axios";
+import axios from "axios";
 import { validationMixin } from "vuelidate";
 import { required, minLength, helpers } from "vuelidate/lib/validators";
 const email_validation = helpers.regex('email', /(?:[a-z0-9]+@nysi.org.sg|[a-z0-9]+@sportsschool.edu.sg)/);
@@ -72,49 +83,83 @@ export default {
         required,
         minLength: minLength(6)
       }
-    },
-    methods: {
-      validateState(email) {
-        const { $dirty, $error } = this.$v.form[email];
-        return $dirty ? !$error : null;
-      },
-      validateState(password) {
-        const { $dirty, $error } = this.$v.form[password];
-        return $dirty ? !$error : null;
-      },
-      // resetForm() {
-      //   this.form = {
-      //     email: null,
-      //     food: null
-      //   };
-
-      //   this.$nextTick(() => {
-      //     this.$v.$reset();
-      //   });
-      // },
-
-      onSubmit() {
-        this.$v.form.$touch();
-        if (this.$v.form.$anyError) {
-          return;
-        }
-
-        // alert("Form submitted!");
-        // console.log[this.$v.form[email]];
-        // console.log[this.$v.form[password]];
-        this.$router.push('/booking');
-
-      },
-      register() {
-        this.$router.push('/register');
-      }
     }
-  }
+  },
+  methods: {
+    validateState(email) {
+      const { $dirty, $error } = this.$v.form[email];
+      return $dirty ? !$error : null;
+    },
+    validateState(password) {
+      const { $dirty, $error } = this.$v.form[password];
+      return $dirty ? !$error : null;
+    },
+    // resetForm() {
+    //   this.form = {
+    //     email: null,
+    //     food: null
+    //   };
+
+    //   this.$nextTick(() => {
+    //     this.$v.$reset();
+    //   });
+    // },
+
+    onSubmit() {
+      this.$v.form.$touch();
+      if (this.$v.form.$anyError) {
+        return;
+      }
+
+      // alert("Form submitted!");
+      // console.log(this.form.email);
+      // console.log(this.form.password);
+      // console.log(this.status);
+      return axios
+        .post("http://localhost:8080/auth/signin", {
+          email: this.form.email,
+          password: this.form.password,
+          status: this.status
+        })
+        .then(response => {
+          console.log(response.data);
+          this.$router.push('/booking');
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+
+    register() {
+      this.$router.push('/register');
+    },
+
+    forgetPassword() {
+      return axios
+        .post("http://localhost:8080/password/reset", {
+          email: this.form.email
+        })
+        .then(response => {
+          console.log(response.data);
+          this.$router.push('/reset');
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  },
+  // mounted() {
+  //   axios
+  //     .get("http://localhost:8080/auth/signup")
+  //     .then((response) => {
+  //       console.log(response.data);
+  //       var login_details = response.data;
+  //       this.login_details = login_details;
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }
+
 };
 </script>
-
-<style>
-body {
-  padding: 1rem;
-}
-</style>
