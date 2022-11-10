@@ -59,6 +59,7 @@ import axios from "axios";
 import { validationMixin } from "vuelidate";
 import { required, maxLength, helpers } from "vuelidate/lib/validators";
 const email_validation = helpers.regex('email', /(?:[a-z0-9]+@nysi.org.sg|[a-z0-9]+@sportsschool.edu.sg)/);
+import authentication from "/Authentication.vue";
 
 export default {
   mixins: [validationMixin],
@@ -67,6 +68,9 @@ export default {
       form: {
         name: '',
         email: '',
+      },
+      api: {
+        register: 'http://localhost:8080/auth/signup',
       },
     };
   },
@@ -82,6 +86,10 @@ export default {
       }
     }
   },
+  components: {
+    authentication
+  },
+  
   methods: {
     validateState(name) {
       const { $dirty, $error } = this.$v.form[name];
@@ -111,9 +119,9 @@ export default {
       // alert("Form submitted!");
 
       return axios
-        .post("http://localhost:8080/auth/signup", {
-          name: this.form.name,
-          email: this.form.email,
+        .post(this.api.register, {
+          "name": this.form.name,
+          "email": this.form.email,
         })
         .then((response) => {
           console.log(response.data);

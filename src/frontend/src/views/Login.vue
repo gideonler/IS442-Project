@@ -70,7 +70,11 @@ export default {
         email: '',
         password: '',
       },
-      status: 'forget_me'
+      status: 'forget_me',
+      api: {
+        sign_in: 'http://localhost:8000/auth/sign_in',
+        reset: 'http://localhost:8000/auth/reset',
+      }
     };
   },
   validations: {
@@ -116,10 +120,10 @@ export default {
       // console.log(this.form.password);
       // console.log(this.status);
       return axios
-        .post("http://localhost:8080/auth/signin", {
-          email: this.form.email,
-          password: this.form.password,
-          status: this.status
+        .post(this.api.sign_in, {
+          "email": this.form.email,
+          "password": this.form.password,
+          "status": this.status
         })
         .then(response => {
           console.log(response.data);
@@ -136,8 +140,8 @@ export default {
 
     forgetPassword() {
       return axios
-        .post("http://localhost:8080/password/reset", {
-          email: this.form.email
+        .post(this.api.reset, {
+          "email": this.form.email
         })
         .then(response => {
           console.log(response.data);

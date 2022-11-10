@@ -63,6 +63,7 @@ import { required, minLength, numeric, sameAs } from "vuelidate/lib/validators";
 export default {
     mixins: [validationMixin],
     data() {
+        props: ["email"]
         return {
             form: {
                 email: null,
@@ -70,6 +71,9 @@ export default {
                 cpassword: null,
                 activation: null,
             },
+            api: {
+                confirm: "http://localhost:8080/auth/confirm",
+            }
         };
     },
     validations: {
@@ -128,11 +132,11 @@ export default {
             // alert("Form submitted!");
 
             return axios
-                .get("http://localhost:8080/auth/confirm", {
-                    contact: this.form.contact,
-                    password: this.form.password,
-                    cpassword: this.form.cpassword,
-                    token: this.form.token,
+                .get(this.api.confirm, {
+                    "contact": this.form.contact,
+                    "password": this.form.password,
+                    "cpassword": this.form.cpassword,
+                    "token": this.form.token,
                 })
                 .then((response) => {
                     console.log(response.data);
