@@ -1,5 +1,4 @@
 <template>
-
     <div>
 
         <b-form @submit.stop.prevent="onSubmit">

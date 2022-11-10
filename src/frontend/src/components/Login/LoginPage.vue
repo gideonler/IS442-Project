@@ -11,15 +11,8 @@
       </li>
     </ul>
 
-    <b-form @submit.stop.prevent="onSubmit">
-      <b-form-group id="example-input-group-1" label="Email" label-for="example-input-1">
-        <b-form-input id="example-input-1" name="example-input-1" v-model="$v.form.email.$model"
-          :state="validateState('email')" aria-describedby="input-1-live-feedback"></b-form-input>
-
         <b-form-invalid-feedback id="input-1-live-feedback">This is a required field and must end with @nysi.org.sg or @sportsschool.edu.sg</b-form-invalid-feedback>
       </b-form-group>
-
-      <div> </div>
 
       <b-form-group id="example-input-group-3" label="Password" label-for="example-input-3">
         <b-form-input id="example-input-3" name="example-input-3" v-model="$v.form.password.$model"
@@ -30,8 +23,10 @@
       </b-form-group>
 
       <b-form-group id="example-input-group-4" label-for="example-input-4">
+
         <b-form-checkbox id="checkbox-1" v-model="status" name="checkbox-1" value="remember_me"
           unchecked-value="forget_me">
+
           Remember me
         </b-form-checkbox>
       </b-form-group>
@@ -91,7 +86,7 @@ export default {
     //     this.$v.$reset();
     //   });
     // },
-    
+
     onSubmit() {
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
@@ -102,7 +97,6 @@ export default {
       console.log[this.$v.form[email]];
       console.log[this.$v.form[password]];
       this.$router.push('/booking');
-
     },
     register() {
       this.$router.push('/register');

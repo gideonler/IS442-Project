@@ -89,7 +89,6 @@ export default {
   components: {
     authentication
   },
-  
   methods: {
     validateState(name) {
       const { $dirty, $error } = this.$v.form[name];

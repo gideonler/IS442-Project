@@ -47,24 +47,4 @@ public class PassController {
         return ResponseEntity.ok(repository.findByPassStatus(status).get());
     }
     
-    //for creating new passes for an existing attraction
-    @PostMapping("/{attractionname}/new")
-    public ResponseEntity createPasses(@PathVariable("attractionname") String attractionName, @RequestBody PassRequest passRequest) {
-        PassService passService = new PassService(repository, attractionRepository);
-        ResponseEntity responseEntity = passService.createPass(passRequest);
-        return responseEntity;
-    }
-    
-    @GetMapping("/{passid}/deactivate")
-    public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
-        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
-        return responseEntity;
-    }
-
-    @GetMapping("/{passid}/activate")
-    public ResponseEntity activatePass(@PathVariable("passid") String passId) {
-        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
-        return responseEntity;
-    }
-
 }
