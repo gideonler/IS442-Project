@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.pass.PassRepository;
-
 @CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/attraction")
