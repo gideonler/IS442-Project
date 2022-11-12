@@ -4,7 +4,7 @@
     <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
       <li class="nav-item" role="presentation">
         <a class="nav-link" id="tab-login" data-mdb-toggle="pill" href="#pills-login" role="tab"
-          aria-controls="pills-login" aria-selected="false">Login</a>
+          aria-controls="pills-login" aria-selected="false" @click="login()">Login</a>
       </li>
       <li class="nav-item" role="presentation">
         <a class="nav-link active" id="tab-register" data-mdb-toggle="pill" href="#pills-register" role="tab"
@@ -17,19 +17,21 @@
         <b-form-input id="example-input-1" name="example-input-1" v-model="$v.form.name.$model"
           :state="validateState('name')" aria-describedby="input-1-live-feedback"></b-form-input>
 
-        <b-form-invalid-feedback id="input-1-live-feedback">This is a required field.</b-form-invalid-feedback>
+        <b-form-invalid-feedback id="input-1-live-feedback">This is a required field and must not be longer than 50
+          characters.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="example-input-group-3" label="Email" label-for="example-input-3">
         <b-form-input id="example-input-3" name="example-input-3" v-model="$v.form.email.$model"
           :state="validateState('email')" aria-describedby="input-3-live-feedback"></b-form-input>
 
-        <b-form-invalid-feedback id="input-3-live-feedback">This is a required field and the minimum length is 6.
+        <b-form-invalid-feedback id="input-3-live-feedback">This is a required field and must end with @nysi.org.sg or
+          @sportsschool.edu.sg
         </b-form-invalid-feedback>
       </b-form-group>
 
       <b-button type="submit" variant="primary">Get Activation Link</b-button>
-    
+
       <!-- <b-button class="ml-2" @click="resetForm()">Reset</b-button> -->
 
       <!-- <b-button variant="primary" v-b-modal.modal-prevent-closing>Get Activation Link</b-button> -->
@@ -53,30 +55,39 @@ body {
 </style>
 
 <script>
+import axios from "axios";
 import { validationMixin } from "vuelidate";
-import { required, minLength } from "vuelidate/lib/validators";
+import { required, maxLength, helpers } from "vuelidate/lib/validators";
+const email_validation = helpers.regex('email', /(?:[a-z0-9]+@nysi.org.sg|[a-z0-9]+@sportsschool.edu.sg)/);
+import authentication from "/Authentication.vue";
 
 export default {
   mixins: [validationMixin],
   data() {
     return {
       form: {
-        name: null,
-        email: null,
+        name: '',
+        email: '',
       },
-      status: 'not_accepted',
-      link: ''
+      api: {
+        register: 'http://localhost:8080/auth/signup',
+      },
     };
   },
   validations: {
     form: {
       name: {
-        required
+        required,
+        maxLength: maxLength(50)
       },
       email: {
-        required
+        required,
+        email_validation
       }
     }
+  },
+  components: {
+    authentication
   },
   methods: {
     validateState(name) {
@@ -102,8 +113,25 @@ export default {
       if (this.$v.form.$anyError) {
         return;
       }
-      this.$router.push('/authentication')
-      alert("Form submitted!");
+      // this.$router.push('/authentication')
+      // console.log(this.form.email);
+      // alert("Form submitted!");
+
+      return axios
+        .post(this.api.register, {
+          "name": this.form.name,
+          "email": this.form.email,
+        })
+        .then((response) => {
+          console.log(response.data);
+          this.$router.push('/authentication')
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    login() {
+      this.$router.push('/login')
     }
   }
 };

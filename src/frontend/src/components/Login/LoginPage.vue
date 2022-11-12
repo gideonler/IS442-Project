@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
       <li class="nav-item" role="presentation">
@@ -12,12 +11,7 @@
       </li>
     </ul>
 
-    <b-form @submit.stop.prevent="onSubmit">
-      <b-form-group id="example-input-group-1" label="Email" label-for="example-input-1">
-        <b-form-input id="example-input-1" name="example-input-1" v-model="$v.form.email.$model"
-          :state="validateState('email')" aria-describedby="input-1-live-feedback"></b-form-input>
-
-        <b-form-invalid-feedback id="input-1-live-feedback">This is a required field.</b-form-invalid-feedback>
+        <b-form-invalid-feedback id="input-1-live-feedback">This is a required field and must end with @nysi.org.sg or @sportsschool.edu.sg</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group id="example-input-group-3" label="Password" label-for="example-input-3">
@@ -29,65 +23,49 @@
       </b-form-group>
 
       <b-form-group id="example-input-group-4" label-for="example-input-4">
-        <b-form-checkbox id="checkbox-1" v-model="status" name="checkbox-1" value="accepted"
-          unchecked-value="not_accepted">
+
+        <b-form-checkbox id="checkbox-1" v-model="status" name="checkbox-1" value="remember_me"
+          unchecked-value="forget_me">
+
           Remember me
         </b-form-checkbox>
       </b-form-group>
 
       <!-- <div>State: <strong>{{ status }}</strong></div> -->
 
-      <!-- 
-      <b-form-group id="example-input-group-2" label="Food" label-for="example-input-2">
-        <b-form-select
-          id="example-input-2"
-          name="example-input-2"
-          v-model="$v.form.food.$model"
-          :options="foods"
-          :state="validateState('food')"
-          aria-describedby="input-2-live-feedback"
-        ></b-form-select>
-
-        <b-form-invalid-feedback id="input-2-live-feedback">This is a required field.</b-form-invalid-feedback>
-      </b-form-group> -->
-
-      <b-button type="submit" variant="primary">Sign In</b-button>
+      <b-button type="submit" variant="primary">Login</b-button>
       <!-- <b-button class="ml-2" @click="resetForm()">Reset</b-button> -->
     </b-form>
   </div>
 </template>
 
-<style>
-body {
-  padding: 1rem;
-}
-</style>
-
 <script>
+import axios from "axios";
 import { validationMixin } from "vuelidate";
-import { required, minLength } from "vuelidate/lib/validators";
+import { required, minLength, helpers } from "vuelidate/lib/validators";
+const email_validation = helpers.regex('email', /(?:[a-z0-9]+@nysi.org.sg|[a-z0-9]+@sportsschool.edu.sg)/);
 
 export default {
   mixins: [validationMixin],
   data() {
     return {
       form: {
-        email: null,
-        password: null,
+        email: '',
+        password: '',
       },
-      status: 'not_accepted'
+      status: 'forget_me'
     };
   },
   validations: {
     form: {
       email: {
-        required
+        required,
+        email_validation
       },
       password: {
         required,
         minLength: minLength(6)
       }
-    }
   },
   methods: {
     validateState(email) {
@@ -108,17 +86,28 @@ export default {
     //     this.$v.$reset();
     //   });
     // },
+
     onSubmit() {
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
         return;
       }
 
-      alert("Form submitted!");
+      // alert("Form submitted!");
+      console.log[this.$v.form[email]];
+      console.log[this.$v.form[password]];
+      this.$router.push('/booking');
     },
     register() {
       this.$router.push('/register');
     }
   }
-};
+}
+}
 </script>
+
+<style>
+body {
+  padding: 1rem;
+}
+</style>
