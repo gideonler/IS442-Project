@@ -40,13 +40,13 @@ public class AttractionManagementController {
         double replacementFee = attractionRequest.getReplacementFee();
         PASSTYPE passtype = PASSTYPE.valueOf(attractionRequest.getPassType().toUpperCase());
         
-        if(replacementFee==0.0) {
-            Attraction attraction = new Attraction(attractionName, passtype);
-            return ResponseEntity.ok(repository.save(attraction));
-        } else {
+        // if(replacementFee==0.0) {
+        //     Attraction attraction = new Attraction(attractionName, passtype);
+        //     return ResponseEntity.ok(repository.save(attraction));
+        // } else {
             Attraction attraction = new Attraction(attractionName, replacementFee, passtype);
             return ResponseEntity.ok(repository.save(attraction));
-        }
+        // }
     }
 
     //Upload files
