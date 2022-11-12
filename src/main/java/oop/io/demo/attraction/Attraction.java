@@ -112,7 +112,7 @@ public class Attraction {
 
     @Transient
     public String getImageFilePath() {
-        return "/templates/" + attractionName + "/" + imageFilename;
+        return "/src/main/resources/attractionicons/" + attractionName + "/" + imageFilename;
     }
     
     //@Transient
