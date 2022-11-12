@@ -13,7 +13,7 @@
     <b-carousel-slide  :key="index" v-for="index in no_active_card_groups">
         <template #img>
             <b-card-group deck >    
-                <b-card style="max-width:33.33%;" :key="attraction.attractionName"  v-for="attraction in active_attractions.slice((index-1)*3,((index-1)*3)+3)" :title="attraction.attractionName" img-height="200px" img-src="../../assets/images/gardens_by_the_bay.jpeg" img-alt="Image" img-top>
+                <b-card style="max-width:33.33%;" :key="attraction.attractionName"  v-for="attraction in active_attractions.slice((index-1)*3,((index-1)*3)+3)" :title="attraction.attractionName" img-height="200px" :img-src="attraction.imageFileName" img-alt="Image" img-top>
                     <b-card-text>
                 {{attraction.attractionName}}
                 </b-card-text>
@@ -70,7 +70,7 @@
   </template>
 
   <script>
-    // import axios from 'axios'
+    import axios from 'axios'
     import PassDataTable from './PassDataTable.vue'
     import EditAttractionModal from './EditAttractionModal.vue'
     
@@ -110,15 +110,15 @@
         }
     },
     mounted() {
-    //    axios
-    //         .get("http://localhost:8080/attraction/attractions")
-    //         .then((response) => {
-    //             var attraction_list = response.data;
-    //             this.attraction_list= attraction_list
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         })
+       axios
+            .get("http://localhost:8080/attraction/attractions")
+            .then((response) => {
+                var attraction_list = response.data;
+                this.attraction_list= attraction_list
+            })
+            .catch((error) => {
+                console.log(error);
+            })
 
         this.attraction_list= [
 {
