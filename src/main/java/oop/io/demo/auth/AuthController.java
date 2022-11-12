@@ -132,7 +132,7 @@ public class AuthController {
 
             //set isVerified to equal true
             userService = new UserService(userRepository);
-            userService.enableUser(confirmationToken.getUser().getEmail());
+            userService.enableDisableUser(confirmationToken.getUser().getEmail(), "Enable");
 
             return ResponseEntity.ok("Confirmed");
         }

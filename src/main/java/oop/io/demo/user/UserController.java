@@ -38,11 +38,26 @@ public class UserController {
         this.repository = userRepository;
     }
     
+    ////ALL ACCESS
+    //Get public user details by username
+    @GetMapping("/userdetails")
+    public ResponseEntity getPublicDetailsByUsername(@RequestBody Map map) {
+        try {
+            String username = (String) map.get("username");
+            User user= this.repository.findById(username).get();
+            UserPublicDetails publicUser = new UserPublicDetails(user.getEmail(), user.getContactNo(), user.getName());
+            return ResponseEntity.ok(publicUser);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching user details. Please check that username is entered correctly.");
+        }
+    }
+
     ////USER AND ADMIN ACCESS
     //Get user by username
     //Access: only admin and user with {username} can access
-    @GetMapping("/userbyusername")
-    public ResponseEntity findByUsername(@RequestBody Map map) {
+    @GetMapping("/mydetails")
+    public ResponseEntity getMyDetails(@RequestBody Map map) {
         try {
             String username = (String) map.get("username");
             User user= this.repository.findById(username).get();
@@ -52,6 +67,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Error fetching user details. Please check that username is entered correctly.");
         }
     }
+
     ////USER ONLY ACCESS
     //Edit user profile details
     //Access: user

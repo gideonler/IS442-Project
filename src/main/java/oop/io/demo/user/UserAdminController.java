@@ -65,15 +65,42 @@ public class UserAdminController {
     //Access: admin
     @PutMapping("/promote")
     public ResponseEntity makeUserAdmin(@RequestBody Map map) {
-        String username = (String) map.get("username");
-        if(username==null) return ResponseEntity.badRequest().body("No username entered.");
-        try {
-            User user = this.repository.findById(username).get();
-            user.setUserType(USERTYPE.ADMIN);
-            return ResponseEntity.ok(repository.save(user));
-        } catch(Exception e) {
-            return ResponseEntity.badRequest().body("User not found!");
-        }
+        UserService userService = new UserService(repository);
+        return userService.changeUserType(map, USERTYPE.ADMIN);
+    }
+
+    //Demote user to staff
+    //Access: admin
+    @PutMapping("/demote")
+    public ResponseEntity makeUserStaff(@RequestBody Map map) {
+        UserService userService = new UserService(repository);
+        return userService.changeUserType(map, USERTYPE.STAFF);
+    }
+
+    //Promote user to admin
+    //Access: admin
+    @PutMapping("/makego")
+    public ResponseEntity makeUserGo(@RequestBody Map map) {
+        UserService userService = new UserService(repository);
+        return userService.changeUserType(map, USERTYPE.GENERALOFFICE);
+    }
+
+    //Enable user
+    @PutMapping("/enable")
+    public ResponseEntity enableUser(@RequestBody Map map) {
+        UserService userService = new UserService(repository);
+        String email = (String) map.get("email");
+        if(email==null) return ResponseEntity.badRequest().body("No email entered.");
+        return userService.enableDisableUser(email, "Enable");
+    }
+
+    //Disable user
+    @PutMapping("/disable")
+    public ResponseEntity disableUser(@RequestBody Map map) {
+        UserService userService = new UserService(repository);
+        String email = (String) map.get("email");
+        if(email==null) return ResponseEntity.badRequest().body("No email entered.");
+        return userService.enableDisableUser(email, "Disable");
     }
 
     //Delete user with username {username}

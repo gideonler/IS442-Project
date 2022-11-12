@@ -3,10 +3,8 @@ package oop.io.demo.attraction;
 import java.io.IOException;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
 import oop.io.demo.fileuploadhelper.FileUploadUtil;
 
 public class AttractionService {
