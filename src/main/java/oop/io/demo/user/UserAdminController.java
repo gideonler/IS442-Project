@@ -107,10 +107,10 @@ public class UserAdminController {
     //Access: admin
     @DeleteMapping("/delete")
     public ResponseEntity deleteUser(@RequestBody Map map) {
-        String username = (String) map.get("username");
-        if(username==null) return ResponseEntity.badRequest().body("No username entered.");
+        String email = (String) map.get("email");
+        if(email==null) return ResponseEntity.badRequest().body("No email entered.");
         try {
-            User user = this.repository.findById(username).get();
+            User user = this.repository.findByEmail(email).get();
             repository.delete(user);
             return ResponseEntity.ok("Successfully deleted user.");
         } catch(Exception e) {

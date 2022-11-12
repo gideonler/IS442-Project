@@ -80,7 +80,7 @@ public class WebSecurityConfig {
           .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
              .authorizeRequests().antMatchers("/auth/**").permitAll()
              .antMatchers("/password/**").permitAll()
-             .antMatchers(h2ConsolePath + "/**").permitAll()
+             .antMatchers(h2ConsolePath + "/**").permitAll();
           // .antMatchers("/usermanagement/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
           // .antMatchers("/user").hasAnyAuthority(USERTYPE.ADMIN.toString())
           // .antMatchers("/user/editprofile").hasAnyAuthority(only the user themself)
@@ -91,7 +91,7 @@ public class WebSecurityConfig {
           // .antMatchers("/attraction/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
           // .antMatchers("/send").hasAnyAuthority(@yeoshi?)
           // .antMatchers("/book/**").permitAll()
-            .anyRequest().authenticated();
+          // .anyRequest().authenticated();
           // .and().formLogin().loginPage("/login").failureUrl("/login?error=true")
           // .defaultSuccessUrl("/home", true)
           // .usernameParameter("email")
