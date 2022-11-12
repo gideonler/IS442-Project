@@ -100,16 +100,17 @@ public class LoanService {
 
 
 
-    // public ResponseEntity changeLoanStatus(String loanId, PASSSTATUS passStatus){
-    //     Optional<Loan> l = loanRepository.findById(loanId);
-    //     if(!l.isPresent()) {
-    //         return ResponseEntity.badRequest().body("Loan does not exist");
-    //     }
-    //     Loan loan = l.get();
-    //     Loan.setLoanStatus(passStatus);
-    //     loanRepository.save(loan);
-    //     return ResponseEntity.ok("Changed status of pass successfully to: " + passStatus.toString());
-    // }
+
+    public ResponseEntity changeLoanStatus(String loanId, LOANSTATUS loanstatus){
+        Optional<Loan> l = loanRepository.findById(loanId);
+        if(!l.isPresent()) {
+            return ResponseEntity.badRequest().body("Loan does not exist");
+        }
+        Loan loan = l.get();
+        loan.setStatus(loanstatus);
+        loanRepository.save(loan);
+        return ResponseEntity.ok("Changed status of loan successfully to: " +loanstatus.toString());
+    }
 
     public String deleteBooking(String userEmail, Date loanDate) {
         Loan loan = loanRepository.findByLoanId(userEmail);
@@ -167,11 +168,11 @@ public class LoanService {
 
 
 
-    public void changeLoanStatus(String loanId, LOANSTATUS loanStatus) {
-        Loan l = loanRepository.findByLoanId(loanId);
-        // ArrayList<Loan>l=loanRepository.findByLoanId(loanId);
-        l.setStatus(loanStatus);
-    }
+    // public void changeLoanStatus(String loanId, LOANSTATUS loanStatus) {
+    //     Loan l = loanRepository.findByLoanId(loanId);
+    //     // ArrayList<Loan>l=loanRepository.findByLoanId(loanId);
+    //     l.setStatus(loanStatus);
+    // }
 
     // Method for getting userinfo of a loan
     public String getUserInfo(Date loanDate, String attractionName) {

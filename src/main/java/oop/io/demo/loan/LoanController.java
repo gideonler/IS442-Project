@@ -53,16 +53,21 @@ public class LoanController {
         String attractionName = loanRequest.getAttractionName();
         LoanService loanService= new LoanService(loanRepository,passRepository,userRepository);
         return loanService.addBooking(userEmail, loanDate, attractionName);
-
     }
 
-    @PostMapping("/cancel")
-    public ResponseEntity cancellLoan(@RequestBody String loanID) {
+    @GetMapping("/cancel")
+    public ResponseEntity cancellLoan(@RequestBody Map<String, String> loanIdMap) {
         // String cancel=new LoanService(loanRepository,passRepository,userRepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
-        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
+        String loanId = loanIdMap.get("loanId");
+        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).changeLoanStatus(loanId, LOANSTATUS.CANCELLED);
         return responseEntity;
         // return ResponseEntity.ok("Pass has been cancelled");
     }
+    // @GetMapping("/{passid}/deactivate")
+    // public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
+    //     ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
+    //     return responseEntity;
+    // }
     
 
 
