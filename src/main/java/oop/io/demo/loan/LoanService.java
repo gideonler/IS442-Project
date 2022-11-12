@@ -93,26 +93,27 @@ public class LoanService {
     }
 
     public ResponseEntity cancelLoan(String loanID, LOANSTATUS loanStatus) {
-        Loan l = loanRepository.findByLoanId(loanID);//atm this shows null value
+        Loan l = loanRepository.findByLoanId(loanID);
         l.setStatus(LOANSTATUS.CANCELLED);
         return ResponseEntity.ok("Loan cancelled: " + loanStatus.toString());
     }
 
 
 
-    // public ResponseEntity changeLoanStatus(String loanId, PASSSTATUS passStatus){
-    //     Optional<Loan> l = loanRepository.findById(loanId);
-    //     if(!l.isPresent()) {
-    //         return ResponseEntity.badRequest().body("Loan does not exist");
-    //     }
-    //     Loan loan = l.get();
-    //     Loan.setLoanStatus(passStatus);
-    //     loanRepository.save(loan);
-    //     return ResponseEntity.ok("Changed status of pass successfully to: " + passStatus.toString());
-    // }
 
-    public String deleteBooking(String userEmail, Date loanDate) {
-        Loan loan = loanRepository.findByLoanId(userEmail);
+    public ResponseEntity changeLoanStatus(String loanId, LOANSTATUS loanstatus){
+        Optional<Loan> l = loanRepository.findById(loanId);
+        if(!l.isPresent()) {
+            return ResponseEntity.badRequest().body("Loan does not exist");
+        }
+        Loan loan = l.get();
+        loan.setStatus(loanstatus);
+        loanRepository.save(loan);
+        return ResponseEntity.ok("Changed status of loan successfully to: " +loanstatus.toString());
+    }
+
+    public String deleteBooking(String loanId, Date loanDate) {
+        Loan loan = loanRepository.findByLoanId(loanId);
         // ArrayList<Loan>loan=loanRepository.findByUserEmail(userEmail);
         loanRepository.delete(loan);
         return "Booking to " + loan.getAttractionName() + " made by " + loan.getUserEmail() + " has been deleted.";
@@ -167,12 +168,6 @@ public class LoanService {
 
 
 
-    public void changeLoanStatus(String loanId, LOANSTATUS loanStatus) {
-        Loan l = loanRepository.findByLoanId(loanId);
-        // ArrayList<Loan>l=loanRepository.findByLoanId(loanId);
-        l.setStatus(loanStatus);
-    }
-
     // Method for getting userinfo of a loan
     public String getUserInfo(Date loanDate, String attractionName) {
         ArrayList<Loan> loans = loanRepository.findAllByAttractionName(attractionName);
@@ -200,18 +195,16 @@ public class LoanService {
     }
 
     // Method for the user to report loss of cards
-    public String ReportLoss(String userEmail, Date loanDate, LOANSTATUS loanStatus) {
-        String checkID = userEmail + loanDate;
-        Loan loan = loanRepository.findByLoanId(checkID);
-        // ArrayList<Loan>loan=loanRepository.findByLoanId(checkID);
-        // Loan l=loan.get();
-        loan.setStatus(LOANSTATUS.LOST);
-        String passNo = p.getPassNo();
-        Date date = loan.getLoanDate();
-        cancelAllLoans(passNo, date);
-        return "Loss reported";
 
+    public ResponseEntity ReportLoss(String loanID, LOANSTATUS loanStatus) {
+        Loan l = loanRepository.findByLoanId(loanID);
+        l.setStatus(LOANSTATUS.LOST);
+        return ResponseEntity.ok("Card changed to lost: " + loanStatus.toString());
     }
+
+
+
+    
     
 
     // Method to cancel all loans

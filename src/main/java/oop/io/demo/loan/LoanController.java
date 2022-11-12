@@ -53,24 +53,29 @@ public class LoanController {
         String attractionName = loanRequest.getAttractionName();
         LoanService loanService= new LoanService(loanRepository,passRepository,userRepository);
         return loanService.addBooking(userEmail, loanDate, attractionName);
-
     }
 
-    @PostMapping("/cancel")
-    public ResponseEntity cancellLoan(@RequestBody String loanID) {
-        // String cancel=new LoanService(loanRepository,passRepository,userRepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
-        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
+    @GetMapping("/cancel")
+    public ResponseEntity cancellLoan(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");//key JSON in postman
+        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).changeLoanStatus(loanId, LOANSTATUS.CANCELLED);
         return responseEntity;
-        // return ResponseEntity.ok("Pass has been cancelled");
     }
-    
+    @GetMapping("/lost")
+    public ResponseEntity ReportLoss(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");//key JSON in postman
+        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).changeLoanStatus(loanId, LOANSTATUS.LOST);
+        return responseEntity;
+       
+    }   
 
 
-    @DeleteMapping("/all/{loanId}")
-    public ResponseEntity deleteBooking(@PathVariable String loanID) {
-        Optional<Loan> loan = this.loanRepository.findById(loanID);
+    @DeleteMapping("/delete/{loanId}")
+    public ResponseEntity deleteBooking(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");
+        Optional<Loan> loan = this.loanRepository.findById(loanId);
         if(loan.isPresent()){
-            this.loanRepository.deleteById(loanID);
+            this.loanRepository.deleteById(loanId);
             return ResponseEntity.ok("Successfully deleted.");
         }
         else {
