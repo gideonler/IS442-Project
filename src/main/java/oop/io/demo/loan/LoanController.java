@@ -57,25 +57,25 @@ public class LoanController {
 
     @GetMapping("/cancel")
     public ResponseEntity cancellLoan(@RequestBody Map<String, String> loanIdMap) {
-        // String cancel=new LoanService(loanRepository,passRepository,userRepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
-        String loanId = loanIdMap.get("loanId");
+        String loanId = loanIdMap.get("loanId");//key JSON in postman
         ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).changeLoanStatus(loanId, LOANSTATUS.CANCELLED);
         return responseEntity;
-        // return ResponseEntity.ok("Pass has been cancelled");
     }
-    // @GetMapping("/{passid}/deactivate")
-    // public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
-    //     ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
-    //     return responseEntity;
-    // }
-    
+    @GetMapping("/lost")
+    public ResponseEntity ReportLoss(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");//key JSON in postman
+        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).changeLoanStatus(loanId, LOANSTATUS.LOST);
+        return responseEntity;
+       
+    }   
 
 
-    @DeleteMapping("/all/{loanId}")
-    public ResponseEntity deleteBooking(@PathVariable String loanID) {
-        Optional<Loan> loan = this.loanRepository.findById(loanID);
+    @DeleteMapping("/delete/{loanId}")
+    public ResponseEntity deleteBooking(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");
+        Optional<Loan> loan = this.loanRepository.findById(loanId);
         if(loan.isPresent()){
-            this.loanRepository.deleteById(loanID);
+            this.loanRepository.deleteById(loanId);
             return ResponseEntity.ok("Successfully deleted.");
         }
         else {
