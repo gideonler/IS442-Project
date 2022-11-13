@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface AttractionRepository extends MongoRepository<Attraction, String>{
     Optional<Attraction> findByAttractionName(String attractionName);
-    List<Attraction> findByPassType(PASSTYPE passType);
+    Optional<List<Attraction>> findByPassType(PASSTYPE passType);
 }

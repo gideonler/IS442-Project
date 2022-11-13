@@ -34,8 +34,8 @@ public class PassController {
     //Get passes by attraction
     @GetMapping("/passes/{attraction}")
     public ResponseEntity getAvailablePassesByAttraction(@PathVariable("attraction") String attraction) {
-        List<Pass> passes = new PassService(repository, attractionRepository).getAvailablePassesByAttraction(attraction);
-        return ResponseEntity.ok(passes);
+        PassService passService = new PassService(repository, attractionRepository);
+        return ResponseEntity.ok(passService.getAvailablePassesByAttraction(attraction));
     }
     
     //Get all passes
