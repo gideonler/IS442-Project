@@ -21,8 +21,6 @@ import Authentication from '../views/Authentication.vue'
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
 
-import Authentication from '../views/Authentication.vue'
-import Register from '../views/Register.vue'
 
 Vue.use(VueRouter);
 
@@ -40,8 +38,7 @@ const routes = [
   { path: '/authentication', component: Authentication },
   { path: '/corporate-pass-creation', component: AdminCorpPass},
   { path: '/corporate-pass-management', component: AdminCorpPassManagement},
-  { path: '/corporate-pass-management/passes', component: AdminCorpPassDisplay}, ,
-  { path: '/authentication', component: Authentication },
+  { path: '/corporate-pass-management/passes/:name', component: AdminCorpPassDisplay}, ,
   { path: '/register', component: Register },
 ]
 
