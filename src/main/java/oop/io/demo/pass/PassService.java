@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
+import oop.io.demo.attraction.Attraction;
 import oop.io.demo.attraction.AttractionRepository;
 
 
@@ -25,12 +26,12 @@ public class PassService {
         String passId = attractionName + passNo;
         if (attractionName==null || passNo ==null) {
             //can throw exception due to null value of field
-            return ResponseEntity.badRequest().body("Place of Interest Name and Pass Number can't be empty");
+            return ResponseEntity.badRequest().body("Attraction Name and Pass Number can't be empty");
         } else if (!attractionRepository.findByAttractionName(attractionName).isPresent()) {
             //can throw exception due to nonexistence of entity
-            return ResponseEntity.badRequest().body("Place of interest " + attractionName + " does not exist.");
+            return ResponseEntity.badRequest().body("Attraction " + attractionName + " does not exist.");
         } else if (repository.findById(passId).isPresent()) {
-            return ResponseEntity.badRequest().body("Pass with pass number: '" + passNo + "' for place of interest: '" + attractionName + "' already exists.");
+            return ResponseEntity.badRequest().body("Pass with pass number: '" + passNo + "' for attraction: '" + attractionName + "' already exists.");
         }
         Pass pass = new Pass(passNo, attractionName);
         return ResponseEntity.ok(repository.save(pass));
@@ -47,8 +48,12 @@ public class PassService {
         return ResponseEntity.ok("Changed status of pass successfully to: " + passStatus.toString());
     }
 
-    public List<Pass> getPassesByAttraction(String attraction) {
-        return repository.findByAttractionName(attraction).get();
+    public ResponseEntity getPassesByAttraction(String attraction) { 
+        List<Pass> attractions = repository.findByAttractionName(attraction).get();
+        if(attractions.isEmpty()) {
+            return ResponseEntity.badRequest().body("Attraction not found!");
+        }
+        return ResponseEntity.ok(attractions);
     }
 
     public List<Pass> getAvailablePassesByAttraction(String attraction) {

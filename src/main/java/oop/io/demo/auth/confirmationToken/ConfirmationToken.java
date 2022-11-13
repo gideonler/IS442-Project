@@ -36,7 +36,7 @@ public class ConfirmationToken {
     private LocalDateTime confirmedAt;
 
     private User user;
-    
+
     public ConfirmationToken(){}
 
     public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt,
@@ -86,6 +86,4 @@ public class ConfirmationToken {
     public void setUser(User user) {
         this.user = user;
     }
-
-    
 }
