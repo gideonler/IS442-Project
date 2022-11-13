@@ -1,4 +1,5 @@
 package oop.io.demo.attraction;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,10 +23,16 @@ public class AttractionController {
 
     @GetMapping("/attractions")
     public ResponseEntity<List<Attraction>> getAllPlacesOfInterest() {
-        List<Attraction> ePass= repository.findByPassType(PASSTYPE.ELECTRONICPASS);
-        List<Attraction> pPass = repository.findByPassType(PASSTYPE.PHYSICALPASS);
-        ePass.addAll(pPass);
-        return ResponseEntity.ok(ePass);
+        Optional<List<Attraction>> ePass= repository.findByPassType(PASSTYPE.ELECTRONICPASS);
+        Optional<List<Attraction>> pPass = repository.findByPassType(PASSTYPE.PHYSICALPASS);
+        List<Attraction> attractions= new ArrayList<>();
+        if(ePass.isPresent()) {
+            attractions.addAll(ePass.get());
+        }
+        if(pPass.isPresent()) {
+            attractions.addAll(pPass.get());
+        }
+        return ResponseEntity.ok(attractions);
     }
 
     @GetMapping("/{attraction}/details")

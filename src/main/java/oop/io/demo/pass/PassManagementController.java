@@ -1,9 +1,12 @@
 package oop.io.demo.pass;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,15 +35,17 @@ public class PassManagementController {
     }
     
     //to deactivate a pass by id
-    @GetMapping("/{passid}/deactivate")
-    public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
+    @PutMapping("/deactivate")
+    public ResponseEntity deactivatePass(@RequestBody Map<String, String> map) {
+        String passId = map.get("passId");
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
         return responseEntity;
     }
 
     //to activate a pass by id
-    @GetMapping("/{passid}/activate")
-    public ResponseEntity activatePass(@PathVariable("passid") String passId) {
+    @PutMapping("/activate")
+    public ResponseEntity activatePass(@RequestBody Map<String, String> map) {
+        String passId = map.get("passId");
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
         return responseEntity;
     }
