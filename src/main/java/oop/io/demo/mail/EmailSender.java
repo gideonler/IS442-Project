@@ -86,6 +86,7 @@ public class EmailSender {
             return ResponseEntity.ok("Check your email for your booking information!");
             
         } catch (Exception e){
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Booking was unsuccessful.");
         }
     }
