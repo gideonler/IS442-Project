@@ -48,11 +48,25 @@ public class LoanController {
     JwtUtils jwtUtils;
     @PostMapping("/book")
     public String addBooking(@RequestBody LoanRequest loanRequest){
+
         String userEmail = loanRequest.getUserEmail();
         Date loanDate = loanRequest.getLoanDate();
         String attractionName = loanRequest.getAttractionName();
+        int noOfPass = loanRequest.getNoOfPass();
         LoanService loanService= new LoanService(loanRepository,passRepository,userRepository);
-        return loanService.addBooking(userEmail, loanDate, attractionName);
+        if (noOfPass == 1){
+            boolean check = loanService.addBooking(userEmail, loanDate, attractionName, "1");
+            if (check){
+                return "One pass was created for " + attractionName + " for use on " + loanDate;
+            }
+        } else {
+            boolean check1 = loanService.addBooking(userEmail, loanDate, attractionName, "1");
+            boolean check2 = loanService.addBooking(userEmail, loanDate, attractionName, "2");
+            if (check1 && check2){
+                return "Two passes were created for " + attractionName + " for use on " + loanDate;
+            }
+        }
+        return "Booking unsuccessful!";
     }
 
     @GetMapping("/cancel")

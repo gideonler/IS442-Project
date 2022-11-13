@@ -32,18 +32,28 @@ public class LoanService {
     }
 
 
-    public String extractPassNo(String attractionName){
-        String passNo = "";
+    public String extractPassNo(String attractionName, Date loanDate){
+        String passNo="";
+        List<String> loanedPasses = new ArrayList<String>();
         Optional<List<Pass>> passList = passRepository.findByAttractionName(attractionName);
-            if (passList.isPresent()){
-                for (Pass pass: passList.get()){
-                    if (pass.getPassStatus() == PASSSTATUS.INOFFICE){
-                        passNo = pass.getPassNo();
-                        break;
-                    }
+        ArrayList<Loan> loanList = loanRepository.findAllByAttractionName(attractionName);
+        for (Loan loan: loanList){
+            String checkAttraction = loan.getAttractionName();
+            Date checkDate = loan.getLoanDate();
+            if ((checkAttraction.equals(attractionName)) && (loanDate.equals(checkDate))){
+                loanedPasses.add(loan.getPassNo());
+            }
+            for (Pass pass : passList.get()){
+                String checkPassNo = pass.getPassNo();
+                if (!loanedPasses.contains(checkPassNo)){
+                    passNo = checkPassNo;
+                    break;
                 }
             }
-            return passNo;
+        }
+
+
+        return passNo;
     }
 
     public String extractContactNo(String userEmail){
@@ -65,22 +75,18 @@ public class LoanService {
 
     // method to allow user to cancel booking
 
-    public String addBooking(String userEmail, Date loanDate, String attractionName) {
+    public boolean addBooking(String userEmail, Date loanDate, String attractionName, String loanId) {
     
-        
-        Boolean checkPass = checkAvail(loanDate, attractionName);
-
-        if (checkPass) {
-            Loan loan = new Loan(userEmail, loanDate, attractionName);
+        String passNo = extractPassNo(attractionName, loanDate);
+        if (passNo != ""){
+            String contactNo = extractContactNo(userEmail);
+            Loan loan = new Loan(userEmail, loanDate, attractionName, loanId);
+            loan.setPassNo(passNo);
             loan.setLoanId();
             loan.setStatus(LOANSTATUS.CONFIRMED);
-            String passNo = extractPassNo(attractionName);
-            String contactNo = extractContactNo(userEmail);
-            loan.setPassNo(passNo);
             loan.setContactNo(contactNo);
             loanRepository.save(loan);
-            return "Booking to " +loanDate+ " made for " +
-            attractionName+ " has been added.";
+            return true;
         }
 
         // if (checkAvail(loanDate,attractionName)){
@@ -89,7 +95,7 @@ public class LoanService {
         // loan.getUserEmail() + " has been added.";
         // }
         // getUserInfo(loanDate,attractionName);
-        return "Booking unsuccessful, please try again.";
+        return false;
     }
 
     public ResponseEntity cancelLoan(String loanID, LOANSTATUS loanStatus) {

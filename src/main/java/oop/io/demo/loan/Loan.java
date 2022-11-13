@@ -45,10 +45,21 @@ public class Loan {
         
 
     }
+
+    public Loan(String userEmail, Date loanDate, String attractionName, String loanId) {
+        this.loanId = loanId;
+        this.loanDate = loanDate;// the date where the user is making the booking
+        this.attractionName = attractionName;
+        this.userEmail = userEmail;
+        this.status = LOANSTATUS.CONFIRMED;
+        
+
+    }
+
     public void setLoanId() {
         SimpleDateFormat dateFor = new SimpleDateFormat("dd/MM/yyyy");
         String date=dateFor.format(this.loanDate);
-        this.loanId=date+this.userEmail;
+        this.loanId=date+this.userEmail+passNo;
     }
 
     public void setLoanDate(Date loanDate) {
