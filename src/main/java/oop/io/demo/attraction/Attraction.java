@@ -93,7 +93,7 @@ public class Attraction {
 
     //@Transient
     public String getTemplateFilePath() {
-        return "/templates/" + attractionName;
+        return "/templates/" + attractionName + "/" + templateFilename;
     }
 
     @Transient
@@ -103,6 +103,6 @@ public class Attraction {
     
     //@Transient
     public String getAttachmentPDFFilePath() {
-        return "/attachments/" + attractionName;
+        return "/attachments/" + attractionName + "/" + attachmentPDFFilename;
     }
 }
