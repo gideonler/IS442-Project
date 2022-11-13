@@ -31,12 +31,14 @@ public class PassManagementController {
         return responseEntity;
     }
     
+    //to deactivate a pass by id
     @GetMapping("/{passid}/deactivate")
     public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
         return responseEntity;
     }
 
+    //to activate a pass by id
     @GetMapping("/{passid}/activate")
     public ResponseEntity activatePass(@PathVariable("passid") String passId) {
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
