@@ -141,12 +141,13 @@
       show-empty
       small
       @filtered="onFiltered"
+      @input-change="handleInput"
     >
       <template #cell(isActive)="data">
         <span v-if="data.value">Yes</span>
         <span v-else>No</span>
       </template>
-      <template #cell(edit)="data">
+      <template #cell(edit)="data" >
         <div v-if="data.isEdit">
           <BIconX class="edit-icon" @click="handleSubmit(data, false)"></BIconX>
           <BIconCheck
@@ -160,12 +161,19 @@
           @click="handleEdit(data, true)"
         ></BIconPencil>
       </template>
-      <template #cell(delete)="data">
+      <template #cell(activate)="data" >
+        <div>
+          <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="handleDeactivate(items[data.index].passId)" variant="danger">Deactivate</b-button> 
+          <b-button v-else @click="handleActivate(items[data.index].passId)" variant="success">Reactivate</b-button>
+
+        </div>
+      </template>
+      <!-- <template #cell(delete)="data">
         <BIconTrash
           class="remove-icon"
           @click="handleDelete(data)"
         ></BIconTrash>
-      </template>
+      </template> -->
     </b-editable-table>
   </div>
 </template>
@@ -192,10 +200,15 @@ export default {
   data() {
     return {
       placeOfInterest: '',
-      api: { view_passes: "http://localhost:8080/pass/passes/"},
+      api: { view_passes: "http://localhost:8080/pass/passes/",
+            activate_pass: "http://localhost:8080/passmanagement/activate",
+            deactivate_pass: "http://localhost:8080/passmanagement/deactivate"
+    },
       items: null,
+      updatedRow: {},
       fields: [
-        { key: "delete", label: "" },
+        // { key: "delete", label: "" },
+        { key: "edit", label: "" },
         {
           key: "passId",
           label: "Pass Id",
@@ -216,14 +229,14 @@ export default {
           key: "passStatus",
           label: "Pass Status",
           type: "select",
-          editable: true,
+          editable: false,
           class: "status-col",
           options: [
-            { value: 1, text: "INOFFICE" },
-            { value: 2, text: "OUT" },
+            { value: "INOFFICE", text: "INOFFICE" },
+            { value: "DEACTIVATED", text: "DEACTIVATED" },
           ],
         },
-        { key: "edit", label: "" },
+        { key: "activate", label: "" },
       ],
       rowUpdate: {},
       totalRows: 1,
@@ -237,7 +250,17 @@ export default {
           filterOn: [],
     };
   },
-  methods: {
+  methods: { 
+    handleInput(data) {
+      if (Object.keys(this.updatedRow).length === 0) {
+        this.updatedRow = {
+          ...this.items[data.index],
+          [data.field.key]: data.value,
+        };
+      } else {
+        this.updatedRow = { ...this.updatedRow, [data.field.key]: data.value };
+      }
+    },
     handleAdd() {
       const newId = Date.now();
       this.rowUpdate = {
@@ -246,11 +269,9 @@ export default {
         action: "add",
         data: {
           id: newId,
-          age: null,
-          name: "",
-          department: 1,
-          dateOfBirth: null,
-          isActive: false,
+          passId: '',
+          passNo: '',
+          passStatus:''
         },
       };
     },
@@ -260,12 +281,40 @@ export default {
         id: data.id,
         action: update ? "update" : "cancel",
       };
+    
+     console.log(this.updatedRow)
+     this.updatedRow = {}
     },
     handleEdit(data) {
+      console.log(this.items)
       this.rowUpdate = { edit: true, id: data.id };
     },
     handleDelete(data) {
       this.rowUpdate = { id: data.id, action: "delete" };
+    },
+    async handleActivate(data) {
+      await axios 
+      .put(this.api.activate_pass, 
+        {
+          "passId" : data    
+        }
+        )
+      .then((response) => {
+        console.log(response);
+      }); 
+     
+    },
+    async handleDeactivate(data) {
+      await axios 
+            .put(this.api.deactivate_pass, 
+              {
+                "passId" : data    
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+     
     },
     validateName(value) {
         if (value === '') {
@@ -370,7 +419,7 @@ table.editable-table td {
 }
 
 .pass-no-col {
-  width: 40%;
+  width: 30%;
 }
 
 
