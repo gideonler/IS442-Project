@@ -25,7 +25,8 @@ public class UserService {
             boolean verified = enableOrDisable== "Enable"? true: false;
             user.setVerified(verified);
             userRepository.save(user);
-            return ResponseEntity.ok(enableOrDisable+ "d user");
+            return ResponseEntity.ok(user);
+            //return ResponseEntity.ok(enableOrDisable+ "d user");
         } else {
             return ResponseEntity.badRequest().body("User not found!");
         }
