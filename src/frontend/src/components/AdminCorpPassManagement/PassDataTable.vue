@@ -1,7 +1,6 @@
 <template>
   <div class="table-container">
-    <h1>{{placeOfInterest}}</h1>
-          <!-- User Interface controls -->
+    <!-- User Interface controls -->
           <b-row>
         <b-col lg="6" class="my-1">
           <b-form-group
@@ -193,11 +192,8 @@ export default {
   data() {
     return {
       placeOfInterest: '',
-      // api: { view_passes: "http://localhost:8080/pass/passes" + this.placeOfInterest
-      // },
-      api: { view_passes: "http://localhost:8080/pass/passes/" + "Duck%20Tours"
-      },
-      items: [],
+      api: { view_passes: "http://localhost:8080/pass/passes/"},
+      items: null,
       fields: [
         { key: "delete", label: "" },
         {
@@ -229,120 +225,6 @@ export default {
         },
         { key: "edit", label: "" },
       ],
-      // fields: [
-      //   { key: "delete", label: "" },
-      //   {
-      //     key: "name",
-      //     label: "Name",
-      //     type: "text",
-      //     editable: true,
-      //     placeholder: "Enter Name...",
-      //     class: "name-col",
-      //     validate: this.validateName
-      //   },
-      //   {
-      //     key: "department",
-      //     label: "Department",
-      //     type: "select",
-      //     editable: true,
-      //     class: "department-col",
-      //     options: [
-      //       { value: 1, text: "HR" },
-      //       { value: 2, text: "Engineer" },
-      //       { value: 3, text: "VP" },
-      //       { value: 4, text: "CEO" },
-      //     ],
-      //   },
-      //   {
-      //     key: "age",
-      //     label: "Age",
-      //     type: "range",
-      //     min: "0",
-      //     max: "100",
-      //     editable: true,
-      //     placeholder: "Enter Age...",
-      //     class: "age-col",
-      //   },
-      //   {
-      //     key: "dateOfBirth",
-      //     label: "Date Of Birth",
-      //     type: "date",
-      //     editable: true,
-      //     class: "date-col",
-      //     locale: "en",
-      //     "date-format-options": {
-      //       year: "numeric",
-      //       month: "numeric",
-      //       day: "numeric",
-      //     },
-      //   },
-      //   {
-      //     key: "isActive",
-      //     label: "Is Active",
-      //     type: "checkbox",
-      //     editable: true,
-      //     class: "is-active-col",
-      //   },
-      //   { key: "edit", label: "" },
-      // ],
-      // items: [
-      //   {
-      //     id: 1,
-      //     age: 40,
-      //     name: "Dickerson",
-      //     department: 1,
-      //     dateOfBirth: "1984-05-20",
-      //     isActive: true,
-      //   },
-      //   {
-      //     id: 2,
-      //     age: 21,
-      //     name: "Larsen",
-      //     department: 2,
-      //     dateOfBirth: "1972-07-25",
-      //     isActive: false,
-      //   },
-      //   {
-      //     id: 3,
-      //     age: 89,
-      //     name: "Geneva",
-      //     department: 3,
-      //     dateOfBirth: "1981-02-02",
-      //     isActive: false,
-      //   },
-      //   {
-      //     id: 1,
-      //     age: 40,
-      //     name: "Dickerson",
-      //     department: 1,
-      //     dateOfBirth: "1984-05-20",
-      //     isActive: true,
-      //   },
-      //   {
-      //     id: 2,
-      //     age: 21,
-      //     name: "Larsen",
-      //     department: 2,
-      //     dateOfBirth: "1972-07-25",
-      //     isActive: false,
-      //   },
-      //   {
-      //     id: 3,
-      //     age: 89,
-      //     name: "Geneva",
-      //     department: 3,
-      //     dateOfBirth: "1981-02-02",
-      //     isActive: false,
-      //   },
-      //   {
-      //     id: 4,
-      //     age: 38,
-      //     name: "Jami",
-      //     department: 4,
-      //     dateOfBirth: "1964-10-19",
-      //     isActive: true,
-      //   },
-      // ],
       rowUpdate: {},
       totalRows: 1,
           currentPage: 1,
@@ -394,9 +276,22 @@ export default {
         }
         return {valid: true};
       },
-      viewPass(placeofinterest){
-          //TODO: replacee
+      async viewPass(placeofinterest){
           this.placeOfInterest= placeofinterest;
+          var view_pass_api= this.api.view_passes + this.placeOfInterest
+          await axios
+            .get(view_pass_api)
+            .then((response) => {
+                var passes_list = response.data;
+                passes_list.forEach(function (value, i) {
+                    value["id"]= i+1
+                });
+                this.items= passes_list;
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+          this.totalRows = this.items.length
         },
         info(item, index, button) {
           this.infoModal.title = `Row index: ${index}`
@@ -425,20 +320,14 @@ export default {
       },
   created(){
     this.$root.$refs.PassDataTable= this;
+    this.viewPass(this.$route.params.name)
   },
-  mounted(){
-    axios
-            .get(api.view_passes)
-            .then((response) => {
-                var passes_list = response.data;
-                console.log(passes_list);
-                this.items= passes_list;
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    this.totalRows = this.items.length
+  beforeRouteUpdate(to, from, next) {
+    // Call the API query method when the URL changes
+    this.viewPass(to.params.name)
+    next()
   }
+
 };
 </script>
 

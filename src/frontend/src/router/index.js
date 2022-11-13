@@ -38,7 +38,7 @@ const routes = [
   { path: '/authentication', component: Authentication },
   { path: '/corporate-pass-creation', component: AdminCorpPass},
   { path: '/corporate-pass-management', component: AdminCorpPassManagement},
-  { path: '/corporate-pass-management/passes', component: AdminCorpPassDisplay}, ,
+  { path: '/corporate-pass-management/passes/:name', component: AdminCorpPassDisplay}, ,
   { path: '/register', component: Register },
 ]
 
