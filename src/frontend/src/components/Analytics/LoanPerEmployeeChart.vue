@@ -64,7 +64,7 @@
             label: 'Avg. Loans of Employee',
 
             //TODO:  Replace Dummy Data with backend data
-            data: this.loanChartData, 
+            data: [40, 20, 12], 
             backgroundColor: [
                 'rgba(255, 159, 64, 0.2)'
             ],

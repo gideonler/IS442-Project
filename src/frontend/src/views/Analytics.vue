@@ -3,7 +3,7 @@
   <div class="container-fluid">
     <div class="row float-right">
     <b-button pill b-button class="my-1" variant="dark" size="sm" title="Export">
-      <b-icon icon="download" aria-hidden="true"></b-icon>
+      <b-icon @click="downloadCsv()" icon="download" aria-hidden="true"></b-icon>
     </b-button>
   </div>
     <div class="row">
@@ -57,11 +57,11 @@
         </div>
       </div>
       <div class="row">
-        <MonthlyLoanChart  class="col-lg-6"></MonthlyLoanChart>
+        <MonthlyBorrowerChart  class="col-lg-6"></MonthlyBorrowerChart>
         <LoanPerEmployeeChart v-bind:loanChartData="monthlyLoan" class="col-lg-6"></LoanPerEmployeeChart>
       </div>
       <div class="row">
-        <MonthlyBorrowerChart class="col-lg-12"></MonthlyBorrowerChart>
+        <MonthlyLoanChart class="col-lg-12"></MonthlyLoanChart>
       </div>
     </div>
     
@@ -70,11 +70,11 @@
 
 <script>
 import DashboardLayout from '../layouts/DashboardLayout'
-import MonthlyLoanChart from '../components/Analytics/MonthlyBorrowerChart.vue'
-import MonthlyBorrowerChart from '../components/Analytics/MonthlyLoanChart.vue'
+import MonthlyBorrowerChart from '../components/Analytics/MonthlyBorrowerChart.vue'
+import MonthlyLoanChart from '../components/Analytics/MonthlyLoanChart.vue'
 import LoanPerEmployeeChart from '../components/Analytics/LoanPerEmployeeChart.vue';
 import StatsCard from '../components/Cards/StatsCard.vue';
-
+import axios from 'axios';
 
   const curr_year = new Date().getFullYear()
   const monthlyLoanData= {2021: [40, 20, 12], 2022: [56, 11, 60]}
@@ -90,6 +90,10 @@ import StatsCard from '../components/Cards/StatsCard.vue';
           { value: 2021, text: '2021' },
         ],
         monthlyLoan: [],
+
+      api: {
+          exportCsv: "http://localhost:8080/export/loans" ,
+        },
       }
     },
     watch: {
@@ -102,6 +106,23 @@ import StatsCard from '../components/Cards/StatsCard.vue';
     created() {
         this.$emit("update:layout", DashboardLayout);
     },
+    methods: {
+        async downloadCsv() {
+          console.log('dfe')
+          await axios
+          .get(this.api.exportCsv)
+          .then((response) => {
+           console.log(response);
+          })
+          .catch((error) => {
+              if (error) {
+                  console.log(error);
+              }
+          });
+        }
+            
+      },
+
     components: { MonthlyLoanChart, MonthlyBorrowerChart, LoanPerEmployeeChart, StatsCard }
 }
 </script>
