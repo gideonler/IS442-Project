@@ -124,7 +124,7 @@ public class EmailSender {
     }
 
     // Sending Overdue Emails
-    @Scheduled(cron = "0 0 8 * * MON-FRI")
+    @Scheduled(cron = "0 0 10 * * MON-FRI")
     //@Scheduled(cron = "0 */3 * * * *")
     public ResponseEntity sendOverdueMessage() throws Exception {
         try {
