@@ -72,7 +72,7 @@ public class EmailService {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
             mimeMessageHelper.setTo(email);
-            mimeMessageHelper.setFrom("singaporesportsschooltest@outlook.com");
+            mimeMessageHelper.setFrom("oopg2t4@outlook.com");
             mimeMessageHelper.setSubject(subject);
     
             fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");

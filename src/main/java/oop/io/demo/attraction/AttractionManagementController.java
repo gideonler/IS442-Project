@@ -64,7 +64,7 @@ public class AttractionManagementController {
         Attraction attraction = a.get();
         //Check: If both templates are not present return Http bad request
         if(attraction.getTemplateFilename()==null && emailTemplateFile==null){
-            return ResponseEntity.badRequest().body("Please include an email template");
+            return ResponseEntity.badRequest().body("Please include an email template"); 
         }
 
         try {

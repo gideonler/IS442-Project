@@ -15,8 +15,6 @@ import org.springframework.data.annotation.Id;
 public class Loan {
 
     private Date loanDate;
-    @CreatedDate
-    private Date bookingMadeDate;
     private String attractionName;
 
     @CreatedBy
@@ -57,10 +55,6 @@ public class Loan {
         this.loanDate = loanDate;
     }
 
-    public void setBookingMadeDate(Date bookingMadeDate) {
-        this.bookingMadeDate = bookingMadeDate;
-    }
-
     public void setEmail(String userEmail) {
         this.userEmail = userEmail;
     }
@@ -83,10 +77,6 @@ public class Loan {
 
     public Date getLoanDate() {
         return this.loanDate;
-    }
-
-    public Date getBookingMadeDate() {
-        return this.bookingMadeDate;
     }
 
     public String getAttractionName() {
