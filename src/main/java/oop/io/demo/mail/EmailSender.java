@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import oop.io.demo.attraction.Attraction;
 import oop.io.demo.attraction.AttractionRepository;
-import oop.io.demo.csvhandler.Response;
 import oop.io.demo.loan.Loan;
 import oop.io.demo.loan.LoanRepository;
 import oop.io.demo.mail.payload.BookingRequest;
 import oop.io.demo.mail.payload.CollectedRequest;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
+import oop.io.demo.user.csvhandler.Response;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
