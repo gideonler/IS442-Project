@@ -83,7 +83,7 @@
               :aria-describedby="ariaDescribedby"
               class="mt-1"
             >
-              <b-form-checkbox value="placeOfInterestName">Name</b-form-checkbox>
+              <b-form-checkbox value="attractionName">Name</b-form-checkbox>
               <b-form-checkbox value="passNo">Pass Number</b-form-checkbox>
               <b-form-checkbox value="passStatus">Pass Status</b-form-checkbox>
             </b-form-checkbox-group>
@@ -164,8 +164,7 @@
       <template #cell(activate)="data" >
         <div>
           <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="handleDeactivate(items[data.index].passId)" variant="danger">Deactivate</b-button> 
-          <b-button v-else @click="handleActivate(items[data.index].passId)" variant="success">Reactivate</b-button>
-
+          <b-button v-if="items[data.index].passStatus == 'DEACTIVATED'" @click="handleActivate(items[data.index].passId)" variant="success">Reactivate</b-button>
         </div>
       </template>
       <!-- <template #cell(delete)="data">
@@ -216,7 +215,8 @@ export default {
           editable: true,
           placeholder: "Enter Name...",
           class: "id-col",
-          validate: this.validateName
+          validate: this.validateName,
+          sortable: true,
         },
         {
           key: "passNo",
@@ -224,6 +224,7 @@ export default {
           type: "text",
           editable: true,
           class: "pass-no-col",
+          sortable: true,
         },
         {
           key: "passStatus",
@@ -231,6 +232,7 @@ export default {
           type: "select",
           editable: false,
           class: "status-col",
+          sortable: true,
           options: [
             { value: "INOFFICE", text: "INOFFICE" },
             { value: "DEACTIVATED", text: "DEACTIVATED" },
@@ -314,18 +316,8 @@ export default {
             .then((response) => {
               console.log(response);
             }); 
-     
     },
-    validateName(value) {
-        if (value === '') {
-          return {
-            valid: false,
-            errorMessage: 'Please enter name'
-          }
-        }
-        return {valid: true};
-      },
-      async viewPass(placeofinterest){
+    async viewPass(placeofinterest){
           this.placeOfInterest= placeofinterest;
           var view_pass_api= this.api.view_passes + this.placeOfInterest
           await axios
@@ -335,38 +327,47 @@ export default {
                 passes_list.forEach(function (value, i) {
                     value["id"]= i+1
                 });
-                this.items= passes_list;
+                this.items= passes_list
             })
             .catch((error) => {
                 console.log(error);
             })
           this.totalRows = this.items.length
-        },
-        info(item, index, button) {
-          this.infoModal.title = `Row index: ${index}`
-          this.infoModal.content = JSON.stringify(item, null, 2)
-          this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-        },
-        resetInfoModal() {
-          this.infoModal.title = ''
-          this.infoModal.content = ''
-        },
-        onFiltered(filteredItems) {
-          // Trigger pagination to update the number of buttons/pages due to filtering
-          this.totalRows = filteredItems.length
-          this.currentPage = 1
-        },
-  },
-  computed: {
-        sortOptions() {
-          // Create an options list from our fields
-          return this.fields
-            .filter(f => f.sortable)
-            .map(f => {
-              return { text: f.label, value: f.key }
-            })
-        }
       },
+    validateName(value) {
+        if (value === '') {
+          return {
+            valid: false,
+            errorMessage: 'Please enter name'
+          }
+        }
+        return {valid: true};
+      },
+      info(item, index, button){
+        this.infoModal.title= `Row index: ${index}`
+        this.infoModal.content = JSON.stringify(item, null, 2)
+        this.$root.$emit('bv::show::modal', this.infoModal.id,button)
+      },
+      resetInfoModal() {
+        this.infoModal.title = ''
+        this.infoModal.content = ''
+      },
+      onFiltered(filteredItems) {
+        // Trigger pagination to update the number of buttons/pages due to filtering
+        this.totalRows = filteredItems.length
+        this.currentPage = 1
+      },
+  },
+  computed:{
+      sortOptions() {
+        // Create an options list from our fields
+        return this.fields
+          .filter(f => f.sortable)
+          .map(f => {
+            return { text: f.label, value: f.key }
+          })
+      },
+  },
   created(){
     this.$root.$refs.PassDataTable= this;
     this.viewPass(this.$route.params.name)
