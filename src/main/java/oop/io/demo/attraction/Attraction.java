@@ -34,20 +34,6 @@ public class Attraction {
         this.active = true;
     }
 
-    // public Attraction(String attractionName, PASSTYPE passType) {
-    //     this.attractionName=attractionName;
-    //     this.replacementFee=53.50;
-    //     this.passType= passType;
-    //     this.active = true;
-    // }
-
-    /*public Attraction(String attractionName, String templateFilename, double replacementFee, PASSTYPE passType) {
-        this.attractionName=attractionName;
-        this.templateFilename=templateFilename;
-        this.replacementFee=replacementFee;
-        this.passType= passType;
-        this.active = true;
-    }*/
 
     public String getAttractionName() {
         return attractionName;
