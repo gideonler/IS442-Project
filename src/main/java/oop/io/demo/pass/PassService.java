@@ -1,5 +1,6 @@
 package oop.io.demo.pass;
 
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +36,26 @@ public class PassService {
         }
         Pass pass = new Pass(passNo, attractionName);
         return ResponseEntity.ok(repository.save(pass));
+    }
+
+    public ResponseEntity editPass(String passId, String passNo) {
+        Optional<Pass> p = repository.findByPassId(passId);
+        if(p.isPresent()) {
+            Pass pass = p.get();
+            if(passNo!=null) {
+                String attractionName = pass.getAttractionName();
+                if(repository.findByPassId(attractionName+passNo).isPresent()){
+                    return ResponseEntity.badRequest().body("Pass with pass number: " + passNo + " for attraction: " + attractionName + " already exists.");
+                }
+                pass.setPassNo(passNo);
+                repository.save(pass);
+                return ResponseEntity.ok("Successfully changed pass number");
+            } else {
+                return ResponseEntity.badRequest().body("No pass number entered");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Pass not found!");
+        }
     }
 
     public ResponseEntity changePassStatus(String passId, PASSSTATUS passStatus){

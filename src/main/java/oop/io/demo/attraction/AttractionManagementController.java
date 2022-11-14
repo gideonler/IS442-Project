@@ -119,7 +119,20 @@ public class AttractionManagementController {
         if(_attraction.isPresent()){
             Attraction attraction = _attraction.get();
             if(attractionRequest.getPassType()!=null) attraction.setPasstype(PASSTYPE.valueOf(attractionRequest.getPassType().toUpperCase()));
-            if(attractionRequest.getAttraction()!=null) attraction.setAttractionName(attractionRequest.getAttraction());
+            
+            if(attractionRequest.getAttraction()!=null) {
+                String newName = attractionRequest.getAttraction();
+                attraction.setAttractionName(newName);
+                Optional<List<Pass>> passesUnderAttraction= passRepository.findByAttractionName(newName);
+                if(passesUnderAttraction.isPresent()) {
+                    //Update attractionname for all passes under this attraction
+                    List<Pass> passes = passesUnderAttraction.get();
+                    for(Pass p : passes) {
+                        p.setAttractionName(newName);
+                        passRepository.save(p);
+                    }
+                }
+            } 
             if(attractionRequest.getReplacementFee()!=0.0) attraction.setReplacementFee(attractionRequest.getReplacementFee());
             return ResponseEntity.ok(repository.save(attraction));
         } else {
