@@ -51,9 +51,38 @@ public class AnalysisController {
         }
     }
 
-/* 
+    //Total Unique Employees by Year
+    @GetMapping("/totalemployees")
+    public ResponseEntity getTotalEmployees() throws Exception {
+        try{
+            return ResponseEntity.ok(analysisService.allEmployees());
+        } catch (Exception e){
+            return ResponseEntity.ok("Loans CSV not sent! :(");
+        }
+    }
+
+    //Total Unique Loans by Year
+    @GetMapping("/totalyearloans")
+    public ResponseEntity getTotalYearLoans() throws Exception {
+        try{
+            return ResponseEntity.ok(analysisService.allYearLoans());
+        } catch (Exception e){
+            return ResponseEntity.ok("Loans CSV not sent! :(");
+        }
+    }
+
+    //Total Unique Employees by Year
+    @GetMapping("/totalyearemployees")
+    public ResponseEntity getTotalYearEmployees(){
+        try{
+            return ResponseEntity.ok(analysisService.allYearEmployees());
+        } catch (Exception e){
+            return ResponseEntity.ok("Loans CSV not sent! :(");
+        }
+    }
+
     //Summarised Yearly Stats
-    @GetMapping("/year")
+    @GetMapping("/yearstats")
     public ResponseEntity getYearSummary() throws Exception {
         try{
             return ResponseEntity.ok(analysisService.yearSummary());
@@ -62,7 +91,7 @@ public class AnalysisController {
         }
     }
 
-
+/* 
     //No. of Available Passes Left to Loan
     @GetMapping("/loans")
     public ResponseEntity getAllLoansInCsv() throws Exception {
