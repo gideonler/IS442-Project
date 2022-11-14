@@ -56,6 +56,7 @@ public class Pass {
 
     public void setAttractionName(String attractionName) {
         this.attractionName = attractionName;
+        this.passId = attractionName + passNo;
     }
 
     public PASSSTATUS getPassStatus() {

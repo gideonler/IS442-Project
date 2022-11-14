@@ -42,6 +42,7 @@ public class PassService {
         Optional<Pass> p = repository.findByPassId(passId);
         if(p.isPresent()) {
             Pass pass = p.get();
+
             if(passNo!=null) {
                 String attractionName = pass.getAttractionName();
                 if(repository.findByPassId(attractionName+passNo).isPresent()){
