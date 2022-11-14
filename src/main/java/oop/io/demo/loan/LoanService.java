@@ -8,7 +8,6 @@ import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
-import oop.io.demo.pass.PASSSTATUS;
 
 import java.util.*;
 
