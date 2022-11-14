@@ -1,24 +1,16 @@
 package oop.io.demo.analysis;
 
-import org.springframework.data.crossstore.HashMapChangeSet;
 import org.springframework.stereotype.Service;
 
-import lombok.val;
 
-import java.io.*;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import oop.io.demo.loan.Loan;
 import oop.io.demo.loan.LoanRepository;
-import oop.io.demo.attraction.Attraction;
 import oop.io.demo.attraction.AttractionRepository;
-import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
-import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 
 @Service
@@ -139,11 +131,6 @@ public Map<String,Map<String,Map<String,Integer>>> allAttractionLoans() throws E
     return output;
 }
 
-//Get Yearly Summary
-public Map<String,Map<String,Integer>> yearSummary() throws Exception{
-    Integer totalPasses = Integer.valueOf(passRepository.findAll().size());
-    Double totalEmployees = Double.valueOf(userRepository.findAll().size());
-=======
     //Get Total Loans in a Year
     public Map<String,Integer> allYearLoans() throws Exception{
         Map<String,Integer> output = new TreeMap<>();
@@ -269,16 +256,12 @@ public Map<String,Map<String,Integer>> yearSummary() throws Exception{
 }
 
 /*
-
 WOKRING TOTAL LOANS
-
 //Get Total Loans in a Month/Year
     public int allLoans(String year, String month) throws Exception{
         int counter = 0;
-
         try{
             List<Loan> loans = loanRepository.findAll();
-
             if (month.equals("0")){
                 for (Loan loan: loans){
                     Date loanDate = loan.getLoanDate();
@@ -304,5 +287,4 @@ WOKRING TOTAL LOANS
         }
         return counter;
     }
-
  */
