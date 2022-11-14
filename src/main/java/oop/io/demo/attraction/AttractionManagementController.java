@@ -52,7 +52,7 @@ public class AttractionManagementController {
 
     //Upload files
     @PutMapping("/{attraction}/uploadfiles")
-    public ResponseEntity createAttraction(@PathVariable("attraction") String attractionName, 
+    public ResponseEntity uploadFiles(@PathVariable("attraction") String attractionName, 
     @RequestParam(name= "emailtemplate") MultipartFile emailTemplateFile, 
     @RequestParam(name="attachment", required = false) MultipartFile attachmentPDFFile){
         AttractionService attractionService = new AttractionService();

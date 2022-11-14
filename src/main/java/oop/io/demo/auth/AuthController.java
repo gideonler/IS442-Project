@@ -49,8 +49,6 @@ public class AuthController {
 
     private ConfirmationTokenService confirmationTokenService;
 
-    private UserService userService;
-
     public AuthController(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository) {
         this.userRepository = userRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
@@ -122,15 +120,14 @@ public class AuthController {
             user.setPassword(encoder.encode(verificationRequest.getPassword()));
             //set contact no- can frontend check whether it exists?
             user.setContactNo(verificationRequest.getContactNo());
-            userRepository.save(user);
             
             //set confirmedAt to now
             confirmationTokenService = new ConfirmationTokenService(confirmationTokenRepository);
             confirmationTokenService.setConfirmedAt(token);
 
             //set isVerified to equal true
-            userService = new UserService(userRepository);
-            userService.enableDisableUser(confirmationToken.getUser().getEmail(), "Enable");
+            user.setVerified(true);
+            userRepository.save(user);
 
             return ResponseEntity.ok("Confirmed");
         }
