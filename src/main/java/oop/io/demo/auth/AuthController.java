@@ -1,7 +1,5 @@
 package oop.io.demo.auth;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
