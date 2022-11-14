@@ -15,6 +15,9 @@ import org.springframework.data.annotation.Id;
 public class Loan {
 
     private Date loanDate;
+    @Column(nullable = false)
+    private Date dueDate;
+
     private String attractionName;
 
     @CreatedBy
@@ -89,6 +92,15 @@ public class Loan {
     public Date getLoanDate() {
         return this.loanDate;
     }
+
+    public Date getDueDate(){
+        return this.dueDate;
+    }
+    public void setDueDate(Date dueDate){
+        Date tomorrow = new Date(dueDate.getTime() + (1000 * 60 * 60 * 24));
+        this.dueDate=tomorrow;
+    }
+
 
     public String getAttractionName() {
         return this.attractionName;
