@@ -1,8 +1,6 @@
 package oop.io.demo.auth;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.auth.confirmationToken.ConfirmationToken;
@@ -22,7 +19,6 @@ import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.PasswordRequest;
 import oop.io.demo.auth.security.jwt.JwtUtils;
-import oop.io.demo.exception.PasswordsDoNotMatchException;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 

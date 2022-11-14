@@ -3,7 +3,7 @@
     id="edit-attraction-modal" 
     ref="edit-attraction-modal"
     body-bg-variant="light"
-    hide-footer= "true"
+    hide-footer
     header-border-variant="light"
     header-bg-variant="light"
     >
@@ -13,18 +13,9 @@
         <div class="row">
           <div class="col-md-12">
             <base-input type="text"
-                      label="Corporate Pass Name"
-                      placeholder="eg. Singapore Gardens"
-                      v-model="passname">
-            </base-input>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <base-input type="text"
                       label="Place of Interest"
                       placeholder="eg. Gardens by the Bay"
-                      v-model="interest">
+                      v-model="attractionname">
             </base-input>
           </div>
         </div>
@@ -45,7 +36,6 @@
                 id="radio-group-1"
                 v-model="selected_passtype"
                 :options="options"
-                :aria-describedby="ariaDescribedby"
                 name="radio-options"
             ></b-form-radio-group>
           </div>
@@ -57,7 +47,7 @@
                 <b-form-file
                 v-model="email_file"
                 :state="Boolean(email_file)"
-                placeholder="Upload Email Template Here..."
+                :placeholder="'Current Template: ' + email_name"
                 drop-placeholder="Drop file here..."
                 ></b-form-file>
             </div>
@@ -67,7 +57,7 @@
                 <b-form-file
                 v-model="pdf_file"
                 :state="Boolean(pdf_file)"
-                placeholder="Upload PDF Attachement Template Here..."
+                :placeholder="'Current Template: ' + pdf_name"
                 drop-placeholder="Drop file here..."
                 ></b-form-file>
             </div>
@@ -77,9 +67,9 @@
             <div class="col-md-12">
                 <label>Pass Image</label>
                 <b-form-file
-                v-model="email_file"
-                :state="Boolean(email_file)"
-                placeholder="Upload Photo Here..."
+                v-model="image"
+                :state="Boolean(image)"
+                :placeholder="'Current Image: ' + image_name"
                 drop-placeholder="Drop file here..."
                 ></b-form-file>
             </div>
@@ -92,7 +82,7 @@
         </div>
         <div class="clearfix"></div>
         <div>
-        <AttractionEditConfirmation></AttractionEditConfirmation>
+        <AttractionEditConfirmation v-on:update-attraction="forceRerender"></AttractionEditConfirmation>
       </div>
       </form>
     </card>
@@ -101,6 +91,7 @@
   <script>
     import Card from '../Cards/Card.vue'
     import AttractionEditConfirmation from './AttractionEditConfirmation.vue'
+    import axios from 'axios';
   
     export default {
       components: {
@@ -110,49 +101,138 @@
       data () {
         return {
           //TODO: Replace with data
-          passname: '',
-          interest: '',
+          attractionname: '',
           replacementfee: '',
-          email_file: '',
-          pdf_file:'',
+          email_file: null,
+          pdf_file:null,
           selected_passtype: '',
+          email_name: '',
+          pdf_name: '',
+          image_name: '',
+          image: null,
             options: [
-            { text: 'Physical Card', value: 'physical' },
-            { text: 'E-card', value: 'digital' }
+            { text: 'Physical Card', value: 'PHYSICALPASS' },
+            { text: 'E-card', value: 'ELECTRONICPASS' }
             ],
-
+          api: {
+            edit_attraction: "" ,
+            upload_files:  "",
+            upload_image: "",
+            },
         }
       },
+      watch: {
+        attractionname() {
+            this.api.edit_attraction =  "http://localhost:8080/attractionmanagement/" + this.attractionname + "/edit"
+            this.api.upload_files =  "http://localhost:8080/attractionmanagement/" + this.attractionname + "/uploadfiles"
+            this.api.upload_image =  "http://localhost:8080/attractionmanagement/" + this.attractionname + "/uploadimage"
+        },
+      },
       methods: {
+        forceRerender() {
+            this.$emit("update-attraction")
+            
+      },
         isFormValid(){
-        return this.passname!= '' &&
-          this.interest!= '' &&
-          this.replacementfee!= '' &&
-          this.email_file!= ''&&
-          this.pdf_file!='' &&
+        return this.attractionname!= '' &&
           this.selected_passtype!= ''
         },
         formReset(){
-          this.passname= ''
-          this.interest= ''
+          this.attractionname= ''
           this.replacementfee= ''
           this.email_file= ''
           this.pdf_file=''
+          this.image!='' 
           this.selected_passtype= ''
         },
-        editAttraction () {
-          //TODO: API Call to update database
+        async editAttraction () {
+          console.log(this.api)
+          //call api to update
           if(this.isFormValid()){
-            this.$root.$refs.AttractionEditConfirmation.showConfirmModal(this.passname);
+          //1. update attraction details
+
+          if(this.replacementfee==''){
+            this.replacementfee= 53.50
           }
-          this.formReset()
+          await axios 
+            .put(this.api.edit_attraction, 
+              {
+                "attraction" : this.attractionname,
+                "replacementFee" : parseFloat(this.replacementfee),
+                "passType" : this.selected_passtype
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+           
+          //2. upload templates
+          if(this.email_file!=null){
+            let filesData = new FormData();
+          filesData.append('emailtemplate', this.email_file);
+          
+            await axios 
+            .put(this.api.upload_files, 
+            filesData,
+              {
+                headers: {
+                'Content-Type': 'multipart/formdata'      
+              }
+            }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+          }
+       
+          if(this.pdf_file!=null){
+            let filesData = new FormData();
+          filesData.append('attachment', this.pdf_file);
+          
+            await axios 
+            .put(this.api.upload_files, 
+            filesData,
+              {
+                headers: {
+                'Content-Type': 'multipart/formdata'      
+              }
+            }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+          }
+
+            //3. upload image
+            if(this.image!=null){
+
+            let imageData = new FormData();
+            imageData.append('image', this.image);
+
+            await axios 
+            .put(this.api.upload_image, 
+               imageData,
+              {
+                headers: {
+                'Content-Type': 'multipart/formdata'      
+              }
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+           
+          }
+            this.$root.$refs.AttractionEditConfirmation.showConfirmModal(this.attractionname);
+          }
+          // this.formReset()
         },
-        populateForm(passname, interest, replacementfee, email_file, pdf_file, selected_passtype){
-            this.passname= passname
-            this.interest= interest
+        populateForm(attractionname, replacementfee, email_file, pdf_file, image, selected_passtype){
+            this.attractionname= attractionname
             this.replacementfee=  replacementfee
-            this.email_file= email_file
-            this.pdf_file= pdf_file
+            this.email_name= email_file
+            this.pdf_name= pdf_file
+            this.image_name= image
             this.selected_passtype= selected_passtype
         },
         showModal() {

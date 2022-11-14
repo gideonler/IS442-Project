@@ -17,11 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
+import oop.io.demo.pass.PassService;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/attractionmanagement")
 public class AttractionManagementController {
+    
     private final AttractionRepository repository;
 
     private final PassRepository passRepository;
@@ -119,7 +121,23 @@ public class AttractionManagementController {
         if(_attraction.isPresent()){
             Attraction attraction = _attraction.get();
             if(attractionRequest.getPassType()!=null) attraction.setPasstype(PASSTYPE.valueOf(attractionRequest.getPassType().toUpperCase()));
-            if(attractionRequest.getAttraction()!=null) attraction.setAttractionName(attractionRequest.getAttraction());
+            
+            if(attractionRequest.getAttraction()!=null) {
+                String newName = attractionRequest.getAttraction();
+                attraction.setAttractionName(newName);
+                Optional<List<Pass>> passesUnderAttraction= passRepository.findByAttractionName(attractionName);
+                if(passesUnderAttraction.isPresent()) {
+                    //Update attractionname for all passes under this attraction
+                    List<Pass> passes = passesUnderAttraction.get();
+                    for(Pass p : passes) {
+                        if(passRepository.findByPassId(newName+ p.getPassNo()).isPresent()) {
+                            return ResponseEntity.badRequest().body("Pass with passId: " + newName+ p.getPassNo() + " already exists!");
+                        }
+                        p.setAttractionName(newName);
+                        passRepository.save(p);
+                    }
+                }
+            } 
             if(attractionRequest.getReplacementFee()!=0.0) attraction.setReplacementFee(attractionRequest.getReplacementFee());
             return ResponseEntity.ok(repository.save(attraction));
         } else {
