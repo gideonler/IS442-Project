@@ -178,12 +178,14 @@ public class LoanController {
         }
     }
 
-
-    
-
-    
-
-
+    @GetMapping("/availpasses")
+    public ResponseEntity availPass() throws Exception {
+        try{
+            return ResponseEntity.ok(loanService.checkUnavailPasses());
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Passes can't be checked right now.");
+        }
+    }
 
     /**
   * GET /read  --> Read a booking by booking id from the database.

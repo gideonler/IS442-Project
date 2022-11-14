@@ -10,6 +10,8 @@ import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.pass.PASSSTATUS;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -209,10 +211,6 @@ public class LoanService {
     }
 
 
-
-    
-    
-
     // Method to cancel all loans
     public String cancelAllLoans(String passNo, Date date) {
         ArrayList<Loan> loans = loanRepository.findAllByPassNo(passNo);
@@ -226,6 +224,37 @@ public class LoanService {
             }
         }
         return "All changes have been made";
+    }
+
+    public Map<String,Map<String,Integer>> checkUnavailPasses() {
+        Map<String,Map<String,Integer>> output = new TreeMap<>();
+
+        try{
+            List<Loan> loans = loanRepository.findAll();
+
+            for (Loan loan: loans){
+                String attraction = loan.getAttractionName();
+                Date loanDate = loan.getDueDate();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String strDate = dateFormat.format(loanDate);
+                int availPass = passRepository.findByAttractionName(attraction).get().size();
+                if (output.containsKey(attraction)){
+                    if (output.get(attraction).containsKey(strDate)){
+                        output.get(attraction).put(strDate, output.get(attraction).get(strDate) - 1);
+                    } else {
+                        output.get(attraction).put(strDate,availPass - 1);
+                    }
+                } else {
+                    Map<String,Integer> add = new TreeMap<>();
+                    add.put(strDate, availPass-1);
+                    output.put(attraction,add);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return output;
     }
 
 } 
