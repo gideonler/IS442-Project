@@ -139,6 +139,11 @@ public Map<String,Map<String,Map<String,Integer>>> allAttractionLoans() throws E
     return output;
 }
 
+//Get Yearly Summary
+public Map<String,Map<String,Integer>> yearSummary() throws Exception{
+    Integer totalPasses = Integer.valueOf(passRepository.findAll().size());
+    Double totalEmployees = Double.valueOf(userRepository.findAll().size());
+=======
     //Get Total Loans in a Year
     public Map<String,Integer> allYearLoans() throws Exception{
         Map<String,Integer> output = new TreeMap<>();
