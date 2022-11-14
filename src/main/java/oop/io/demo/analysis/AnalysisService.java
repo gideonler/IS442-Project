@@ -139,6 +139,8 @@ public Map<String,Map<String,Map<String,Integer>>> allAttractionLoans() throws E
     return output;
 }
 
+}
+
 /* 
 //Get Yearly Summary
 public Map<String,Map<String,Integer>> yearSummary() throws Exception{
