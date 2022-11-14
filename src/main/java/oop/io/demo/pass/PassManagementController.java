@@ -30,7 +30,7 @@ public class PassManagementController {
     
     //for creating new passes for an existing attraction
     @PostMapping("/new")
-    public ResponseEntity createPasses(@RequestBody PassRequest passRequest) {
+    public ResponseEntity createPass(@RequestBody PassRequest passRequest) {
         PassService passService = new PassService(repository, attractionRepository);
         ResponseEntity responseEntity = passService.createPass(passRequest);
         return responseEntity;

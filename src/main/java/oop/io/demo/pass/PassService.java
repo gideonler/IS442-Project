@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
-import oop.io.demo.attraction.Attraction;
 import oop.io.demo.attraction.AttractionRepository;
 
 

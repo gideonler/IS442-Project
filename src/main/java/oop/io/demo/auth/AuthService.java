@@ -8,20 +8,17 @@ import org.springframework.http.ResponseEntity;
 import oop.io.demo.auth.confirmationToken.ConfirmationToken;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
-import oop.io.demo.auth.payload.request.PasswordRequest;
 import oop.io.demo.auth.payload.request.SignupRequest;
-import oop.io.demo.auth.payload.request.VerificationRequest;
 import oop.io.demo.auth.payload.response.MessageResponse;
 import oop.io.demo.exception.EmailFailToSendException;
 import oop.io.demo.exception.PasswordsDoNotMatchException;
+
 import oop.io.demo.mail.Email;
-import oop.io.demo.mail.EmailSender;
 import oop.io.demo.mail.EmailService;
 import oop.io.demo.user.USERTYPE;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
-import oop.io.demo.user.UserService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 public class AuthService {
     

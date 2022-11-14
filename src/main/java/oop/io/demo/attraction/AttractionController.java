@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/attraction")
 public class AttractionController {
+    
     private final AttractionRepository repository;
-
 
     public AttractionController(AttractionRepository attractionRepository) {
         this.repository= attractionRepository;
