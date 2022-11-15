@@ -112,7 +112,7 @@ public class LoanController {
         } else {
             return ResponseEntity.ok("No bookings made for this user" );
         }
-        return ResponseEntity.ok("Number of bookings: " + count);
+        return ResponseEntity.ok(count);
     }
 
     //endpoint to get loan ID
