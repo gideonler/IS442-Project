@@ -1,8 +1,6 @@
 package oop.io.demo.loan;
 import java.util.*;
 
-import org.hibernate.annotations.SourceType;
-
 public class LoanRequest {
     private String userEmail;
     private String attractionName;

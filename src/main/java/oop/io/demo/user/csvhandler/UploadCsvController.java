@@ -9,14 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
-/**
- * 
- * Copyright by https://loizenai.com
- * @author loizenai.com
- *
- */
-
 @RestController
 @RequestMapping("/uploadcsv")
 public class UploadCsvController {

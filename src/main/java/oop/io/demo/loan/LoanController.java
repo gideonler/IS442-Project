@@ -4,8 +4,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.validation.constraints.Size;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -104,17 +103,14 @@ public class LoanController {
         return status;
     }
 
-    @GetMapping("/getbooking/{userEmail}")
-    public ResponseEntity countBooking(@PathVariable("userEmail") String userEmail) {
+    @GetMapping("/getbookingcount")
+    public ResponseEntity countBooking(@RequestParam("userEmail") String userEmail) {
         int count = 0;
         ArrayList<Loan> loan = loanRepository.findAllByUserEmail(userEmail);
-
         if (loan != null) {
             count = loan.size();
-
         } else {
             return ResponseEntity.ok("No bookings made for this user" );
-
         }
         return ResponseEntity.ok("Number of bookings: " + count);
     }
@@ -147,7 +143,6 @@ public class LoanController {
         ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository)
                 .changeLoanStatus(loanId, LOANSTATUS.LOST);
         return responseEntity;
-
     }
 
     @DeleteMapping("/delete/{loanId}")

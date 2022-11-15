@@ -2,7 +2,6 @@ package oop.io.demo.csvexporter;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 import com.opencsv.CSVWriter;
 
 import java.io.*;
