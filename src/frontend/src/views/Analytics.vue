@@ -64,7 +64,7 @@
         <LoanPerEmployeeChart :key=this.selected_year :selectedYear=this.selected_year  class="col-lg-6"></LoanPerEmployeeChart>
       </div>
       <div class="row">
-        <MonthlyLoanChart class="col-lg-12"></MonthlyLoanChart>
+        <MonthlyLoanChart :key=this.selected_year :selectedYear=this.selected_year  class="col-lg-12"></MonthlyLoanChart>
       </div>
     </div>
     
@@ -96,7 +96,6 @@ import axios from 'axios';
         year_stats: {},
       api: {
           exportCsv: "http://localhost:8080/export/loans" ,
-          get_total_attractions: "http://localhost:8080/analysis/totalattractions" ,
           get_total_employees: "http://localhost:8080/analysis/totalemployees" ,
           get_year_stats: "http://localhost:8080/analysis/yearstats" ,
         },
