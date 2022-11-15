@@ -1,3 +1,11 @@
+/**
+ * Contains endpoints for Staff and Admins to get passes
+ * 1. Get all passes /pass/passes
+ * 2. Get Pass by id /pass/{passid}
+ * 3. Get Pass by attraction /pass/passes/{attractionname}
+ * 4. Get all passes by status /pass/passes/status
+ */
+
 package oop.io.demo.pass;
 import java.util.*;
 import org.springframework.http.ResponseEntity;
@@ -23,26 +31,27 @@ public class PassController {
         this.attractionRepository = attractionRepository; 
     }
 
+    //GET all passes
+    @GetMapping("/passes")
+    public ResponseEntity<List<Pass>> getAllPasses() {
+        return ResponseEntity.ok(repository.findAll());
+    }
+
     //GET pass by id
     @GetMapping("/{passid}")
     public ResponseEntity<Optional<Pass>> getPassDetails(@PathVariable("passid") String passId) {
         return ResponseEntity.ok(repository.findById(passId));
     }
   
-    //Get passes by attraction
+    //GET passes by attraction
     @GetMapping("/passes/{attraction}")
     public ResponseEntity getAvailablePassesByAttraction(@PathVariable("attraction") String attraction) {
         PassService passService = new PassService(repository, attractionRepository);
         return ResponseEntity.ok(passService.getPassesByAttraction(attraction));
     }
-    
-    //Get all passes
-    @GetMapping("/passes")
-    public ResponseEntity<List<Pass>> getAllPasses() {
-        return ResponseEntity.ok(repository.findAll());
-    }
 
-    //Get passes by pass status
+
+    //GET passes by pass status
     @GetMapping("/passes/status")
     public ResponseEntity<List<Pass>> getPassesByPassStatus(@RequestParam(value="status") String passStatus) {
         PASSSTATUS status = PASSSTATUS.valueOf(passStatus.toUpperCase());

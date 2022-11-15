@@ -1,3 +1,11 @@
+/**
+ * Helper class to help save file in specified directory
+ * Used for:
+ * - Uploading image of attraction
+ * - Uploading template email for attraction
+ * - Uploading PDF file to be (optionally) sent with email for attraction
+ */
+
 package oop.io.demo.fileuploadhelper;
 
 import java.io.*;

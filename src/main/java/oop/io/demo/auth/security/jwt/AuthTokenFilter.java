@@ -1,3 +1,7 @@
+/**
+ * Contains method for setting user authentication
+ */
+
 package oop.io.demo.auth.security.jwt;
 
 import java.io.IOException;

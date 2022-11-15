@@ -1,3 +1,11 @@
+/**
+ * Contains endpoints to be used for authentication
+ * 1. Sign in   [POST] /auth/signin
+ * 2. Sign up   [POST] /auth/signup
+ * 3. Verify account from token received after signing up [GET] /auth/confirm
+ * 4. Sign out    
+ */
+
 package oop.io.demo.auth;
 
 import java.util.Map;

@@ -1,3 +1,8 @@
+/**
+ * Contains one endpoint for the General Office to change the status of a pass when collected/ returned
+ * 1. Update pass status upon collection to ONLOAN or INOFFICE /passstatus/change
+ */
+
 package oop.io.demo.pass;
 
 import java.util.Map;

@@ -1,3 +1,10 @@
+/**
+ * Class containing Jwt Token helper methods
+ * 1. generate Jwt Token
+ * 2. get email from Token
+ * 3. validate Jwt Token
+ */
+
 package oop.io.demo.auth.security.jwt;
 
 import java.util.Date;

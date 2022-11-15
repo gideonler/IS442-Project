@@ -1,3 +1,9 @@
+/**
+ * Contains methods for
+ * 1. Enabling/disabling user: enableDisableUser(String email, String enableOrDisable)
+ * 2. Changing user type: changeUserType(Map<String, String> map, USERTYPE userType)
+ */
+
 package oop.io.demo.user;
 
 import java.util.Map;
@@ -22,11 +28,10 @@ public class UserService {
         Optional<User> _user = userRepository.findByEmail(email);
         if(_user.isPresent()) {
             User user= _user.get();
-            boolean verified = enableOrDisable== "Enable"? true: false;
+            boolean verified = enableOrDisable == "Enable";
             user.setVerified(verified);
             userRepository.save(user);
             return ResponseEntity.ok(user);
-            //return ResponseEntity.ok(enableOrDisable+ "d user");
         } else {
             return ResponseEntity.badRequest().body("User not found!");
         }
