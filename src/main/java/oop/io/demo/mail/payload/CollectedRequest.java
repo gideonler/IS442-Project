@@ -6,6 +6,10 @@ public class CollectedRequest {
     @NotBlank
 	private String email;
 
+	public CollectedRequest(String email){
+		this.email = email;
+	}
+
 	public String getEmail() {
 		return email;
 	}
