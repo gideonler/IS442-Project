@@ -163,23 +163,23 @@
       </template>
       <template #cell(activate)="data" >
         <div>
-          <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="handleDeactivate(items[data.index].passId)" variant="danger">Deactivate</b-button> 
-          <b-button v-if="items[data.index].passStatus == 'DEACTIVATED'" @click="handleActivate(items[data.index].passId)" variant="success">Reactivate</b-button>
+          <b-button v-if="data.item.passStatus == 'INOFFICE'" @click="showPopup('Deactivation', data.item.passId)" variant="danger">Deactivate</b-button> 
+          <b-button v-if="data.item.passStatus == 'DEACTIVATED'" @click="showPopup('Reactivation', data.item.passId)" variant="success">Reactivate</b-button>
         </div>
       </template>
-      <!-- <template #cell(delete)="data">
-        <BIconTrash
-          class="remove-icon"
-          @click="handleDelete(data)"
-        ></BIconTrash>
-      </template> -->
     </b-editable-table>
+    <div hidden>
+        <StatusChangePopUp :action="this.action" :pass="this.pass_to_upate" v-on:update-status="handleUpdate"></StatusChangePopUp>
+    </div>
   </div>
+
+
 </template>
 
 <script>
 import axios from 'axios'
 import BEditableTable from "bootstrap-vue-editable-table";
+import   StatusChangePopUp from './StatusChangePopUp.vue';
 import {
   BIconTrash,
   BIconPencil,
@@ -195,27 +195,31 @@ export default {
     BIconPencil,
     BIconCheck,
     BButton,
+    StatusChangePopUp,
   },
   data() {
     return {
+      action: '',
+      curr_passno_list: [],
+      pass_to_upate:  '',
       placeOfInterest: '',
       api: { view_passes: "http://localhost:8080/pass/passes/",
             activate_pass: "http://localhost:8080/passmanagement/activate",
-            deactivate_pass: "http://localhost:8080/passmanagement/deactivate"
+            deactivate_pass: "http://localhost:8080/passmanagement/deactivate",
+            edit_pass: "http://localhost:8080/passmanagement/",
+            create_pass: "http://localhost:8080/passmanagement/new",
     },
       items: null,
       updatedRow: {},
       fields: [
-        // { key: "delete", label: "" },
-        { key: "edit", label: "" },
+        { key: "edit", label: "",  class:"edit-col"  },
         {
           key: "passId",
           label: "Pass Id",
           type: "text",
-          editable: true,
+          editable: false,
           placeholder: "Enter Name...",
           class: "id-col",
-          validate: this.validateName,
           sortable: true,
         },
         {
@@ -224,6 +228,7 @@ export default {
           type: "text",
           editable: true,
           class: "pass-no-col",
+          validate: this.validateNo,
           sortable: true,
         },
         {
@@ -242,17 +247,20 @@ export default {
       ],
       rowUpdate: {},
       totalRows: 1,
-          currentPage: 1,
-          perPage: 5,
-          pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
-          sortBy: '',
-          sortDesc: false,
-          sortDirection: 'asc',
-          filter: null,
-          filterOn: [],
+      currentPage: 1,
+      perPage: 5,
+      pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
     };
   },
   methods: { 
+    async handleUpdate() {
+      await this.action=="Reactivation"? this.handleActivate(this.pass_to_upate) : this.handleDeactivate(this.pass_to_upate)            
+      },
     handleInput(data) {
       if (Object.keys(this.updatedRow).length === 0) {
         this.updatedRow = {
@@ -270,22 +278,46 @@ export default {
         id: newId,
         action: "add",
         data: {
+          action: 'add',
           id: newId,
           passId: '',
           passNo: '',
-          passStatus:''
+          passStatus:'INOFFICE'
         },
       };
     },
-    handleSubmit(data, update) {
+    async handleSubmit(data, update) {
+      if(data.item.action=='add'){
+        await axios 
+            .post(this.api.create_pass, 
+              {
+                "passNo" : this.updatedRow.passNo,
+                "attractionName": this.placeOfInterest,
+                "passStatus": "INOFFICE"
+              }
+              )
+            .then((response) => {
+              console.log(response);
+              data.item.passId= this.placeOfInterest+  this.updatedRow.passNo
+            }); 
+      }else{
+        await axios 
+            .put(this.api.edit_pass + this.updatedRow.passId + '/edit' , 
+              {
+                "passNo" : this.updatedRow.passNo
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+      }
       this.rowUpdate = {
-        edit: false,
-        id: data.id,
-        action: update ? "update" : "cancel",
-      };
-    
-     console.log(this.updatedRow)
-     this.updatedRow = {}
+            edit: false,
+            id: data.id,
+            action: update ? "update" : "cancel",
+          };
+          
+        this.updatedRow = {}
     },
     handleEdit(data) {
       console.log(this.items)
@@ -293,6 +325,11 @@ export default {
     },
     handleDelete(data) {
       this.rowUpdate = { id: data.id, action: "delete" };
+    },
+    showPopup(action, data){
+      this.action= action;
+      this.pass_to_upate= data;
+      this.$root.$refs.StatusChangePopUp.showModal();
     },
     async handleActivate(data) {
       await axios 
@@ -303,6 +340,8 @@ export default {
         )
       .then((response) => {
         console.log(response);
+        this.$emit('update-status');
+
       }); 
      
     },
@@ -315,6 +354,7 @@ export default {
               )
             .then((response) => {
               console.log(response);
+              this.$emit('update-status');
             }); 
     },
     async viewPass(placeofinterest){
@@ -323,22 +363,28 @@ export default {
           await axios
             .get(view_pass_api)
             .then((response) => {
-                var passes_list = response.data;
+                var passes_list = response.data.body;
+                var curr_passno_list= [];
+                console.log(passes_list)
                 passes_list.forEach(function (value, i) {
+                    curr_passno_list.push(value.passNo)
                     value["id"]= i+1
                 });
                 this.items= passes_list
+                this.curr_passno_list = curr_passno_list 
+                console.log(this.items)
             })
             .catch((error) => {
                 console.log(error);
             })
           this.totalRows = this.items.length
       },
-    validateName(value) {
-        if (value === '') {
+    validateNo(value) {
+      
+        if (this.curr_passno_list.includes(value)) {
           return {
             valid: false,
-            errorMessage: 'Please enter name'
+            errorMessage: 'Current pass number exists. Please set a unique number.'
           }
         }
         return {valid: true};

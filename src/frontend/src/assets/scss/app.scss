@@ -966,7 +966,8 @@ $font-family-base:            $font-family-sans-serif !default;
 // Carousel
 
 $carousel-control-color:             $black !default;
-$carousel-control-width:             15% !default;
+$carousel-control-width:             3em !default;
+$carousel-control-margin:            .2em !default;
 $carousel-control-opacity:           .5 !default;
 $carousel-control-hover-opacity:     .9 !default;
 $carousel-control-transition:        opacity .15s ease !default;
@@ -989,6 +990,7 @@ $carousel-control-next-icon-bg:      url("data:image/svg+xml,<svg xmlns='http://
 $carousel-transition-duration:       .6s !default;
 $carousel-transition:                transform $carousel-transition-duration ease-in-out !default; // Define transform transition first if using multiple transitions (e.g., `transform 2s ease, opacity .5s ease-out`)
 
+$carousel-padding-y:                  3.5em !default;
 
 // Spinners
 
