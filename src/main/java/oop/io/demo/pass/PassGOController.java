@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.attraction.AttractionRepository;
+import oop.io.demo.loan.Loan;
+import oop.io.demo.loan.LoanRepository;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
@@ -20,21 +22,28 @@ public class PassGOController {
 
     private final AttractionRepository attractionRepository;
 
-    public PassGOController(PassRepository passRepository, AttractionRepository attractionRepository) {
+    private final LoanRepository loanRepository;
+
+    public PassGOController(PassRepository passRepository, AttractionRepository attractionRepository, LoanRepository loanRepository) {
         this.repository = passRepository;
         this.attractionRepository = attractionRepository; 
+        this.loanRepository = loanRepository;
     }
 
     @PutMapping("/passreturn")
-    public ResponseEntity setPassStatusToInOffice(@RequestBody Map<String, String> map) {
-        String passId = map.get("passId");
+    public ResponseEntity setPassStatusToInOffice(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");
+        Loan loan = loanRepository.findByLoanId(loanId);
+        String passId = loan.getAttractionName()+loan.getPassNo();
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
         return responseEntity;
     }
 
     @PutMapping("/passloan")
-    public ResponseEntity setPassStatusToOnLoan(@RequestBody Map<String, String> map) {
-        String passId = map.get("passId");
+    public ResponseEntity setPassStatusToOnLoan(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");
+        Loan loan = loanRepository.findByLoanId(loanId);
+        String passId = loan.getAttractionName()+loan.getPassNo();
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.ONLOAN);
         return responseEntity;
     }

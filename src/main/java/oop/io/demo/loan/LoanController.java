@@ -25,11 +25,10 @@ import oop.io.demo.user.UserRepository;
 @RequestMapping("/loan")
 @Controller
 public class LoanController {
+
     //loan controller should:
     //have method endpoint: "newbooking" calls method in loanservice to make new booking
     ////access: both staff and admin can access to make booking for themself- userEmail automatically assigned based on their identity
-
-
     LOANSTATUS passStatus =LOANSTATUS.ACTIVE;
     @Autowired
     private LoanRepository loanRepository;
@@ -41,12 +40,10 @@ public class LoanController {
     private LoanService loanService;
 
 
-
     @Autowired
     JwtUtils jwtUtils;
     @PostMapping("/book")
     public String addBooking(@RequestBody LoanRequest loanRequest){
-
         String userEmail = loanRequest.getUserEmail();
         Date loanDate = loanRequest.getLoanDate();
         String attractionName = loanRequest.getAttractionName();
@@ -73,6 +70,7 @@ public class LoanController {
         ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).changeLoanStatus(loanId, LOANSTATUS.CANCELLED);
         return responseEntity;
     }
+
     @GetMapping("/lost")
     public ResponseEntity ReportLoss(@RequestBody Map<String, String> loanIdMap) {
         String loanId = loanIdMap.get("loanId");//key JSON in postman
@@ -80,7 +78,6 @@ public class LoanController {
         return responseEntity;
        
     }   
-
 
     @DeleteMapping("/delete/{loanId}")
     public ResponseEntity deleteBooking(@RequestBody Map<String, String> loanIdMap) {
@@ -95,20 +92,19 @@ public class LoanController {
         }
     }
 
-
     @GetMapping("/{userEmail}")
-    public ResponseEntity getLoanByUserEmail(@PathVariable("userEmail") String userEmail){
-        Optional<Loan> loan = loanRepository.findByUserEmail(userEmail);
-        if(loan.isPresent()) {
-            return ResponseEntity.ok(loan.get());
+    public ResponseEntity getLoansByUserEmail(@PathVariable("userEmail") String userEmail){
+        List<Loan> loans = loanRepository.findAllByUserEmail(userEmail);
+        if(!loans.isEmpty()) {
+            return ResponseEntity.ok(loans);
         }
         else {
             return ResponseEntity.badRequest().body("User was not found!");
         }
     }
 
-    @Scheduled(cron = "0 0 9 * * MON-FRI")//overdue sent at 9AM
 
+    @Scheduled(cron = "0 0 9 * * MON-FRI")//overdue sent at 9AM
     public ResponseEntity setOverDueDate() throws Exception {
         try {
             //Take user email to direct the collected message to the user
@@ -159,15 +155,11 @@ public class LoanController {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(loan.getDueDate());
                 cal.add(Calendar.DAY_OF_YEAR,-1);
-                Date oneDayBefore= cal.getTime();
-                
+                Date oneDayBefore= cal.getTime();                
               
                 if(isSameDay(currentDate, oneDayBefore)){
                     loan.setStatus(LOANSTATUS.OVERDUE);
-                    savedLoans.add(loan);
-                
-               
-                    
+                    savedLoans.add(loan);                                    
                 }
                 
             }
