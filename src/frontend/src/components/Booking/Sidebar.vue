@@ -1,60 +1,46 @@
 <template>
     <!-- Vertical navbar -->
     <div class="vertical-nav bg-white fixed-right" id="sidebar">
-        <div class="py-4 px-3 mb-4">
-            <div class="media d-flex align-items-center"><img
-                    src="https://therichpost.com/wp-content/uploads/2020/06/avatar2.png" alt="..." width="65"
-                    class="mr-3 rounded-circle img-thumbnail shadow-sm">
-                <div class="media-body personal">
-                    <h4 class="m-0">Mr Sporty</h4>
-                    <p class="font-weight-light text-muted mb-0">Sportsman of the Year</p>
-                    <p class="font-weight-light text-muted mb-0">mrsporty@sss.edu.sg</p>
-                </div>
-            </div>
-        </div>
 
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mb-0">Bookings</p>
+        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-2 mb-0">Bookings</p>
 
-        <ul class="nav flex-column bg-white mb-0">
-            <li class="nav-item">
-                <a href="#" class="nav-link text-dark font-italic">
-                    <i class="fa fa-address-card mr-3 text-primary fa-fw"></i>
-                    You have 2 bookings left for October
-                </a>
-            </li>
-        </ul>
+        <p class="px-3 mb-0"> You have {{ number }} bookings left for {{ month }} </p>
 
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mt-2 mb-0">Current Bookings</p>
+        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mb-0">Current Bookings</p>
 
-        <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" class="scrollspy-example scrollspy" tabindex="0"> 
-            <ul class="nav flex-column bg-white mb-0">
-                <li class="nav-item">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Booking 1</div>
-                        <ul>
-                            <li>Destination: Singapore Zoo</li>
-                            <li>Date: 1st October 2022</li>
-                            <li>Number of tickets: 2</li>
-                        </ul>                
-                    </div>
-                    <button class="btn btn-secondary btn-sm mt-1 ml-5">Cancel Booking</button>   
-                    <!-- move to styling              -->
-                </li>
+        <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" class="scrollspy px-3"
+            tabindex="0">
+            <ul class="nav flex-column bg-white mb-0 overflow-auto">
                 <li class="nav-item">
                     <div class="mt-3 ms-2 me-auto">
-                        <div class="fw-bold">Booking 2</div>
-                        <ul>
+                        <div class="row">
+                            <div class="col fw-bold centered">Booking 2</div>
+                            <div class="col">
+                                <b-button v-b-modal.modal-1 class="btn-sm">Cancel booking</b-button>
+                            </div>
+                        </div>
+                        <ul class="no-bullets">
                             <li>Destination: Gardens By The Bay</li>
                             <li>Date: 31st October 2022</li>
                             <li>Number of tickets: 2</li>
-                        </ul>                
+                        </ul>
                     </div>
-                    <button class="btn btn-secondary btn-sm mt-1 ml-5">Cancel Booking</button>                
+
                 </li>
             </ul>
         </div>
 
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mt-2 mb-0">Note</p>
+
+        <b-modal id="modal-1" title="Booking Cancellation" alignment="center">
+            <p class="my-4">Are you sure you want to cancel your booking?</p>
+            <template #modal-footer>
+                <b-button variant="danger">No</b-button>
+                <b-button variant="success" @click="cancelBooking()">Yes</b-button>
+            </template>
+        </b-modal>
+
+
+        <!-- <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mt-2 mb-0">Note</p>
 
         <ul class="nav flex-column bg-white mb-0">
             <li class="nav-item">
@@ -63,7 +49,7 @@
                     <ul>
                         <li>Passes can be collected 1 day before the trip from the General Office</li>
                         <li>Passes must be returned to the General Office the day after the trip</li>
-                    </ul>                
+                    </ul>
                 </div>
             </li>
             <li class="nav-item">
@@ -76,38 +62,73 @@
                         <li> Report loss and found <a href="#"> here </a></li>
                     </ul>
                     <ul>
-                        <li>For futher queries, please contact 
+                        <li>For futher queries, please contact
                             <p class="text-primary text-decoration-underline">ineedhelp@sss.edu.sg</p>
                         </li>
-                    </ul>                
-                </div>         
+                    </ul>
+                </div>
             </li>
-        </ul>
+        </ul> -->
 
     </div>
     <!-- End vertical navbar -->
 </template>
   
 <script>
+import axios from "axios";
+
+
+
 export default {
     name: 'SideBar',
     props: {
         msg: String
+    },
+    data() {
+        return {
+            bookingDetails: [],
+            api: {
+                numberBooking: "http://localhost:8080/getbooking",
+                cancelBooking: "http://localhost:8080/loan/cancel"
+            }
+        }
+    },
+    methods: {
+        numberBookings() {
+            return axios
+            .get(this.api.numberBooking + "/" + this.userEmail)
+            .then((response) => {
+                console.log(response.data)
+                this.number = response.data;
+            })
+        },
+
+        cancelBooking() {
+            axios
+            .get(this.api.cancelBooking, {
+                "loanId": this.loanId
+            })
+            .then((response) => {
+                console.log(response.data);
+            })
+        }
     }
 }
+
+
 </script>
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .vertical-nav {
     min-width: 10rem;
-    width: 25rem;
-    height: 100vh;
+    width: 20rem;
+    height: 100%;
     position: fixed;
-    top: 0;
     right: 0;
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.4s;
+    overflow: auto;
 }
 
 /* for toggle behavior */
@@ -144,17 +165,31 @@ export default {
     transform: translate(10px, 10px);
 }
 
+.centered {
+    transform: translateY(-50%, 50%);
+}
+
+.modal-dialog {
+    position: fixed;
+    top: 50% !important;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.no-bullets {
+    list-style-type: none;
+}
+
 .scrollspy {
     position: relative;
 }
 
-body {
+/* body {
     background: #599fd9;
     background: -webkit-linear-gradient(to right, #599fd9, #c2e59c);
     background: linear-gradient(to right, #599fd9, #c2e59c);
     min-height: 100vh;
     overflow-x: hidden;
-}
+} */
 
 .separator {
     margin: 3rem 0;

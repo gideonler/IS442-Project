@@ -5,10 +5,10 @@
         <div class="col-md-7" >
           <CalendarFilter></CalendarFilter>
          <Calendar fluid></Calendar>
-         <Sidebar></Sidebar>
+        
         </div>
         <div class="col-md-5">
-
+          <Sidebar></Sidebar>
         </div>
       </div>
     </div>
