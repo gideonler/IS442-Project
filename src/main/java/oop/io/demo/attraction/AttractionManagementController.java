@@ -41,7 +41,7 @@ public class AttractionManagementController {
         double replacementFee = attractionRequest.getReplacementFee();
         PASSTYPE passtype = PASSTYPE.valueOf(attractionRequest.getPassType().toUpperCase());
         
-        if(replacementFee==0.0) {
+        if(replacementFee==0.0 && passtype==PASSTYPE.PHYSICALPASS) {
              Attraction attraction = new Attraction(attractionName, 53.50, passtype);
              return ResponseEntity.ok(repository.save(attraction));
         } else {
