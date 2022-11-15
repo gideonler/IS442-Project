@@ -1,7 +1,5 @@
 package oop.io.demo.auth.payload.request;
 
-import javax.validation.constraints.NotBlank;
-
 public class LoginRequest {
 	private String email;
 

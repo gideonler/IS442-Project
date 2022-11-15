@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
-import oop.io.demo.pass.PassService;
 
 @CrossOrigin(maxAge = 3600)
 @RestController

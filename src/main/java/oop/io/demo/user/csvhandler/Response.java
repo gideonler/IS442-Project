@@ -2,11 +2,6 @@ package oop.io.demo.user.csvhandler;
 
 import java.util.ArrayList;
 
-/**
-* Copyright by https://loizenai.com
-* @author loizenai.com
-*
-*/
 public class Response {
    private String filename;
    private ArrayList<String> messages;

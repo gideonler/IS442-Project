@@ -1,13 +1,11 @@
 package oop.io.demo.loan;
 
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import javax.persistence.Column;
 
 
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 
 
@@ -45,8 +43,6 @@ public class Loan {
         this.attractionName = attractionName;
         this.userEmail = userEmail;
         this.status = LOANSTATUS.CONFIRMED;
-        
-
     }
 
     public Loan(String userEmail, Date loanDate, String attractionName, String loanId) {
