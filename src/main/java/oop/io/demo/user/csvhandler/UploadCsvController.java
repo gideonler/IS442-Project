@@ -1,3 +1,8 @@
+/**
+ * Contains a single endpoint for uploading a CSV to batch sign up users
+ * 1. Bulk sign up user through CSV upload /uploadcsv/users
+ */
+
 package oop.io.demo.user.csvhandler;
 
 import java.util.ArrayList;

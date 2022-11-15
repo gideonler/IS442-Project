@@ -1,3 +1,11 @@
+/**
+ * Contains endpoints for the ADMIN to manage passes
+ * 1. Create new pass /passmanagement/new
+ * 2. Deactivate pass /passmanagement/deactivate
+ * 3. Activate pass /passmanagement/activate
+ * 4. Edit Pass /passmanagement/{passId}/edit
+ */
+
 package oop.io.demo.pass;
 
 import java.util.Map;

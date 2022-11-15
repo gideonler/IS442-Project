@@ -1,3 +1,15 @@
+/**
+ * Contains all the endpoints for managing users accessible to ADMINS ONLY
+ * 1. Get all users /usermanagement/users
+ * 2. Get users by type /usermanagement/usersbytype
+ * 3. Promote staff to admin /usermanagement/promote
+ * 4. Demote a user (admin or go) to staff /usermanagement/demote
+ * 5. Make a user a GO /usermanagement/makego
+ * 6. Enable (verify) a user /usermanagement/enable
+ * 7. Disable a user /usermanagement/disable
+ * 8. Delete a user /usermanagement/delete
+ */
+
 package oop.io.demo.user;
 
 import java.util.List;
@@ -14,8 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.auth.security.jwt.JwtUtils;
-
 @CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/usermanagement")
@@ -26,9 +36,6 @@ public class UserAdminController {
 
     @Autowired
     PasswordEncoder encoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
 
     private final UserRepository repository;
 

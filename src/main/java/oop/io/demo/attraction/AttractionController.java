@@ -1,3 +1,9 @@
+/**
+ * Contains endpoints for STAFF and ADMIN to
+ * 1. Get all attractions   [GET] /attraction/attractions
+ * 2. Get the details of one attraction     [GET] /attraction/{attraction}/details
+ */
+
 package oop.io.demo.attraction;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +27,7 @@ public class AttractionController {
         this.repository= attractionRepository;
     }
 
+    //
     @GetMapping("/attractions")
     public ResponseEntity<List<Attraction>> getAllPlacesOfInterest() {
         Optional<List<Attraction>> ePass= repository.findByPassType(PASSTYPE.ELECTRONICPASS);
