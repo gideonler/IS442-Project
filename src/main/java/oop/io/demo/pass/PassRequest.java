@@ -1,6 +1,5 @@
 package oop.io.demo.pass;
 
-
 public class PassRequest {
     
     private String passNo;
