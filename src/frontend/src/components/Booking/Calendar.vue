@@ -68,15 +68,6 @@
           this.loadData();
         }
     },
-    // watch: {
-    //   selected_attraction() {
-    //     //reset values
-    //     this.selected_date= ''
-    //     this.selected_no_pass=''
-    //     this.getPasses()
-    //     this.loadData();
-    //   },
-    // },
     methods: {
       async getPasses(){
         await axios
@@ -103,10 +94,6 @@
             tomorrow.setDate(today.getDate() + 1)
             var last =  new Date()
             last.setDate(today.getDate() + 56)
-            
-            // var dd = String(tomorrow.getDate()).padStart(2, '0');
-            // var mm = String(tomorrow.getMonth() + 1).padStart(2, '0'); //January is 0!
-            // var yyyy = tomorrow.getFullYear();
             var avail_dates = []
             var daysOfYear = [];
             for (var d = tomorrow; d <= last; d.setDate(d.getDate() + 1)) {
@@ -119,9 +106,9 @@
             }
             var temp;
             for(date of avail_dates){
-              if(this.containsKey(availabilities,date)){
+              if(this.containsKey(this.availabilities,date)){
                 //all available
-                if(availabilities[date]!=0){
+                if(this.availabilities[date]!=0){
                   temp= { title: 'available', 'date': date,   display: 'background', passes_left: availabilities[date]  }
                 }
               }
@@ -131,8 +118,7 @@
               }
               result.push(temp)
             }
-            // var total_availabilities= this.total_loans[selected_attraction]
-            // console.log(result)
+
             this.calendarOptions.events= result;
 
           })
@@ -151,14 +137,12 @@
         handleDateClick: function(info){ 
           let availability=  info.dayEl.innerText.split("\n")[1];
           if (availability== 'available'){
-            console.log(info)
             this.selected_date = info.dateStr;
             if(this.containsKey(this.availabilities, info.dateStr)){
               this.selected_no_pass= this.availabilities[info.dateStr];
             }else{
               this.selected_no_pass= this.selected_max_avail;
             }
-            // this.$root.$refs.BookingPopUp.showModal(info.dateStr);
             this.$root.$refs.BookingPopUp.showModal();
 
           }else if (availability== 'unavailable'){
