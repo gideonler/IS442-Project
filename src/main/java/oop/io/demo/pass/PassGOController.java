@@ -30,10 +30,25 @@ public class PassGOController {
         this.loanRepository = loanRepository;
     }
 
+<<<<<<< HEAD
     @PutMapping("/change")
     public ResponseEntity setPassStatusToOnLoan(@RequestBody Map<String, String> loanIdAndStatusMap) {
         String loanId = loanIdAndStatusMap.get("loanId");
         String passStatus = loanIdAndStatusMap.get("passStatus");
+=======
+    @PutMapping("/passreturn")
+    public ResponseEntity setPassStatusToInOffice(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");
+        Loan loan = loanRepository.findByLoanId(loanId);
+        String passId = loan.getAttractionName()+loan.getPassNo();
+        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
+        return responseEntity;
+    }
+
+    @PutMapping("/passloan")
+    public ResponseEntity setPassStatusToOnLoan(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");
+>>>>>>> 9b9433a (merge the endpoint for changing pass status to inoffice and onloan)
         Loan loan = loanRepository.findByLoanId(loanId);
         String passId = loan.getAttractionName()+loan.getPassNo();
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.ONLOAN);
