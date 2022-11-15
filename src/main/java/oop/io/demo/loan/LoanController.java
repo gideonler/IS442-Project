@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.mail.*;
@@ -46,9 +45,6 @@ public class LoanController {
     private LoanService loanService;
     @Autowired
     private EmailSender emailSender;
-
-    @Autowired
-    JwtUtils jwtUtils;
 
     @PostMapping("/book")
     public String addBooking(@RequestBody LoanRequest loanRequest) {
