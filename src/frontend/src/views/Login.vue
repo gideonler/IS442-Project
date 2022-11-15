@@ -72,8 +72,8 @@ export default {
       },
       status: 'forget_me',
       api: {
-        sign_in: 'http://localhost:8000/auth/sign_in',
-        reset: 'http://localhost:8000/auth/reset',
+        sign_in: 'http://localhost:8080/auth/signin',
+        reset: 'http://localhost:8080/auth/reset',
       }
     };
   },
@@ -81,7 +81,7 @@ export default {
     form: {
       email: {
         required,
-        email_validation
+        // email_validation
       },
       password: {
         required,
@@ -119,11 +119,11 @@ export default {
       // console.log(this.form.email);
       // console.log(this.form.password);
       // console.log(this.status);
-      return axios
+      axios
         .post(this.api.sign_in, {
           "email": this.form.email,
           "password": this.form.password,
-          "status": this.status
+          // "status": this.status
         })
         .then(response => {
           console.log(response.data);
