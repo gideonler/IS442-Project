@@ -17,7 +17,7 @@
                     <li>Loan Date: {{ booking.loanDate.split("T")[0] }}</li>
                     <li>Pass Number: {{ booking.passNo }}</li>
                     <li>Booking Status: {{ booking.status }}</li>
-                    <li>Pass Status: {{ passStatus }}</li>
+                    <li>Pass Status: {{ getPassStatus(booking.loanID) }}</li>
                     <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info" @click="sendInfo(booking.loanID)">
                         Cancel booking
                     </b-button>
@@ -75,10 +75,11 @@ export default {
             month: "",
             bookingList: [{ attractionName: "", loanDate: "", passNo: "", status: "", loanID: "" }],
             bookingId: "",
-            passStatus: "Yet to collect",
+            passStatus: "",
             api: {
                 numberBooking: "http://localhost:8080/loan/getbookingcount/",
                 bookingList: "http://localhost:8080/loan/",
+                passStatus: "http://localhost:8080/passstatus/change",
                 cancelBooking: "http://localhost:8080/loan/cancel"
             }
         }
@@ -120,9 +121,23 @@ export default {
                 });
         },
 
-        // getPassStatus() {
-
-        // }
+        getPassStatus(loanID) {
+            // return axios
+            // .put(this.api.passStatus), {
+            //     // "loanId": "16/11/2022singaporesportsschooltest@outlook.com5",
+            //     "loanId": loanID,
+            //     "passStatus": "INOFFICE"
+            // }
+            // .then((response) => {
+            //     console.log(response.data)
+            //     this.passStatus = response.data;
+            //     return this.passStatus;
+            // })
+            // .catch((error) => {
+            //     console.log(error.response);
+            // });
+            return "INOFFICE";
+        },
 
         sendInfo(loanID) {
             this.bookingId = loanID;
@@ -138,12 +153,13 @@ export default {
             var currentDate = moment(dateFormat(currentDate));
 
             var differenceDay = loanDate.diff(currentDate, 'days');
-            if (differenceDay < 2) {
+            if (differenceDay < 1) {
                 this.$alert("You cannot cancel your booking less than 1 day before the trip");
             } else {
                 return axios
                 .get(this.api.cancelBooking, {
-                    "loanID": "bookingId"
+                    // "loanId": "bookingId"
+                    "loanId": "16/11/2022singaporesportsschooltest@outlook.com5"
                 })
                 .then((response) => {
                     console.log(response.data);
