@@ -4,9 +4,9 @@
 
         <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-2 mb-0">Bookings</p>
 
-        <p class="px-3 mb-0"> You have {{ number }} bookings left for {{ month }} </p>
+        <p class="px-3 mb-0"> You have {{ number }} bookings in total </p>
 
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mb-0">Current Bookings</p>
+        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mb-0">Upcoming Bookings</p>
 
         <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" class="scrollspy px-3"
             tabindex="0">
@@ -86,21 +86,35 @@ export default {
     },
     data() {
         return {
+            number: "",
+            month: "",
             bookingDetails: [],
             api: {
-                numberBooking: "http://localhost:8080/getbooking",
-                cancelBooking: "http://localhost:8080/loan/cancel"
+                numberBooking: "http://localhost:8080/loan/getbookingcount/",
+                cancelBooking: "http://localhost:8080/loan/cancel/"
             }
         }
     },
+
+    mounted() {
+        this.numberBookings();
+    },
+
     methods: {
         numberBookings() {
             return axios
-            .get(this.api.numberBooking + "/" + this.userEmail)
+            .get(this.api.numberBooking, {
+                params: {
+                    userEmail: this.userEmail
+                }
+            })
             .then((response) => {
                 console.log(response.data)
                 this.number = response.data;
             })
+            .catch((error) => {
+                console.log(error.response);
+            });
         },
 
         cancelBooking() {
