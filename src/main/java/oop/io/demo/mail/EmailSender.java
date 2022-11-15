@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import oop.io.demo.attraction.Attraction;
 import oop.io.demo.attraction.AttractionRepository;
@@ -23,6 +24,7 @@ import java.util.*;
 
 import javax.validation.Valid;
 
+@CrossOrigin(maxAge = 3600)
 @Controller
 @RequestMapping("/email")
 public class EmailSender {

@@ -18,8 +18,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Authentication from '../views/Authentication.vue'
 import GOPass from '../views/GOPassManagement.vue'
-// import { apply } from 'core-js/fn/reflect'
-
+import UsersManagement from '../views/UsersManagement.vue'
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
 
@@ -43,6 +42,7 @@ const routes = [
   { path: '/corporate-pass-management/passes/:name', component: AdminCorpPassDisplay}, ,
   { path: '/register', component: Register },
   { path: '/gopass', component: GOPass },
+  { path: '/users', component: UsersManagement },
 ]
 
 const router = new VueRouter({
