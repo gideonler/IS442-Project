@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.UserRepository;
+import oop.io.demo.mail.*;
+import oop.io.demo.mail.payload.BookingRequest;
 
 
 @CrossOrigin(maxAge = 3600)
@@ -39,7 +41,8 @@ public class LoanController {
     private PassRepository passRepository;
     @Autowired
     private LoanService loanService;
-
+    @Autowired
+    private EmailSender emailSender;
 
 
     @Autowired
@@ -51,16 +54,30 @@ public class LoanController {
         Date loanDate = loanRequest.getLoanDate();
         String attractionName = loanRequest.getAttractionName();
         int noOfPass = loanRequest.getNoOfPass();
-        LoanService loanService= new LoanService(loanRepository,passRepository,userRepository);
+        loanService= new LoanService(loanRepository,passRepository,userRepository);
         if (noOfPass == 1){
-            boolean check = loanService.addBooking(userEmail, loanDate, attractionName, "1");
-            if (check){
+            Loan loan = loanService.addBooking(userEmail, loanDate, attractionName, "1");
+            if (loan != null){
+                try{
+                    BookingRequest booking = new BookingRequest(userEmail,loan.getLoanID());
+                    emailSender.sendAttachmentMessage(booking);
+                } catch (Exception e){
+                    return "Booking error.";
+                }
                 return "One pass was created for " + attractionName + " for use on " + loanDate;
             }
         } else {
-            boolean check1 = loanService.addBooking(userEmail, loanDate, attractionName, "1");
-            boolean check2 = loanService.addBooking(userEmail, loanDate, attractionName, "2");
-            if (check1 && check2){
+            Loan loan1 = loanService.addBooking(userEmail, loanDate, attractionName, "1");
+            Loan loan2 = loanService.addBooking(userEmail, loanDate, attractionName, "2");
+            if (loan1 !=null && loan2 != null){
+                try{
+                    BookingRequest booking1 = new BookingRequest(userEmail,loan1.getLoanID());
+                    emailSender.sendAttachmentMessage(booking1);
+                    BookingRequest booking2 = new BookingRequest(userEmail,loan2.getLoanID());
+                    emailSender.sendAttachmentMessage(booking2);
+                } catch (Exception e){
+                    return "Booking error.";
+                }
                 return "Two passes were created for " + attractionName + " for use on " + loanDate;
             }
         }
