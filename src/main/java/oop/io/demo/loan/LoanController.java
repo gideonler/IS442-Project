@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -61,6 +63,7 @@ public class LoanController {
         String strMonth = monthFormat.format(loanDate);
 
         if (checkBooking(userEmail, loanDate)) {
+            countBooking(userEmail);
             if (noOfPass == 1) {
                 Loan loan = loanService.addBooking(userEmail, loanDate, attractionName, "1");
                 if (loan != null) {
@@ -99,6 +102,21 @@ public class LoanController {
             }
         }
         return status;
+    }
+
+    @GetMapping("/getbooking/{userEmail}")
+    public ResponseEntity countBooking(@PathVariable("userEmail") String userEmail) {
+        int count = 0;
+        ArrayList<Loan> loan = loanRepository.findAllByUserEmail(userEmail);
+
+        if (loan != null) {
+            count = loan.size();
+
+        } else {
+            return ResponseEntity.ok("No bookings made for this user" );
+
+        }
+        return ResponseEntity.ok("Number of bookings: " + count);
     }
 
     @GetMapping("/cancel")
