@@ -76,7 +76,7 @@ public class LoanService {
 
     // method to allow user to cancel booking
 
-    public boolean addBooking(String userEmail, Date loanDate, String attractionName, String loanId) {
+    public Loan addBooking(String userEmail, Date loanDate, String attractionName, String loanId) {
     
         String passNo = extractPassNo(attractionName, loanDate);
         if (passNo != ""){
@@ -87,7 +87,7 @@ public class LoanService {
             loan.setStatus(LOANSTATUS.CONFIRMED);
             loan.setContactNo(contactNo);
             loanRepository.save(loan);
-            return true;
+            return loan;
         }
 
         // if (checkAvail(loanDate,attractionName)){
@@ -96,7 +96,7 @@ public class LoanService {
         // loan.getUserEmail() + " has been added.";
         // }
         // getUserInfo(loanDate,attractionName);
-        return false;
+        return null;
     }
 
     public ResponseEntity cancelLoan(String loanID, LOANSTATUS loanStatus) {

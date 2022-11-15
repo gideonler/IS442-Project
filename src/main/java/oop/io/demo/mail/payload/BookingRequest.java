@@ -8,6 +8,10 @@ public class BookingRequest {
 	@NotBlank
 	private String loanId;
 
+	public BookingRequest(String email, String loanId){
+		this.email = email;
+		this.loanId = loanId;
+	}
 
 	public String getEmail() {
 		return email;
