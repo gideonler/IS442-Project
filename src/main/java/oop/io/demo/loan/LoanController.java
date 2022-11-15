@@ -149,11 +149,12 @@ public class LoanController {
     }
 
     @GetMapping("/{userEmail}")
-    public ResponseEntity getLoanByUserEmail(@PathVariable("userEmail") String userEmail) {
-        Optional<Loan> loan = loanRepository.findByUserEmail(userEmail);
-        if (loan.isPresent()) {
-            return ResponseEntity.ok(loan.get());
-        } else {
+    public ResponseEntity getLoansByUserEmail(@PathVariable("userEmail") String userEmail){
+        List<Loan> loans = loanRepository.findAllByUserEmail(userEmail);
+        if(!loans.isEmpty()) {
+            return ResponseEntity.ok(loans);
+        }
+        else {
             return ResponseEntity.badRequest().body("User was not found!");
         }
     }
