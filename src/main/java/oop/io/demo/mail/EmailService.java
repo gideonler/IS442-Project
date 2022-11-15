@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -17,7 +16,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 
 @Service

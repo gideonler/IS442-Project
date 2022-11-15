@@ -1,22 +1,23 @@
+/**
+ * Contains all the endpoints for managing users accessible to STAFF AND ADMIN
+ * 1. Get public user details for a specific user /user/userdetails
+ * 2. Get user's own profile details /user/mydetails
+ * 3. Edit profile /user/editprofile
+ */
+
 package oop.io.demo.user;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import oop.io.demo.auth.security.jwt.JwtUtils;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
@@ -28,9 +29,6 @@ public class UserController {
 
     @Autowired
     PasswordEncoder encoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
 
     private final UserRepository repository;
 

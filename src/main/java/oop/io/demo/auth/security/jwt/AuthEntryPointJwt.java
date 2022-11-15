@@ -1,3 +1,7 @@
+/**
+ * Contains method for logging error due to unauthorized access
+ */
+
 package oop.io.demo.auth.security.jwt;
 
 import java.io.IOException;

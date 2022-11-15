@@ -4,8 +4,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.validation.constraints.Size;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,10 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.mail.*;
@@ -47,9 +45,6 @@ public class LoanController {
     private LoanService loanService;
     @Autowired
     private EmailSender emailSender;
-
-    @Autowired
-    JwtUtils jwtUtils;
 
     @PostMapping("/book")
     public String addBooking(@RequestBody LoanRequest loanRequest) {
@@ -104,19 +99,30 @@ public class LoanController {
         return status;
     }
 
-    @GetMapping("/getbooking/{userEmail}")
-    public ResponseEntity countBooking(@PathVariable("userEmail") String userEmail) {
+    @GetMapping("/getbookingcount")
+    public ResponseEntity countBooking(@RequestParam("userEmail") String userEmail) {
         int count = 0;
         ArrayList<Loan> loan = loanRepository.findAllByUserEmail(userEmail);
-
         if (loan != null) {
             count = loan.size();
-
         } else {
             return ResponseEntity.ok("No bookings made for this user" );
+        }
+        return ResponseEntity.ok(count);
+    }
+
+    //endpoint to get loan ID
+    @GetMapping("/getLoanID/{userEmail}")
+    public ResponseEntity getLoanID(@PathVariable("userEmail") String loanId) {
+        Optional<Loan> loan = this.loanRepository.findById(loanId);
+        if (loan != null) {
+            return ResponseEntity.ok("Loan ID is: " +loan);
+
+        } else {
+            return ResponseEntity.ok("No loans made" );
 
         }
-        return ResponseEntity.ok("Number of bookings: " + count);
+
     }
 
     @GetMapping("/cancel")
@@ -133,7 +139,6 @@ public class LoanController {
         ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository)
                 .changeLoanStatus(loanId, LOANSTATUS.LOST);
         return responseEntity;
-
     }
 
     @DeleteMapping("/delete/{loanId}")
@@ -149,11 +154,12 @@ public class LoanController {
     }
 
     @GetMapping("/{userEmail}")
-    public ResponseEntity getLoanByUserEmail(@PathVariable("userEmail") String userEmail) {
-        Optional<Loan> loan = loanRepository.findByUserEmail(userEmail);
-        if (loan.isPresent()) {
-            return ResponseEntity.ok(loan.get());
-        } else {
+    public ResponseEntity getLoansByUserEmail(@PathVariable("userEmail") String userEmail){
+        List<Loan> loans = loanRepository.findAllByUserEmail(userEmail);
+        if(!loans.isEmpty()) {
+            return ResponseEntity.ok(loans);
+        }
+        else {
             return ResponseEntity.badRequest().body("User was not found!");
         }
     }

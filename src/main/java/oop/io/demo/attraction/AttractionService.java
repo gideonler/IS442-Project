@@ -1,3 +1,10 @@
+/**
+ * Contains methods to help with uploading image for
+ * 1. upload email template
+ * 2. attraction icon
+ * 3. PDF attachment template
+ */
+
 package oop.io.demo.attraction;
 
 import java.io.IOException;

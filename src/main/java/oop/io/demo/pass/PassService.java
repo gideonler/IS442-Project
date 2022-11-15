@@ -1,6 +1,14 @@
+/**
+ * Contains methods called by PassManagementController and PassGOController to
+ * 1. create a pass createPass(PassRequest createPassRequest)
+ * 2. edit a pass editPass(String passId, String passNo)
+ * 3. change a pass's status changePassStatus(String passId, PASSSTATUS passStatus)
+ * 4. get passes by attraction getPassesByAttraction(String attraction)
+ * 5. get available passes by attraction getAvailablePassesByAttraction(String attraction)
+ */
+
 package oop.io.demo.pass;
 
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

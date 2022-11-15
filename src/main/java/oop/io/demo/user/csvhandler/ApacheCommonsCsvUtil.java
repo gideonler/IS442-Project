@@ -1,3 +1,8 @@
+/**
+ * This class is used to help with parsing CSV files for:
+ * - Batch sign up of users
+ */
+
 package oop.io.demo.user.csvhandler;
 
 import java.io.BufferedReader;

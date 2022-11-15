@@ -1,165 +1,202 @@
 <template>
     <!-- Vertical navbar -->
     <div class="vertical-nav bg-white fixed-right" id="sidebar">
-        <div class="py-4 px-3 mb-4">
-            <div class="media d-flex align-items-center"><img
-                    src="https://therichpost.com/wp-content/uploads/2020/06/avatar2.png" alt="..." width="65"
-                    class="mr-3 rounded-circle img-thumbnail shadow-sm">
-                <div class="media-body personal">
-                    <h4 class="m-0">Mr Sporty</h4>
-                    <p class="font-weight-light text-muted mb-0">Sportsman of the Year</p>
-                    <p class="font-weight-light text-muted mb-0">mrsporty@sss.edu.sg</p>
-                </div>
+
+        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Bookings</p>
+
+        <p class="px-3"> You have {{ number }} bookings in total </p>
+
+        <hr>
+
+        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Upcoming Bookings</p>
+
+        <div class="scroll px-3 bg-booking " tabindex="0">
+            <div v-if="bookingList.length > 1">
+                <ul class="no-bullets" v-for="(booking, b) in bookingList" :key="b">
+                    <li>Attraction Name: {{ booking.attractionName }}</li>
+                    <li>Loan Date: {{ booking.loanDate.split("T")[0] }}</li>
+                    <li>Pass Number: {{ booking.passNo }}</li>
+                    <li>Booking Status: {{ booking.status }}</li>
+                    <li>Pass Status: {{ passStatus }}</li>
+                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info" @click="sendInfo(booking.loanID)">
+                        Cancel booking
+                    </b-button>
+                    <hr>
+                </ul>
             </div>
+            <div v-else>No upcoming bookings</div>
         </div>
 
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mb-0">Bookings</p>
+        <b-modal id="modal-1" title="Booking Cancellation" alignment="center">
+            <p class="my-4">Are you sure you want to cancel your booking? {{ bookingId }}</p>
+            <template #modal-footer>
+                <b-button variant="danger" @click="$bvModal.hide('modal-1')">No</b-button>
+                <b-button variant="primary" @click="cancelBooking(bookingId); $bvModal.hide('modal-1')">Yes</b-button>
+            </template>
+        </b-modal>
 
-        <ul class="nav flex-column bg-white mb-0">
-            <li class="nav-item">
-                <a href="#" class="nav-link text-dark font-italic">
-                    <i class="fa fa-address-card mr-3 text-primary fa-fw"></i>
-                    You have 2 bookings left for October
-                </a>
-            </li>
+        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Note</p>
+        <ul>
+            <li>Passes can be collected 1 day before the trip from the General Office</li>
+            <li>Passes must be returned to the General Office the day after the trip</li>
+            <li> Report loss and found <a href="#"> here </a></li>
         </ul>
 
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mt-2 mb-0">Current Bookings</p>
-
-        <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" class="scrollspy-example scrollspy" tabindex="0"> 
-            <ul class="nav flex-column bg-white mb-0">
-                <li class="nav-item">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Booking 1</div>
-                        <ul>
-                            <li>Destination: Singapore Zoo</li>
-                            <li>Date: 1st October 2022</li>
-                            <li>Number of tickets: 2</li>
-                        </ul>                
-                    </div>
-                    <button class="btn btn-secondary btn-sm mt-1 ml-5">Cancel Booking</button>   
-                    <!-- move to styling              -->
-                </li>
-                <li class="nav-item">
-                    <div class="mt-3 ms-2 me-auto">
-                        <div class="fw-bold">Booking 2</div>
-                        <ul>
-                            <li>Destination: Gardens By The Bay</li>
-                            <li>Date: 31st October 2022</li>
-                            <li>Number of tickets: 2</li>
-                        </ul>                
-                    </div>
-                    <button class="btn btn-secondary btn-sm mt-1 ml-5">Cancel Booking</button>                
-                </li>
-            </ul>
-        </div>
-
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 py-3 mt-2 mb-0">Note</p>
-
-        <ul class="nav flex-column bg-white mb-0">
-            <li class="nav-item">
-                <div class="ms-2 me-auto">
-                    <div class="fw-bold">Information</div>
-                    <ul>
-                        <li>Passes can be collected 1 day before the trip from the General Office</li>
-                        <li>Passes must be returned to the General Office the day after the trip</li>
-                    </ul>                
-                </div>
+        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Contact</p>
+        <p class="px-3"> General Office Phone: 6766 0100</p>
+        <!-- <ul>
+            <li>General Office Phone: 12345678</li>
+            <li>For futher queries, please contact
+                <p class="text-primary text-decoration-underline">ineedhelp@sss.edu.sg</p>
             </li>
-            <li class="nav-item">
-                <div class="mt-3 ms-2 me-auto">
-                    <div class="fw-bold">Contact</div>
-                    <ul>
-                        <li>General Office Phone: 12345678</li>
-                    </ul>
-                    <ul>
-                        <li> Report loss and found <a href="#"> here </a></li>
-                    </ul>
-                    <ul>
-                        <li>For futher queries, please contact 
-                            <p class="text-primary text-decoration-underline">ineedhelp@sss.edu.sg</p>
-                        </li>
-                    </ul>                
-                </div>         
-            </li>
-        </ul>
-
+        </ul> -->
     </div>
     <!-- End vertical navbar -->
 </template>
   
 <script>
+import axios from "axios";
+import moment from "moment";
+
+function dateFormat(date) {
+    var dateSplit = date.split("/");
+    var dateFormatted = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0];
+    return dateFormatted;
+}
+
 export default {
     name: 'SideBar',
     props: {
         msg: String
+    },
+    data() {
+        return {
+            number: "",
+            month: "",
+            bookingList: [{ attractionName: "", loanDate: "", passNo: "", status: "", loanID: "" }],
+            bookingId: "",
+            passStatus: "Yet to collect",
+            api: {
+                numberBooking: "http://localhost:8080/loan/getbookingcount/",
+                bookingList: "http://localhost:8080/loan/",
+                cancelBooking: "http://localhost:8080/loan/cancel"
+            }
+        }
+    },
+
+    mounted() {
+        this.numberBookings();
+        this.getBookings();
+    },
+
+    methods: {
+        numberBookings() {
+            return axios
+                .get(this.api.numberBooking, {
+                    params: {
+                        // userEmail: this.userEmail
+                        userEmail: "janedo@sportsschool.edu.sg"
+                    }
+                })
+                .then((response) => {
+                    console.log(response.data)
+                    this.number = response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
+        },
+
+        getBookings() {
+            return axios
+                // .get(this.api.bookingList + "janedo@sportsschol.edu.sg")
+                .get(this.api.bookingList + "singaporesportsschooltest@outlook.com")
+                .then((response) => {
+                    console.log(response.data)
+                    this.bookingList = response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
+        },
+
+        // getPassStatus() {
+
+        // }
+
+        sendInfo(loanID) {
+            this.bookingId = loanID;
+        },
+
+        cancelBooking(bookingId) {
+            console.log(bookingId)
+
+            var loanDate = moment(dateFormat(bookingId.substr(0, 10)));
+
+            var current = new Date();
+            var currentDate = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`;
+            var currentDate = moment(dateFormat(currentDate));
+
+            var differenceDay = loanDate.diff(currentDate, 'days');
+            if (differenceDay < 2) {
+                this.$alert("You cannot cancel your booking less than 1 day before the trip");
+            } else {
+                return axios
+                .get(this.api.cancelBooking, {
+                    "loanID": "bookingId"
+                })
+                .then((response) => {
+                    console.log(response.data);
+                    this.$alert("Booking cancelled successfully");
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
+            }
+        }
     }
 }
+
+
 </script>
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .vertical-nav {
     min-width: 10rem;
-    width: 25rem;
-    height: 100vh;
+    width: 20rem;
+    height: 100%;
     position: fixed;
-    top: 0;
+    margin-top: -2%;
     right: 0;
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.4s;
+    /* overflow: auto; */
 }
 
-/* for toggle behavior */
-#sidebar.active {
-    margin-left: -17rem;
-}
-
-#content.active {
-    width: 100%;
+.no-bullets {
+    list-style-type: none;
     margin: 0;
+    padding: 0;
 }
 
-@media (max-width: 768px) {
-    #sidebar {
-        margin-left: -17rem;
-    }
-
-    #sidebar.active {
-        margin-left: 0;
-    }
-
-    #content {
-        width: 100%;
-        margin: 0;
-    }
-
-    #content.active {
-        margin-left: 17rem;
-        width: calc(100% - 17rem);
-    }
+.bg-booking {
+    background-color: #fafcef;
 }
 
-.personal {
-    transform: translate(10px, 10px);
-}
-
-.scrollspy {
+.scroll {
     position: relative;
+    height: 35%;
+    overflow: auto;
 }
 
-body {
+/* body {
     background: #599fd9;
     background: -webkit-linear-gradient(to right, #599fd9, #c2e59c);
     background: linear-gradient(to right, #599fd9, #c2e59c);
     min-height: 100vh;
     overflow-x: hidden;
-}
-
-.separator {
-    margin: 3rem 0;
-    border-bottom: 1px dashed #fff;
-}
+} */
 
 .text-uppercase {
     letter-spacing: 0.1em;

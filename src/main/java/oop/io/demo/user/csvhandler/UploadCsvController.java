@@ -1,3 +1,8 @@
+/**
+ * Contains a single endpoint for uploading a CSV to batch sign up users
+ * 1. Bulk sign up user through CSV upload /uploadcsv/users
+ */
+
 package oop.io.demo.user.csvhandler;
 
 import java.util.ArrayList;
@@ -8,14 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-
-/**
- * 
- * Copyright by https://loizenai.com
- * @author loizenai.com
- *
- */
 
 @RestController
 @RequestMapping("/uploadcsv")

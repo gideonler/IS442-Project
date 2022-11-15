@@ -3,12 +3,12 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-7" >
-          <CalendarFilter @filter-attraction="filterAttraction" ></CalendarFilter>
+         <CalendarFilter @filter-attraction="filterAttraction" ></CalendarFilter>
          <Calendar :key="this.selected_attraction" :selected_attraction="this.selected_attraction" fluid></Calendar>
          <Sidebar></Sidebar>
         </div>
         <div class="col-md-5">
-
+          <Sidebar></Sidebar>
         </div>
       </div>
     </div>

@@ -1,3 +1,12 @@
+/**
+ * Contains methods used in the authentication process of users
+ * 1. Sign up one user   signUpOneUser(SignupRequest signUpRequest)
+ * 2. Generate confirmation token     generateConfirmationToken(String email)
+ * 3. Send confirmation token email     sendConfirmationTokenEmail(User user)
+ * 4. Send forgot password email    sendForgotPasswordEmail(String email)
+ * 5. Change password      changePassword(String password, String token)
+ * 6. Confirm token     confirmToken(String token)
+ */
 package oop.io.demo.auth;
 
 import java.time.LocalDateTime;
@@ -11,7 +20,6 @@ import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.SignupRequest;
 import oop.io.demo.auth.payload.response.MessageResponse;
 import oop.io.demo.exception.EmailFailToSendException;
-import oop.io.demo.exception.PasswordsDoNotMatchException;
 
 import oop.io.demo.mail.Email;
 import oop.io.demo.mail.EmailService;
@@ -19,9 +27,7 @@ import oop.io.demo.user.USERTYPE;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 
-
 public class AuthService {
-    
     
     private final UserRepository userRepository;
 
@@ -83,7 +89,7 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<?> sendForgotPasswordEmail(String email) throws PasswordsDoNotMatchException{
+    public ResponseEntity<?> sendForgotPasswordEmail(String email){
         String token = generateConfirmationToken(email);
         //send email
         Email mail = new Email();

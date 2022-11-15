@@ -1,3 +1,11 @@
+/**
+ * TODO: remove uncommented code to allow for email validation
+ * 
+ * This class contains a method: Store that takes in a file and uses ApacheCommonCsvUtil's parseCsv
+ * method to get a list of Sign Up requests whereby it will call sign up each user
+ * using AuthService's signUpOneUser method
+ */
+
 package oop.io.demo.user.csvhandler;
 
 import java.io.InputStream;
@@ -9,11 +17,8 @@ import org.springframework.stereotype.Service;
 
 import oop.io.demo.auth.AuthService;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
-import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.SignupRequest;
-import oop.io.demo.mail.EmailService;
 import oop.io.demo.user.UserRepository;
-import oop.io.demo.user.UserService;
 
 @Service
 public class CsvHandlerService {

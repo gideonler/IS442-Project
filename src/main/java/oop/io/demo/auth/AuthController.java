@@ -1,3 +1,11 @@
+/**
+ * Contains endpoints to be used for authentication
+ * 1. Sign in   [POST] /auth/signin
+ * 2. Sign up   [POST] /auth/signup
+ * 3. Verify account from token received after signing up [GET] /auth/confirm
+ * 4. Sign out    
+ */
+
 package oop.io.demo.auth;
 
 import java.util.Map;
@@ -30,7 +38,6 @@ import oop.io.demo.auth.security.services.UserDetailImplementation;
 import oop.io.demo.exception.EmailFailToSendException;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
-import oop.io.demo.user.UserService;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
