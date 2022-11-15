@@ -86,10 +86,7 @@ import axios from 'axios';
     data(){
       return {
       selected_year:curr_year,
-      options: [
-          { value: '2022', text: '2022' },
-          { value: '2021', text: '2021' },
-        ],
+      options: [],
         monthlyLoan: [],
         total_attractions: {},
         total_employees: {},
@@ -120,34 +117,43 @@ import axios from 'axios';
         return Object.keys(obj).includes(String(key));
         },
       async loadData(){          
-          await axios
-          .get(this.api.get_total_attractions)
-          .then((response) => {
-            this.total_attractions = response.data
-          })
-          .catch((error) => {
-              if (error) {
-                  console.log(error);
-              }
-          });
+          // await axios
+          // .get(this.api.get_total_attractions)
+          // .then((response) => {
+          //   this.total_attractions = response.data
+          //   var years= Object.keys(this.total_attractions)
+          //   console.log(years)
+          //   console.log(this.total_attractions)
+          // })
+          // .catch((error) => {
+          //     if (error) {
+          //         console.log(error);
+          //     }
+          // });
 
 
-          await axios
-          .get(this.api.get_total_employees)
-          .then((response) => {
-            this.total_employees = response.data
-          })
-          .catch((error) => {
-              if (error) {
-                  console.log(error);
-              }
-          });
+          // await axios
+          // .get(this.api.get_total_employees)
+          // .then((response) => {
+          //   this.total_employees = response.data
+          // })
+          // .catch((error) => {
+          //     if (error) {
+          //         console.log(error);
+          //     }
+          // });
 
 
           await axios
           .get(this.api.get_year_stats)
           .then((response) => {
             this.year_stats = response.data
+            var years= Object.keys(this.year_stats)
+            var options= []
+            for(var year of years){
+              options.push({"value": year, "text": year})
+            }
+            this.options= options
           })
           .catch((error) => {
               if (error) {
