@@ -4,7 +4,7 @@
       <b-modal ref="my-modal" 
       hide-footer title="Book New Pass">
         <div class="d-block text-center">
-          <h3>There are {{no_avail}} available passes on {{date}} </h3>
+          <h3>There are {{no_avail}} available passes on {{selected_date}} </h3>
           <ul>
             <li>You can only borrow 1 day to 8 weeks prior visitation.</li>
             <li>You may borrow a maximum of 2 passes each time.</li>
@@ -40,13 +40,15 @@
   </template>
   
   <script>
+  import axios from 'axios';
     export default {
         name: 'booking-popup',
+        props:['selected_date', 'no_avail', 'attraction_name'],
         data() {
             return {
-                //TODO: replace dummy data for no. available with backend data
-                no_avail: 3,
-                date: null,
+                api: { 
+                  create_booking: "http://localhost:8080/loan/book"
+                },
                 no_passes:null,
                 pass_type:null,
             };
@@ -65,10 +67,24 @@
         hideModal() {
           this.$refs['my-modal'].hide()
         },
-        confirmBooking(date, no_passes) {
+        async confirmBooking(date, no_passes) {
+          await axios 
+            .post(this.api.create_booking, 
+              {
+                "loanDate" : this.date,
+
+                //TO DO: REPLACE WITH USER EMAIL. CAN GET FROM API.
+                "userEmail" : parseFloat(this.replacementfee),
+                "attractionName" : this.attraction_name,
+                "noOfPass": this.no_passes
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+
           // close current modal
           this.$refs['my-modal'].toggle('#toggle-btn')
-          //TODO: Send to backend to confirm booking- update db
 
           //show confirmation message
           this.$root.$refs.BookingConfirmation.showModal(date, no_passes);

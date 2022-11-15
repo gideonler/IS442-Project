@@ -1,3 +1,8 @@
+/**
+ * Contains one endpoint for the General Office to change the status of a pass when collected/ returned
+ * 1. Update pass status upon collection to ONLOAN or INOFFICE /passstatus/change
+ */
+
 package oop.io.demo.pass;
 
 import java.util.Map;
@@ -35,6 +40,7 @@ public class PassGOController {
         String loanId = loanIdAndStatusMap.get("loanId");
         PASSSTATUS passStatus = PASSSTATUS.valueOf(loanIdAndStatusMap.get("passStatus"));
         Loan loan = loanRepository.findByLoanId(loanId);
+        if(loan==null) return ResponseEntity.badRequest().body("Loan not found!");
         String passId = loan.getAttractionName()+loan.getPassNo();
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, passStatus);
         return responseEntity;

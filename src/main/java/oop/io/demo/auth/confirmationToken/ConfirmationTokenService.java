@@ -1,3 +1,8 @@
+/**
+ * Contains methods to save, set, and get confirmation token
+ */
+
+
 package oop.io.demo.auth.confirmationToken;
 
 import java.time.LocalDateTime;

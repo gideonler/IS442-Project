@@ -1,3 +1,10 @@
+/**
+ * Contains all the endpoints for managing users accessible to STAFF AND ADMIN
+ * 1. Get public user details for a specific user /user/userdetails
+ * 2. Get user's own profile details /user/mydetails
+ * 3. Edit profile /user/editprofile
+ */
+
 package oop.io.demo.user;
 
 import java.util.Map;

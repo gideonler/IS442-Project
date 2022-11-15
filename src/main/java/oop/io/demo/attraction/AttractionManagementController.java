@@ -1,3 +1,13 @@
+/**
+ * Contains endpoints for ADMIN to manage attractions
+ * 1. Create new attraction     [POST] /attractionmanagement/new
+ * 2. Edit attraction   [PUT] /attractionmanagement/{attractionname}/edit
+ * 3. Deactivate attraction and all its child passes    [PUT] /attractionmanagement/{attractionname}/deactivate
+ * 4. Reactivate attraction and all of its child passes     [PUT] /attractionmanagement/{attractionname}/reactivate
+ * 5. Upload image for attraction   [PUT] /attractionmanagement/{attractionname}/uploadimage
+ * 6. Upload email template (and optionally) email attachment PDF    [PUT] /attractionmanagement/{attractionname}/uploadfiles
+ */
+
 package oop.io.demo.attraction;
 import java.io.IOException;
 import java.util.List;

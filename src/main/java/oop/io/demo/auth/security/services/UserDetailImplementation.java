@@ -1,3 +1,7 @@
+/**
+ * Class to create a UserDetailImplementation from a User with SimpleGrantedAuthority attribute
+ * that can be used to grant privileged access
+ */
 package oop.io.demo.auth.security.services;
 
 import java.util.Collection;

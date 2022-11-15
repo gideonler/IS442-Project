@@ -1,3 +1,7 @@
+/**
+ * Class with method to return UserDetails from User with specified email
+ */
+
 package oop.io.demo.auth.security.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
