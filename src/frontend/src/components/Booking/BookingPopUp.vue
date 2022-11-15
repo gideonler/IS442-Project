@@ -40,13 +40,15 @@
   </template>
   
   <script>
+  import axios from 'axios';
     export default {
         name: 'booking-popup',
-        props:['selected_date', 'no_avail'],
+        props:['selected_date', 'no_avail', 'attraction_name'],
         data() {
             return {
-                //TODO: replace dummy data for no. available with backend data
-                // date: null,
+                api: { 
+                  create_booking: "http://localhost:8080/loan/book"
+                },
                 no_passes:null,
                 pass_type:null,
             };
@@ -65,10 +67,24 @@
         hideModal() {
           this.$refs['my-modal'].hide()
         },
-        confirmBooking(date, no_passes) {
+        async confirmBooking(date, no_passes) {
+          await axios 
+            .post(this.api.create_booking, 
+              {
+                "loanDate" : this.date,
+
+                //TO DO: REPLACE WITH USER EMAIL. CAN GET FROM API.
+                "userEmail" : parseFloat(this.replacementfee),
+                "attractionName" : this.attraction_name,
+                "noOfPass": this.no_passes
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+
           // close current modal
           this.$refs['my-modal'].toggle('#toggle-btn')
-          //TODO: Send to backend to confirm booking- update db
 
           //show confirmation message
           this.$root.$refs.BookingConfirmation.showModal(date, no_passes);
