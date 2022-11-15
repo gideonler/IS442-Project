@@ -163,8 +163,10 @@
       </template>
       <template #cell(activate)="data" >
         <div>
-          <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="handleDeactivate(items[data.index].passId)" variant="danger">Deactivate</b-button> 
-          <b-button v-if="items[data.index].passStatus == 'DEACTIVATED'" @click="handleActivate(items[data.index].passId)" variant="success">Reactivate</b-button>
+          <!-- <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="handleDeactivate(items[data.index].passId)" variant="danger">Deactivate</b-button> 
+          <b-button v-if="items[data.index].passStatus == 'DEACTIVATED'" @click="handleActivate(items[data.index].passId)" variant="success">Reactivate</b-button> -->
+          <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="showPopup('Deactivation', items[data.index].passId)" variant="danger">Deactivate</b-button> 
+          <b-button v-if="items[data.index].passStatus == 'DEACTIVATED'" @click="showPopup('Reactivation', items[data.index].passId)" variant="success">Reactivate</b-button>
         </div>
       </template>
       <!-- <template #cell(delete)="data">
@@ -174,12 +176,19 @@
         ></BIconTrash>
       </template> -->
     </b-editable-table>
+    <div hidden>
+        <!-- <StatusChangePopUp v-on:update-attraction="forceRerender"></StatusChangePopUp> -->
+        <StatusChangePopUp :action="this.action" :pass="this.pass_to_upate" v-on:update-status="handleUpdate"></StatusChangePopUp>
+    </div>
   </div>
+
+
 </template>
 
 <script>
 import axios from 'axios'
 import BEditableTable from "bootstrap-vue-editable-table";
+import   StatusChangePopUp from './StatusChangePopUp.vue';
 import {
   BIconTrash,
   BIconPencil,
@@ -195,9 +204,12 @@ export default {
     BIconPencil,
     BIconCheck,
     BButton,
+    StatusChangePopUp,
   },
   data() {
     return {
+      action: '',
+      pass_to_upate:  '',
       placeOfInterest: '',
       api: { view_passes: "http://localhost:8080/pass/passes/",
             activate_pass: "http://localhost:8080/passmanagement/activate",
@@ -253,6 +265,9 @@ export default {
     };
   },
   methods: { 
+    async handleUpdate() {
+      await this.action=="Reactivation"? this.handleActivate(this.pass_to_upate) : this.handleDeactivate(this.pass_to_upate)            
+      },
     handleInput(data) {
       if (Object.keys(this.updatedRow).length === 0) {
         this.updatedRow = {
@@ -294,6 +309,11 @@ export default {
     handleDelete(data) {
       this.rowUpdate = { id: data.id, action: "delete" };
     },
+    showPopup(action, data){
+      this.action= action;
+      this.pass_to_upate= data;
+      this.$root.$refs.StatusChangePopUp.showModal();
+    },
     async handleActivate(data) {
       await axios 
       .put(this.api.activate_pass, 
@@ -303,6 +323,8 @@ export default {
         )
       .then((response) => {
         console.log(response);
+        this.$emit('update-status');
+
       }); 
      
     },
@@ -315,6 +337,7 @@ export default {
               )
             .then((response) => {
               console.log(response);
+              this.$emit('update-status');
             }); 
     },
     async viewPass(placeofinterest){
@@ -323,11 +346,13 @@ export default {
           await axios
             .get(view_pass_api)
             .then((response) => {
-                var passes_list = response.data;
+                var passes_list = response.data.body;
+                console.log(passes_list)
                 passes_list.forEach(function (value, i) {
                     value["id"]= i+1
                 });
                 this.items= passes_list
+                console.log(this.items)
             })
             .catch((error) => {
                 console.log(error);
