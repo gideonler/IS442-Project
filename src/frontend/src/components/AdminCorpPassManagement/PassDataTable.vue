@@ -163,19 +163,12 @@
       </template>
       <template #cell(activate)="data" >
         <div>
-          <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="showPopup('Deactivation', items[data.index].passId)" variant="danger">Deactivate</b-button> 
-          <b-button v-if="items[data.index].passStatus == 'DEACTIVATED'" @click="showPopup('Reactivation', items[data.index].passId)" variant="success">Reactivate</b-button>
+          <b-button v-if="data.item.passStatus == 'INOFFICE'" @click="showPopup('Deactivation', data.item.passId)" variant="danger">Deactivate</b-button> 
+          <b-button v-if="data.item.passStatus == 'DEACTIVATED'" @click="showPopup('Reactivation', data.item.passId)" variant="success">Reactivate</b-button>
         </div>
       </template>
-      <!-- <template #cell(delete)="data">
-        <BIconTrash
-          class="remove-icon"
-          @click="handleDelete(data)"
-        ></BIconTrash>
-      </template> -->
     </b-editable-table>
     <div hidden>
-        <!-- <StatusChangePopUp v-on:update-attraction="forceRerender"></StatusChangePopUp> -->
         <StatusChangePopUp :action="this.action" :pass="this.pass_to_upate" v-on:update-status="handleUpdate"></StatusChangePopUp>
     </div>
   </div>
@@ -214,6 +207,7 @@ export default {
             activate_pass: "http://localhost:8080/passmanagement/activate",
             deactivate_pass: "http://localhost:8080/passmanagement/deactivate",
             edit_pass: "http://localhost:8080/passmanagement/",
+            create_pass: "http://localhost:8080/passmanagement/new",
     },
       items: null,
       updatedRow: {},
@@ -249,18 +243,18 @@ export default {
             { value: "DEACTIVATED", text: "DEACTIVATED" },
           ],
         },
-        { key: "activate", label: "" , class:"activate-col"},
+        { key: "activate", label: "" },
       ],
       rowUpdate: {},
       totalRows: 1,
-          currentPage: 1,
-          perPage: 5,
-          pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
-          sortBy: '',
-          sortDesc: false,
-          sortDirection: 'asc',
-          filter: null,
-          filterOn: [],
+      currentPage: 1,
+      perPage: 5,
+      pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
     };
   },
   methods: { 
@@ -284,15 +278,30 @@ export default {
         id: newId,
         action: "add",
         data: {
+          action: 'add',
           id: newId,
           passId: '',
           passNo: '',
-          passStatus:''
+          passStatus:'INOFFICE'
         },
       };
     },
     async handleSubmit(data, update) {
-      await axios 
+      if(data.item.action=='add'){
+        await axios 
+            .post(this.api.create_pass, 
+              {
+                "passNo" : this.updatedRow.passNo,
+                "attractionName": this.placeOfInterest,
+                "passStatus": "INOFFICE"
+              }
+              )
+            .then((response) => {
+              console.log(response);
+              data.item.passId= this.placeOfInterest+  this.updatedRow.passNo
+            }); 
+      }else{
+        await axios 
             .put(this.api.edit_pass + this.updatedRow.passId + '/edit' , 
               {
                 "passNo" : this.updatedRow.passNo
@@ -301,14 +310,14 @@ export default {
             .then((response) => {
               console.log(response);
             }); 
-
+      }
       this.rowUpdate = {
-        edit: false,
-        id: data.id,
-        action: update ? "update" : "cancel",
-      };
-      
-     this.updatedRow = {}
+            edit: false,
+            id: data.id,
+            action: update ? "update" : "cancel",
+          };
+          
+        this.updatedRow = {}
     },
     handleEdit(data) {
       console.log(this.items)
