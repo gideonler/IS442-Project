@@ -15,7 +15,7 @@ import oop.io.demo.loan.LoanRepository;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
-@RequestMapping("/passstatusupdate")
+@RequestMapping("/passstatus")
 public class PassGOController {
     
     private final PassRepository repository;
@@ -30,21 +30,13 @@ public class PassGOController {
         this.loanRepository = loanRepository;
     }
 
-    @PutMapping("/passreturn")
-    public ResponseEntity setPassStatusToInOffice(@RequestBody Map<String, String> loanIdMap) {
-        String loanId = loanIdMap.get("loanId");
+    @PutMapping("/change")
+    public ResponseEntity setPassStatusToInOffice(@RequestBody Map<String, String> loanIdAndStatusMap) {
+        String loanId = loanIdAndStatusMap.get("loanId");
+        PASSSTATUS passStatus = PASSSTATUS.valueOf(loanIdAndStatusMap.get("passStatus"));
         Loan loan = loanRepository.findByLoanId(loanId);
         String passId = loan.getAttractionName()+loan.getPassNo();
-        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
-        return responseEntity;
-    }
-
-    @PutMapping("/passloan")
-    public ResponseEntity setPassStatusToOnLoan(@RequestBody Map<String, String> loanIdMap) {
-        String loanId = loanIdMap.get("loanId");
-        Loan loan = loanRepository.findByLoanId(loanId);
-        String passId = loan.getAttractionName()+loan.getPassNo();
-        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.ONLOAN);
+        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, passStatus);
         return responseEntity;
     }
     
