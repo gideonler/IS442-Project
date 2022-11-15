@@ -31,12 +31,12 @@ public class PassGOController {
     }
 
     @PutMapping("/change")
-    public ResponseEntity setPassStatusToOnLoan(@RequestBody Map<String, String> loanIdAndStatusMap) {
+    public ResponseEntity setPassStatusToInOffice(@RequestBody Map<String, String> loanIdAndStatusMap) {
         String loanId = loanIdAndStatusMap.get("loanId");
-        String passStatus = loanIdAndStatusMap.get("passStatus");
+        PASSSTATUS passStatus = PASSSTATUS.valueOf(loanIdAndStatusMap.get("passStatus"));
         Loan loan = loanRepository.findByLoanId(loanId);
         String passId = loan.getAttractionName()+loan.getPassNo();
-        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.ONLOAN);
+        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, passStatus);
         return responseEntity;
     }
     
