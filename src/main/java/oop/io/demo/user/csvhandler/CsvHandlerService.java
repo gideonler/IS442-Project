@@ -9,11 +9,8 @@ import org.springframework.stereotype.Service;
 
 import oop.io.demo.auth.AuthService;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
-import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.SignupRequest;
-import oop.io.demo.mail.EmailService;
 import oop.io.demo.user.UserRepository;
-import oop.io.demo.user.UserService;
 
 @Service
 public class CsvHandlerService {

@@ -30,7 +30,6 @@ import oop.io.demo.auth.security.services.UserDetailImplementation;
 import oop.io.demo.exception.EmailFailToSendException;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
-import oop.io.demo.user.UserService;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
