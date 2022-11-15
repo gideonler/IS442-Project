@@ -8,7 +8,6 @@
             id="availability"
             v-model="selected_avail"
             :options="options_avail"
-            :aria-describedby="ariaDescribedby"
             ></b-form-checkbox-group>  
         </div>
     </div>
