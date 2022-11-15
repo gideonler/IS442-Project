@@ -1,7 +1,6 @@
 <template>
   <div class="table-container">
-    <h1>{{placeOfInterest}}</h1>
-          <!-- User Interface controls -->
+    <!-- User Interface controls -->
           <b-row>
         <b-col lg="6" class="my-1">
           <b-form-group
@@ -84,7 +83,7 @@
               :aria-describedby="ariaDescribedby"
               class="mt-1"
             >
-              <b-form-checkbox value="placeOfInterestName">Name</b-form-checkbox>
+              <b-form-checkbox value="attractionName">Name</b-form-checkbox>
               <b-form-checkbox value="passNo">Pass Number</b-form-checkbox>
               <b-form-checkbox value="passStatus">Pass Status</b-form-checkbox>
             </b-form-checkbox-group>
@@ -142,12 +141,13 @@
       show-empty
       small
       @filtered="onFiltered"
+      @input-change="handleInput"
     >
       <template #cell(isActive)="data">
         <span v-if="data.value">Yes</span>
         <span v-else>No</span>
       </template>
-      <template #cell(edit)="data">
+      <template #cell(edit)="data" >
         <div v-if="data.isEdit">
           <BIconX class="edit-icon" @click="handleSubmit(data, false)"></BIconX>
           <BIconCheck
@@ -161,17 +161,24 @@
           @click="handleEdit(data, true)"
         ></BIconPencil>
       </template>
-      <template #cell(delete)="data">
+      <template #cell(activate)="data" >
+        <div>
+          <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="handleDeactivate(items[data.index].passId)" variant="danger">Deactivate</b-button> 
+          <b-button v-if="items[data.index].passStatus == 'DEACTIVATED'" @click="handleActivate(items[data.index].passId)" variant="success">Reactivate</b-button>
+        </div>
+      </template>
+      <!-- <template #cell(delete)="data">
         <BIconTrash
           class="remove-icon"
           @click="handleDelete(data)"
         ></BIconTrash>
-      </template>
+      </template> -->
     </b-editable-table>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import BEditableTable from "bootstrap-vue-editable-table";
 import {
   BIconTrash,
@@ -192,119 +199,46 @@ export default {
   data() {
     return {
       placeOfInterest: '',
+      api: { view_passes: "http://localhost:8080/pass/passes/",
+            activate_pass: "http://localhost:8080/passmanagement/activate",
+            deactivate_pass: "http://localhost:8080/passmanagement/deactivate"
+    },
+      items: null,
+      updatedRow: {},
       fields: [
-        { key: "delete", label: "" },
+        // { key: "delete", label: "" },
+        { key: "edit", label: "" },
         {
-          key: "name",
-          label: "Name",
+          key: "passId",
+          label: "Pass Id",
           type: "text",
           editable: true,
           placeholder: "Enter Name...",
-          class: "name-col",
-          validate: this.validateName
+          class: "id-col",
+          validate: this.validateName,
+          sortable: true,
         },
         {
-          key: "department",
-          label: "Department",
-          type: "select",
+          key: "passNo",
+          label: "Pass No.",
+          type: "text",
           editable: true,
-          class: "department-col",
+          class: "pass-no-col",
+          sortable: true,
+        },
+        {
+          key: "passStatus",
+          label: "Pass Status",
+          type: "select",
+          editable: false,
+          class: "status-col",
+          sortable: true,
           options: [
-            { value: 1, text: "HR" },
-            { value: 2, text: "Engineer" },
-            { value: 3, text: "VP" },
-            { value: 4, text: "CEO" },
+            { value: "INOFFICE", text: "INOFFICE" },
+            { value: "DEACTIVATED", text: "DEACTIVATED" },
           ],
         },
-        {
-          key: "age",
-          label: "Age",
-          type: "range",
-          min: "0",
-          max: "100",
-          editable: true,
-          placeholder: "Enter Age...",
-          class: "age-col",
-        },
-        {
-          key: "dateOfBirth",
-          label: "Date Of Birth",
-          type: "date",
-          editable: true,
-          class: "date-col",
-          locale: "en",
-          "date-format-options": {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-          },
-        },
-        {
-          key: "isActive",
-          label: "Is Active",
-          type: "checkbox",
-          editable: true,
-          class: "is-active-col",
-        },
-        { key: "edit", label: "" },
-      ],
-      items: [
-        {
-          id: 1,
-          age: 40,
-          name: "Dickerson",
-          department: 1,
-          dateOfBirth: "1984-05-20",
-          isActive: true,
-        },
-        {
-          id: 2,
-          age: 21,
-          name: "Larsen",
-          department: 2,
-          dateOfBirth: "1972-07-25",
-          isActive: false,
-        },
-        {
-          id: 3,
-          age: 89,
-          name: "Geneva",
-          department: 3,
-          dateOfBirth: "1981-02-02",
-          isActive: false,
-        },
-        {
-          id: 1,
-          age: 40,
-          name: "Dickerson",
-          department: 1,
-          dateOfBirth: "1984-05-20",
-          isActive: true,
-        },
-        {
-          id: 2,
-          age: 21,
-          name: "Larsen",
-          department: 2,
-          dateOfBirth: "1972-07-25",
-          isActive: false,
-        },
-        {
-          id: 3,
-          age: 89,
-          name: "Geneva",
-          department: 3,
-          dateOfBirth: "1981-02-02",
-          isActive: false,
-        },
-        {
-          id: 4,
-          age: 38,
-          name: "Jami",
-          department: 4,
-          dateOfBirth: "1964-10-19",
-          isActive: true,
-        },
+        { key: "activate", label: "" },
       ],
       rowUpdate: {},
       totalRows: 1,
@@ -318,7 +252,17 @@ export default {
           filterOn: [],
     };
   },
-  methods: {
+  methods: { 
+    handleInput(data) {
+      if (Object.keys(this.updatedRow).length === 0) {
+        this.updatedRow = {
+          ...this.items[data.index],
+          [data.field.key]: data.value,
+        };
+      } else {
+        this.updatedRow = { ...this.updatedRow, [data.field.key]: data.value };
+      }
+    },
     handleAdd() {
       const newId = Date.now();
       this.rowUpdate = {
@@ -327,11 +271,9 @@ export default {
         action: "add",
         data: {
           id: newId,
-          age: null,
-          name: "",
-          department: 1,
-          dateOfBirth: null,
-          isActive: false,
+          passId: '',
+          passNo: '',
+          passStatus:''
         },
       };
     },
@@ -341,13 +283,57 @@ export default {
         id: data.id,
         action: update ? "update" : "cancel",
       };
+    
+     console.log(this.updatedRow)
+     this.updatedRow = {}
     },
     handleEdit(data) {
+      console.log(this.items)
       this.rowUpdate = { edit: true, id: data.id };
     },
     handleDelete(data) {
       this.rowUpdate = { id: data.id, action: "delete" };
     },
+    async handleActivate(data) {
+      await axios 
+      .put(this.api.activate_pass, 
+        {
+          "passId" : data    
+        }
+        )
+      .then((response) => {
+        console.log(response);
+      }); 
+     
+    },
+    async handleDeactivate(data) {
+      await axios 
+            .put(this.api.deactivate_pass, 
+              {
+                "passId" : data    
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+    },
+    async viewPass(placeofinterest){
+          this.placeOfInterest= placeofinterest;
+          var view_pass_api= this.api.view_passes + this.placeOfInterest
+          await axios
+            .get(view_pass_api)
+            .then((response) => {
+                var passes_list = response.data;
+                passes_list.forEach(function (value, i) {
+                    value["id"]= i+1
+                });
+                this.items= passes_list
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+          this.totalRows = this.items.length
+      },
     validateName(value) {
         if (value === '') {
           return {
@@ -357,41 +343,41 @@ export default {
         }
         return {valid: true};
       },
-      viewPass(placeofinterest){
-          //TODO: replacee
-          this.placeOfInterest= placeofinterest;
-        },
-        info(item, index, button) {
-          this.infoModal.title = `Row index: ${index}`
-          this.infoModal.content = JSON.stringify(item, null, 2)
-          this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-        },
-        resetInfoModal() {
-          this.infoModal.title = ''
-          this.infoModal.content = ''
-        },
-        onFiltered(filteredItems) {
-          // Trigger pagination to update the number of buttons/pages due to filtering
-          this.totalRows = filteredItems.length
-          this.currentPage = 1
-        },
-  },
-  computed: {
-        sortOptions() {
-          // Create an options list from our fields
-          return this.fields
-            .filter(f => f.sortable)
-            .map(f => {
-              return { text: f.label, value: f.key }
-            })
-        }
+      info(item, index, button){
+        this.infoModal.title= `Row index: ${index}`
+        this.infoModal.content = JSON.stringify(item, null, 2)
+        this.$root.$emit('bv::show::modal', this.infoModal.id,button)
       },
+      resetInfoModal() {
+        this.infoModal.title = ''
+        this.infoModal.content = ''
+      },
+      onFiltered(filteredItems) {
+        // Trigger pagination to update the number of buttons/pages due to filtering
+        this.totalRows = filteredItems.length
+        this.currentPage = 1
+      },
+  },
+  computed:{
+      sortOptions() {
+        // Create an options list from our fields
+        return this.fields
+          .filter(f => f.sortable)
+          .map(f => {
+            return { text: f.label, value: f.key }
+          })
+      },
+  },
   created(){
     this.$root.$refs.PassDataTable= this;
+    this.viewPass(this.$route.params.name)
   },
-  mounted(){
-    this.totalRows = this.items.length
+  beforeRouteUpdate(to, from, next) {
+    // Call the API query method when the URL changes
+    this.viewPass(to.params.name)
+    next()
   }
+
 };
 </script>
 
@@ -429,23 +415,17 @@ table.editable-table td {
   font-size: 20px;
 }
 
-.name-col {
+.id-col {
+  width:  15%;
+}
+
+.pass-no-col {
+  width: 30%;
+}
+
+
+.status-col {
   width:  20%;
 }
 
-.department-col {
-  width: 20%;
-}
-
-.age-col {
-  width:  10%;
-}
-
-.date-col {
-  width:  20%;
-}
-
-.is-active-col {
-  width:  10%;
-}
 </style>

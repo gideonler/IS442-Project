@@ -38,27 +38,43 @@ public class UserController {
         this.repository = userRepository;
     }
     
-    ////USER AND ADMIN ACCESS
-    //Get user by username
-    //Access: only admin and user with {username} can access
-    @GetMapping("/userbyusername")
-    public ResponseEntity findByUsername(@RequestBody Map map) {
+    ////ALL ACCESS
+    //Get public user details by username
+    @GetMapping("/userdetails")
+    public ResponseEntity getPublicDetailsByEmail(@RequestBody Map<String, String> map) {
         try {
-            String username = (String) map.get("username");
-            User user= this.repository.findById(username).get();
-            return ResponseEntity.ok(user);
+            String email = (String) map.get("email");
+            User user= this.repository.findByEmail(email).get();
+            UserPublicDetails publicUser = new UserPublicDetails(user.getEmail(), user.getContactNo(), user.getName());
+            return ResponseEntity.ok(publicUser);
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body("Error fetching user details. Please check that username is entered correctly.");
         }
     }
+
+    ////USER AND ADMIN ACCESS
+    //Get user by username
+    //Access: only admin and user with {username} can access
+    @GetMapping("/mydetails")
+    public ResponseEntity getMyDetails(@RequestBody Map<String, String> map) {
+        try {
+            String email = (String) map.get("email");
+            User user= this.repository.findByEmail(email).get();
+            return ResponseEntity.ok(user);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching user details. Please check that email is entered correctly.");
+        }
+    }
+
     ////USER ONLY ACCESS
     //Edit user profile details
     //Access: user
     @PutMapping("/editprofile")
     public ResponseEntity editProfile(@RequestBody EditProfileRequest editProfileRequest) {
         try {
-            User user = repository.findById(editProfileRequest.getUsername()).get();
+            User user = repository.findByEmail(editProfileRequest.getEmail()).get();
             if(editProfileRequest.getContactNo()!=null) user.setContactNo(editProfileRequest.getContactNo());
             if(editProfileRequest.getName()!=null) user.setName(editProfileRequest.getName());
             return ResponseEntity.ok(repository.save(user));

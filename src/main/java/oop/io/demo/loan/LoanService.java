@@ -8,8 +8,9 @@ import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
-import oop.io.demo.pass.PASSSTATUS;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -32,18 +33,28 @@ public class LoanService {
     }
 
 
-    public String extractPassNo(String attractionName){
-        String passNo = "";
+    public String extractPassNo(String attractionName, Date loanDate){
+        String passNo="";
+        List<String> loanedPasses = new ArrayList<String>();
         Optional<List<Pass>> passList = passRepository.findByAttractionName(attractionName);
-            if (passList.isPresent()){
-                for (Pass pass: passList.get()){
-                    if (pass.getPassStatus() == PASSSTATUS.INOFFICE){
-                        passNo = pass.getPassNo();
-                        break;
-                    }
+        ArrayList<Loan> loanList = loanRepository.findAllByAttractionName(attractionName);
+        for (Loan loan: loanList){
+            String checkAttraction = loan.getAttractionName();
+            Date checkDate = loan.getLoanDate();
+            if ((checkAttraction.equals(attractionName)) && (loanDate.equals(checkDate))){
+                loanedPasses.add(loan.getPassNo());
+            }
+            for (Pass pass : passList.get()){
+                String checkPassNo = pass.getPassNo();
+                if (!loanedPasses.contains(checkPassNo)){
+                    passNo = checkPassNo;
+                    break;
                 }
             }
-            return passNo;
+        }
+
+
+        return passNo;
     }
 
     public String extractContactNo(String userEmail){
@@ -65,22 +76,18 @@ public class LoanService {
 
     // method to allow user to cancel booking
 
-    public String addBooking(String userEmail, Date loanDate, String attractionName) {
+    public Loan addBooking(String userEmail, Date loanDate, String attractionName, String loanId) {
     
-        
-        Boolean checkPass = checkAvail(loanDate, attractionName);
-
-        if (checkPass) {
-            Loan loan = new Loan(userEmail, loanDate, attractionName);
+        String passNo = extractPassNo(attractionName, loanDate);
+        if (passNo != ""){
+            String contactNo = extractContactNo(userEmail);
+            Loan loan = new Loan(userEmail, loanDate, attractionName, loanId);
+            loan.setPassNo(passNo);
             loan.setLoanId();
             loan.setStatus(LOANSTATUS.CONFIRMED);
-            String passNo = extractPassNo(attractionName);
-            String contactNo = extractContactNo(userEmail);
-            loan.setPassNo(passNo);
             loan.setContactNo(contactNo);
             loanRepository.save(loan);
-            return "Booking to " +loanDate+ " made for " +
-            attractionName+ " has been added.";
+            return loan;
         }
 
         // if (checkAvail(loanDate,attractionName)){
@@ -89,30 +96,31 @@ public class LoanService {
         // loan.getUserEmail() + " has been added.";
         // }
         // getUserInfo(loanDate,attractionName);
-        return "Booking unsuccessful, please try again.";
+        return null;
     }
 
     public ResponseEntity cancelLoan(String loanID, LOANSTATUS loanStatus) {
-        Loan l = loanRepository.findByLoanId(loanID);//atm this shows null value
+        Loan l = loanRepository.findByLoanId(loanID);
         l.setStatus(LOANSTATUS.CANCELLED);
         return ResponseEntity.ok("Loan cancelled: " + loanStatus.toString());
     }
 
 
 
-    // public ResponseEntity changeLoanStatus(String loanId, PASSSTATUS passStatus){
-    //     Optional<Loan> l = loanRepository.findById(loanId);
-    //     if(!l.isPresent()) {
-    //         return ResponseEntity.badRequest().body("Loan does not exist");
-    //     }
-    //     Loan loan = l.get();
-    //     Loan.setLoanStatus(passStatus);
-    //     loanRepository.save(loan);
-    //     return ResponseEntity.ok("Changed status of pass successfully to: " + passStatus.toString());
-    // }
 
-    public String deleteBooking(String userEmail, Date loanDate) {
-        Loan loan = loanRepository.findByLoanId(userEmail);
+    public ResponseEntity changeLoanStatus(String loanId, LOANSTATUS loanstatus){
+        Optional<Loan> l = loanRepository.findById(loanId);
+        if(!l.isPresent()) {
+            return ResponseEntity.badRequest().body("Loan does not exist");
+        }
+        Loan loan = l.get();
+        loan.setStatus(loanstatus);
+        loanRepository.save(loan);
+        return ResponseEntity.ok("Changed status of loan successfully to: " +loanstatus.toString());
+    }
+
+    public String deleteBooking(String loanId, Date loanDate) {
+        Loan loan = loanRepository.findByLoanId(loanId);
         // ArrayList<Loan>loan=loanRepository.findByUserEmail(userEmail);
         loanRepository.delete(loan);
         return "Booking to " + loan.getAttractionName() + " made by " + loan.getUserEmail() + " has been deleted.";
@@ -167,12 +175,6 @@ public class LoanService {
 
 
 
-    public void changeLoanStatus(String loanId, LOANSTATUS loanStatus) {
-        Loan l = loanRepository.findByLoanId(loanId);
-        // ArrayList<Loan>l=loanRepository.findByLoanId(loanId);
-        l.setStatus(loanStatus);
-    }
-
     // Method for getting userinfo of a loan
     public String getUserInfo(Date loanDate, String attractionName) {
         ArrayList<Loan> loans = loanRepository.findAllByAttractionName(attractionName);
@@ -200,19 +202,13 @@ public class LoanService {
     }
 
     // Method for the user to report loss of cards
-    public String ReportLoss(String userEmail, Date loanDate, LOANSTATUS loanStatus) {
-        String checkID = userEmail + loanDate;
-        Loan loan = loanRepository.findByLoanId(checkID);
-        // ArrayList<Loan>loan=loanRepository.findByLoanId(checkID);
-        // Loan l=loan.get();
-        loan.setStatus(LOANSTATUS.LOST);
-        String passNo = p.getPassNo();
-        Date date = loan.getLoanDate();
-        cancelAllLoans(passNo, date);
-        return "Loss reported";
 
+    public ResponseEntity ReportLoss(String loanID, LOANSTATUS loanStatus) {
+        Loan l = loanRepository.findByLoanId(loanID);
+        l.setStatus(LOANSTATUS.LOST);
+        return ResponseEntity.ok("Card changed to lost: " + loanStatus.toString());
     }
-    
+
 
     // Method to cancel all loans
     public String cancelAllLoans(String passNo, Date date) {
@@ -227,6 +223,37 @@ public class LoanService {
             }
         }
         return "All changes have been made";
+    }
+
+    public Map<String,Map<String,Integer>> checkUnavailPasses() {
+        Map<String,Map<String,Integer>> output = new TreeMap<>();
+
+        try{
+            List<Loan> loans = loanRepository.findAll();
+
+            for (Loan loan: loans){
+                String attraction = loan.getAttractionName();
+                Date loanDate = loan.getDueDate();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String strDate = dateFormat.format(loanDate);
+                int availPass = passRepository.findByAttractionName(attraction).get().size();
+                if (output.containsKey(attraction)){
+                    if (output.get(attraction).containsKey(strDate)){
+                        output.get(attraction).put(strDate, output.get(attraction).get(strDate) - 1);
+                    } else {
+                        output.get(attraction).put(strDate,availPass - 1);
+                    }
+                } else {
+                    Map<String,Integer> add = new TreeMap<>();
+                    add.put(strDate, availPass-1);
+                    output.put(attraction,add);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return output;
     }
 
 } 

@@ -1,6 +1,6 @@
 package oop.io.demo.auth;
 
-import java.util.Optional;
+import java.util.Map;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +51,6 @@ public class AuthController {
 
     private ConfirmationTokenService confirmationTokenService;
 
-    private UserService userService;
-
     public AuthController(UserRepository userRepository, ConfirmationTokenRepository confirmationTokenRepository) {
         this.userRepository = userRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
@@ -84,11 +82,11 @@ public class AuthController {
 
         //this is the first step to signing up (just using name and email)
         @PostMapping("/signup")
-        public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest){
+        public ResponseEntity<?> registerUser(@Valid @RequestBody Map<String, String> signUpRequest){
             AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
             try {
-                if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-                    User u = userRepository.findByEmail(signUpRequest.getEmail()).get();
+                if (userRepository.existsByEmail(signUpRequest.get("email"))) {
+                    User u = userRepository.findByEmail(signUpRequest.get("email")).get();
                     if(!u.isVerified()){
                         authService.sendConfirmationTokenEmail(u);
                         return ResponseEntity.badRequest().body(new MessageResponse("Error: User with this email is already registered. Please check email for verification link."));
@@ -97,7 +95,7 @@ public class AuthController {
                 } /* else if(!(signUpRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(signUpRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
                     return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
                 } */
-                return authService.signUpOneUser(signUpRequest);
+                return authService.signUpOneUser(new SignupRequest(signUpRequest.get("email"), signUpRequest.get("name")));
             } catch(EmailFailToSendException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
@@ -124,15 +122,14 @@ public class AuthController {
             user.setPassword(encoder.encode(verificationRequest.getPassword()));
             //set contact no- can frontend check whether it exists?
             user.setContactNo(verificationRequest.getContactNo());
-            userRepository.save(user);
             
             //set confirmedAt to now
             confirmationTokenService = new ConfirmationTokenService(confirmationTokenRepository);
             confirmationTokenService.setConfirmedAt(token);
 
             //set isVerified to equal true
-            userService = new UserService(userRepository);
-            userService.enableUser(confirmationToken.getUser().getEmail());
+            user.setVerified(true);
+            userRepository.save(user);
 
             return ResponseEntity.ok("Confirmed");
         }

@@ -37,6 +37,7 @@
         hideModal() {
           this.$bvModal.hide('edit-attraction-modal')
           this.$refs['edit-attraction-confirmation-modal'].hide()
+          this.$emit("update-attraction")
         },
         
       }

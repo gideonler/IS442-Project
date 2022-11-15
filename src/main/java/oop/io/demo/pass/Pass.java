@@ -41,16 +41,13 @@ public class Pass {
         return passId;
     }
 
-    public void setPassId(String passId) {
-        this.passId = passId;
-    }
-
     public  String getPassNo() {
         return passNo;
     }
 
     public void setPassNo(String passNo) {
         this.passNo = passNo;
+        this.passId = attractionName+ passNo;
     }
 
     public String getAttractionName() {
@@ -59,6 +56,7 @@ public class Pass {
 
     public void setAttractionName(String attractionName) {
         this.attractionName = attractionName;
+        this.passId = attractionName + passNo;
     }
 
     public PASSSTATUS getPassStatus() {

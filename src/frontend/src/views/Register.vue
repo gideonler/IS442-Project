@@ -59,7 +59,7 @@ import axios from "axios";
 import { validationMixin } from "vuelidate";
 import { required, maxLength, helpers } from "vuelidate/lib/validators";
 const email_validation = helpers.regex('email', /(?:[a-z0-9]+@nysi.org.sg|[a-z0-9]+@sportsschool.edu.sg)/);
-import authentication from "/Authentication.vue";
+import authentication from "./Authentication.vue"
 
 export default {
   mixins: [validationMixin],

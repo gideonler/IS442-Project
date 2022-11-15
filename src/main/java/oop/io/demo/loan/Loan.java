@@ -4,16 +4,20 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import javax.persistence.Column;
-import javax.persistence.Id;
+
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+
+
 
 public class Loan {
 
     private Date loanDate;
-    @CreatedDate
-    private Date bookingMadeDate;
+    @Column(nullable = false)
+    private Date dueDate;
+
     private String attractionName;
 
     @CreatedBy
@@ -27,7 +31,8 @@ public class Loan {
     private String contactNo;
     private String passNo;
 
-    private LOANSTATUS loanStatus;
+
+    private LOANSTATUS status;
 
     // constructor with attributes required to create a new loan
 
@@ -35,26 +40,33 @@ public class Loan {
     }
 
     public Loan(String userEmail, Date loanDate, String attractionName) {
-
+        this.loanId = userEmail;
         this.loanDate = loanDate;// the date where the user is making the booking
         this.attractionName = attractionName;
         this.userEmail = userEmail;
-        this.loanStatus=LOANSTATUS.COMPLETE;
+        this.status = LOANSTATUS.CONFIRMED;
+        
+
+    }
+
+    public Loan(String userEmail, Date loanDate, String attractionName, String loanId) {
+        this.loanId = loanId;
+        this.loanDate = loanDate;// the date where the user is making the booking
+        this.attractionName = attractionName;
+        this.userEmail = userEmail;
+        this.status = LOANSTATUS.CONFIRMED;
+        
 
     }
 
     public void setLoanId() {
         SimpleDateFormat dateFor = new SimpleDateFormat("dd/MM/yyyy");
-        String date = dateFor.format(this.loanDate);
-        this.loanId = date + this.userEmail;
+        String date=dateFor.format(this.loanDate);
+        this.loanId=date+this.userEmail+passNo;
     }
 
     public void setLoanDate(Date loanDate) {
         this.loanDate = loanDate;
-    }
-
-    public void setBookingMadeDate(Date bookingMadeDate) {
-        this.bookingMadeDate = bookingMadeDate;
     }
 
     public void setEmail(String userEmail) {
@@ -65,15 +77,15 @@ public class Loan {
         return this.userEmail;
     }
 
-    // public LOANSTATUS getStatus() {
-    //     return this.status;
-    // }
+    public LOANSTATUS getStatus() {
+        return this.status;
+    }
 
-    // public void setStatus(LOANSTATUS status) {
-    //     this.status = status;
-    // }
+    public void setStatus(LOANSTATUS status) {
+        this.status = status;
+    }
 
-    public void setPassNo(String passNo) {
+    public void setPassNo(String passNo){
         this.passNo = passNo;
     }
 
@@ -81,9 +93,14 @@ public class Loan {
         return this.loanDate;
     }
 
-    public Date getBookingMadeDate() {
-        return this.bookingMadeDate;
+    public Date getDueDate(){
+        return this.dueDate;
     }
+    public void setDueDate(Date dueDate){
+        Date tomorrow = new Date(dueDate.getTime() + (1000 * 60 * 60 * 24));
+        this.dueDate=tomorrow;
+    }
+
 
     public String getAttractionName() {
         return this.attractionName;
@@ -107,11 +124,5 @@ public class Loan {
 
     public void setContactNo(String contactNo) {
         this.contactNo = contactNo;
+            }
     }
-    public LOANSTATUS getStatus() {
-        return loanStatus;
-    }
-    public void setStatus(LOANSTATUS loanStatus) {
-        this.loanStatus = loanStatus;
-    }
-}

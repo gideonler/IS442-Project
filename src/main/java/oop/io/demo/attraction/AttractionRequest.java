@@ -9,11 +9,6 @@ public class AttractionRequest{
 
     private String passType;
 
-    public AttractionRequest(String attraction, double replacementFee, String passType) {
-        this.attraction=attraction;
-        this.replacementFee=replacementFee;
-        this.passType= passType;
-    }
 
     public String getAttraction() {
         return attraction;

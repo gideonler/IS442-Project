@@ -1,15 +1,16 @@
 package oop.io.demo.loan;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,9 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.UserRepository;
-
-
-
+import oop.io.demo.mail.*;
+import oop.io.demo.mail.payload.BookingRequest;
 
 
 @CrossOrigin(maxAge = 3600)
@@ -41,36 +41,70 @@ public class LoanController {
     private PassRepository passRepository;
     @Autowired
     private LoanService loanService;
-
+    @Autowired
+    private EmailSender emailSender;
 
 
     @Autowired
     JwtUtils jwtUtils;
     @PostMapping("/book")
     public String addBooking(@RequestBody LoanRequest loanRequest){
+
         String userEmail = loanRequest.getUserEmail();
         Date loanDate = loanRequest.getLoanDate();
         String attractionName = loanRequest.getAttractionName();
-        LoanService loanService= new LoanService(loanRepository,passRepository,userRepository);
-        return loanService.addBooking(userEmail, loanDate, attractionName);
-
+        int noOfPass = loanRequest.getNoOfPass();
+        loanService= new LoanService(loanRepository,passRepository,userRepository);
+        if (noOfPass == 1){
+            Loan loan = loanService.addBooking(userEmail, loanDate, attractionName, "1");
+            if (loan != null){
+                try{
+                    BookingRequest booking = new BookingRequest(userEmail,loan.getLoanID());
+                    emailSender.sendAttachmentMessage(booking);
+                } catch (Exception e){
+                    return "Booking error.";
+                }
+                return "One pass was created for " + attractionName + " for use on " + loanDate;
+            }
+        } else {
+            Loan loan1 = loanService.addBooking(userEmail, loanDate, attractionName, "1");
+            Loan loan2 = loanService.addBooking(userEmail, loanDate, attractionName, "2");
+            if (loan1 !=null && loan2 != null){
+                try{
+                    BookingRequest booking1 = new BookingRequest(userEmail,loan1.getLoanID());
+                    emailSender.sendAttachmentMessage(booking1);
+                    BookingRequest booking2 = new BookingRequest(userEmail,loan2.getLoanID());
+                    emailSender.sendAttachmentMessage(booking2);
+                } catch (Exception e){
+                    return "Booking error.";
+                }
+                return "Two passes were created for " + attractionName + " for use on " + loanDate;
+            }
+        }
+        return "Booking unsuccessful!";
     }
 
-    @PostMapping("/cancel")
-    public ResponseEntity cancellLoan(@RequestBody String loanID) {
-        // String cancel=new LoanService(loanRepository,passRepository,userRepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
-        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
+    @GetMapping("/cancel")
+    public ResponseEntity cancellLoan(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");//key JSON in postman
+        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).changeLoanStatus(loanId, LOANSTATUS.CANCELLED);
         return responseEntity;
-        // return ResponseEntity.ok("Pass has been cancelled");
     }
-    
+    @GetMapping("/lost")
+    public ResponseEntity ReportLoss(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");//key JSON in postman
+        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository).changeLoanStatus(loanId, LOANSTATUS.LOST);
+        return responseEntity;
+       
+    }   
 
 
-    @DeleteMapping("/all/{loanId}")
-    public ResponseEntity deleteBooking(@PathVariable String loanID) {
-        Optional<Loan> loan = this.loanRepository.findById(loanID);
+    @DeleteMapping("/delete/{loanId}")
+    public ResponseEntity deleteBooking(@RequestBody Map<String, String> loanIdMap) {
+        String loanId = loanIdMap.get("loanId");
+        Optional<Loan> loan = this.loanRepository.findById(loanId);
         if(loan.isPresent()){
-            this.loanRepository.deleteById(loanID);
+            this.loanRepository.deleteById(loanId);
             return ResponseEntity.ok("Successfully deleted.");
         }
         else {
@@ -90,14 +124,85 @@ public class LoanController {
         }
     }
 
+    @Scheduled(cron = "0 0 9 * * MON-FRI")//overdue sent at 9AM
+
+    public ResponseEntity setOverDueDate() throws Exception {
+        try {
+            //Take user email to direct the collected message to the user
+            ArrayList<Loan> reminderLoans = loanRepository.findAllByStatus("CONFIRMED");
+            ArrayList<Loan>savedLoans=new ArrayList<>();
+            for (Loan loan: reminderLoans){
+                Date currentDate=new Date();
+           
+        
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
+  
+    
+            
+                System.out.println(currentDate.compareTo(loan.getDueDate())<0);
+                if(currentDate.compareTo(loan.getDueDate())>0){
+                    loan.setStatus(LOANSTATUS.OVERDUE);
+                    savedLoans.add(loan);
+                    System.out.println("Overdue Status Set");
+
+                }
+            }
+            
+            loanRepository.saveAll(savedLoans);
+          
+            return ResponseEntity.ok("Overdue sent!");
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Overdue not sent.");
+        }
+    }
 
 
-
+    public static boolean isSameDay(Date date1, Date date2) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        return fmt.format(date1).equals(fmt.format(date2));
+    }
     
 
-    
+    @Scheduled(cron = "0 0 9 * * MON-FRI")//Reminder sent at 9am 1 day before
 
+    public ResponseEntity setReminder() throws Exception {
+        try {
+            //Take user email to direct the collected message to the user
+            ArrayList<Loan> reminderLoans = loanRepository.findAllByStatus("CONFIRMED");
+            ArrayList<Loan>savedLoans=new ArrayList<>();
+            for (Loan loan: reminderLoans){
+                Date currentDate=new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(loan.getDueDate());
+                cal.add(Calendar.DAY_OF_YEAR,-1);
+                Date oneDayBefore= cal.getTime();
+                
+              
+                if(isSameDay(currentDate, oneDayBefore)){
+                    loan.setStatus(LOANSTATUS.OVERDUE);
+                    savedLoans.add(loan);
+                
+               
+                    
+                }
+                
+            }
+            loanRepository.saveAll(savedLoans);
+            return ResponseEntity.ok("Overdue sent!");
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Overdue not sent.");
+        }
+    }
 
+    @GetMapping("/availpasses")
+    public ResponseEntity availPass() throws Exception {
+        try{
+            return ResponseEntity.ok(loanService.checkUnavailPasses());
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Passes can't be checked right now.");
+        }
+    }
 
     /**
   * GET /read  --> Read a booking by booking id from the database.

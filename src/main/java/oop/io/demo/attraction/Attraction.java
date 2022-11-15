@@ -34,13 +34,6 @@ public class Attraction {
         this.active = true;
     }
 
-    /*public Attraction(String attractionName, String templateFilename, double replacementFee, PASSTYPE passType) {
-        this.attractionName=attractionName;
-        this.templateFilename=templateFilename;
-        this.replacementFee=replacementFee;
-        this.passType= passType;
-        this.active = true;
-    }*/
 
     public String getAttractionName() {
         return attractionName;
@@ -105,7 +98,7 @@ public class Attraction {
 
     @Transient
     public String getImageFilePath() {
-        return "/templates/" + attractionName + "/" + imageFilename;
+        return "/src/main/resources/attractionicons/" + attractionName + "/" + imageFilename;
     }
     
     //@Transient

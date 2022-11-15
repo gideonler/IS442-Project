@@ -1,4 +1,5 @@
 package oop.io.demo.attraction;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,14 +10,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import oop.io.demo.pass.PassRepository;
-
 @CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/attraction")
 public class AttractionController {
+    
     private final AttractionRepository repository;
-
 
     public AttractionController(AttractionRepository attractionRepository) {
         this.repository= attractionRepository;
@@ -24,10 +23,16 @@ public class AttractionController {
 
     @GetMapping("/attractions")
     public ResponseEntity<List<Attraction>> getAllPlacesOfInterest() {
-        List<Attraction> ePass= repository.findByPassType(PASSTYPE.ELECTRONICPASS);
-        List<Attraction> pPass = repository.findByPassType(PASSTYPE.PHYSICALPASS);
-        ePass.addAll(pPass);
-        return ResponseEntity.ok(ePass);
+        Optional<List<Attraction>> ePass= repository.findByPassType(PASSTYPE.ELECTRONICPASS);
+        Optional<List<Attraction>> pPass = repository.findByPassType(PASSTYPE.PHYSICALPASS);
+        List<Attraction> attractions= new ArrayList<>();
+        if(ePass.isPresent()) {
+            attractions.addAll(ePass.get());
+        }
+        if(pPass.isPresent()) {
+            attractions.addAll(pPass.get());
+        }
+        return ResponseEntity.ok(attractions);
     }
 
     @GetMapping("/{attraction}/details")
