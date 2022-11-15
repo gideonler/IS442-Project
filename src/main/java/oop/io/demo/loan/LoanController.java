@@ -119,6 +119,20 @@ public class LoanController {
         return ResponseEntity.ok("Number of bookings: " + count);
     }
 
+    //endpoint to get loan ID
+    @GetMapping("/getLoanID/{userEmail}")
+    public ResponseEntity getLoanID(@PathVariable("userEmail") String loanId) {
+        Optional<Loan> loan = this.loanRepository.findById(loanId);
+        if (loan != null) {
+            return ResponseEntity.ok("Loan ID is: " +loan);
+
+        } else {
+            return ResponseEntity.ok("No loans made" );
+
+        }
+
+    }
+
     @GetMapping("/cancel")
     public ResponseEntity cancellLoan(@RequestBody Map<String, String> loanIdMap) {
         String loanId = loanIdMap.get("loanId");// key JSON in postman
