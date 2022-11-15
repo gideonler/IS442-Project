@@ -171,7 +171,7 @@
     <template>
       <div>
         <FullCalendar :options="calendarOptions" />
-        <BookingPopUp :key="this.selected_date" :selected_date='this.selected_date' :no_avail="this.selected_no_pass" ></BookingPopUp>
+        <BookingPopUp :key="this.selected_date" :selected_date='this.selected_date' :no_avail="this.selected_no_pass" :attraction_name="this.selected_attraction" ></BookingPopUp>
         <WaitingListPopUp></WaitingListPopUp>
         <BookingConfirmation></BookingConfirmation>
         <WaitingListConfirmation></WaitingListConfirmation>   
