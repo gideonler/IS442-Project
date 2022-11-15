@@ -62,7 +62,6 @@
         }
       },
       created() {
-        console.log(this.selected_attraction)
         if(this.selected_attraction!= null){
           this.getPasses()
           this.loadData();
@@ -86,9 +85,7 @@
           .get(this.api.get_avail_passes)
           .then((response) => {
             this.total_loans = response.data
-            this.availabilities=  response.data[this.selected_attraction]
             var result= []
-
             const today = new Date()
             var tomorrow =  new Date()
             tomorrow.setDate(today.getDate() + 1)
@@ -105,18 +102,27 @@
                 avail_dates.push(yyyy+"-" +mm+ "-"+ dd)
             }
             var temp;
-            for(date of avail_dates){
-              if(this.containsKey(this.availabilities,date)){
-                //all available
-                if(this.availabilities[date]!=0){
-                  temp= { title: 'available', 'date': date,   display: 'background', passes_left: availabilities[date]  }
+
+            if(this.containsKey(this.total_loans,this.selected_attraction)){
+              this.availabilities=  response.data[this.selected_attraction]
+              for(date of avail_dates){
+                if(this.containsKey(this.availabilities,date)){
+                  //all available
+                  if(this.availabilities[date]!=0){
+                    temp= { title: 'available', 'date': date,   display: 'background', passes_left: this.availabilities[date]  }
+                  }
                 }
+                //all still available
+                else{
+                  temp= { title: 'available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
+                }
+                result.push(temp)
               }
-              //all still available
-              else{
-                temp= { title: 'available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
-              }
-              result.push(temp)
+            }else{
+              for(date of avail_dates){
+                  temp= { title: 'available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
+                  result.push(temp)
+                }
             }
 
             this.calendarOptions.events= result;
