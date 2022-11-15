@@ -17,20 +17,20 @@
 
 
 <script>
+    import axios from 'axios';
     export default {
         name: 'calendar-filter',
         data() {
             return {
             selected: null,
             selected_avail: [],
+            attraction_names: [],
+          current_attractions: [],
             //TODO: Get data from backend
-            options: [
-                { value: null, text: 'Please select a pass type' },
-                { value: 'Mandai Wildlife Reserve', text: 'Mandai Wildlife Reserve' },
-                { value: 'Duck Tours', text: 'Duck Tours' },
-                { value: 'Singapore Flyer', text: 'Singapore Flyer' },
-                { value: 'Art Science Museum', text: 'Art Science Museum', disabled: true }
-            ],
+            api: {
+            get_attractions: "http://localhost:8080/attraction/attractions"
+          },
+            options: [],
             options_avail: [
             { text: 'Available', value: 'available' },
             { text: 'Waiting List', value: 'unavailable' }
@@ -43,10 +43,36 @@
             this.updateBooking(this.selected)
             }
         },
+        created() {
+            this.loadData();
+        },
         methods: {
             updateBooking(pass_type) {
                 this.$root.$refs.BookingPopUp.updatePassType(pass_type);
                 this.$root.$refs.WaitingListPopUp.updatePassType(pass_type);
+            },
+            async loadData(){
+                await axios
+                .get(this.api.get_attractions)
+                .then((response) => {
+                    this.current_attractions = response.data
+                })
+                .catch((error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
+
+                var options= [
+                { value: null, text: 'Please select a pass type' }]
+
+                for(var attraction of this.current_attractions){
+                    var attractionName = attraction["attractionName"]
+                    options.push({"value": attractionName, "text": attractionName})
+                // this.attraction_names.push(attraction["attractionName"])
+                }
+                this.options= options;
+
             }
         }
     }
