@@ -19,12 +19,18 @@
     BookingConfirmation,
     WaitingListConfirmation
 },
+      props:['selected_attraction'],
       data() {
         return {
           api: {
             get_avail_passes: "http://localhost:8080/loan/availpasses" ,
+            get_passes: 'http://localhost:8080/pass/passes/'
           },
+          availabilities: [],
+          // selected_attraction: '',
           avail_passes: [],
+          selected_date: '',
+          selected_no_pass:'',
           calendarOptions: {
             headerToolbar: {
               left: 'prev,next today',
@@ -50,34 +56,47 @@
                 // options apply to dayGridDay and timeGridDay views
               }},
             dateClick: this.handleDateClick,
-            
-            //TODO: replace this dummy data with data from the backend: 
-            // events: [
-            //   { title: 'unavailable', date: '2022-09-01' ,   display: 'background',    color: '#ff7f7f'},
-            //   { title: 'unavailable', date: '2022-09-06' ,   display: 'background',    color: '#ff7f7f'},
-            //   { title: 'unavailable', date: '2022-09-09' ,   display: 'background',    color: '#ff7f7f'},
-            //   { title: 'available', date: '2022-09-02',   display: 'background'  }
-            // ],
             events: [],
             showModal: false
           }
         }
       },
       created() {
-        this.loadData();
+        console.log(this.selected_attraction)
+        if(this.selected_attraction!= null){
+          this.getPasses()
+          this.loadData();
+        }
     },
+    // watch: {
+    //   selected_attraction() {
+    //     //reset values
+    //     this.selected_date= ''
+    //     this.selected_no_pass=''
+    //     this.getPasses()
+    //     this.loadData();
+    //   },
+    // },
     methods: {
+      async getPasses(){
+        await axios
+          .get(this.api.get_passes + this.selected_attraction)
+          .then((response) => {
+            this.selected_max_avail= response.data.body.length
+          })
+          .catch((error) => {
+              if (error) {
+                  console.log(error);
+              }
+          });
+      },
       async loadData(){
         await axios
           .get(this.api.get_avail_passes)
           .then((response) => {
             this.total_loans = response.data
-
-
-            var selected_attraction= "Mandai Zoo"
-            var availabilities= response.data[selected_attraction]
+            this.availabilities=  response.data[this.selected_attraction]
             var result= []
-
 
             const today = new Date()
             var tomorrow =  new Date()
@@ -98,8 +117,6 @@
                 var yyyy = date.getFullYear();
                 avail_dates.push(yyyy+"-" +mm+ "-"+ dd)
             }
-
-            console.log(avail_dates)
             var temp;
             for(date of avail_dates){
               if(this.containsKey(availabilities,date)){
@@ -110,13 +127,12 @@
               }
               //all still available
               else{
-                temp= { title: 'available', 'date': date,   display: 'background'}
+                temp= { title: 'available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
               }
               result.push(temp)
             }
-            var total_availabilities= this.total_loans[selected_attraction]
-
-            console.log(result)
+            // var total_availabilities= this.total_loans[selected_attraction]
+            // console.log(result)
             this.calendarOptions.events= result;
 
           })
@@ -125,8 +141,6 @@
                   console.log(error);
               }
           });
-        
-          
         },
         containsKey(obj, key ) {
         return Object.keys(obj).includes(String(key));
@@ -137,21 +151,29 @@
         handleDateClick: function(info){ 
           let availability=  info.dayEl.innerText.split("\n")[1];
           if (availability== 'available'){
-            this.$root.$refs.BookingPopUp.showModal(info.dateStr);
+            console.log(info)
+            this.selected_date = info.dateStr;
+            if(this.containsKey(this.availabilities, info.dateStr)){
+              this.selected_no_pass= this.availabilities[info.dateStr];
+            }else{
+              this.selected_no_pass= this.selected_max_avail;
+            }
+            // this.$root.$refs.BookingPopUp.showModal(info.dateStr);
+            this.$root.$refs.BookingPopUp.showModal();
+
           }else if (availability== 'unavailable'){
             this.$root.$refs.WaitingListPopUp.showModal(info.dateStr);
           }
         }
-    }
+      }
     }
     </script>
     <template>
       <div>
         <FullCalendar :options="calendarOptions" />
-        <BookingPopUp></BookingPopUp>
+        <BookingPopUp :key="this.selected_date" :selected_date='this.selected_date' :no_avail="this.selected_no_pass" ></BookingPopUp>
         <WaitingListPopUp></WaitingListPopUp>
         <BookingConfirmation></BookingConfirmation>
-        <WaitingListConfirmation></WaitingListConfirmation>
-        
+        <WaitingListConfirmation></WaitingListConfirmation>   
       </div>
     </template>

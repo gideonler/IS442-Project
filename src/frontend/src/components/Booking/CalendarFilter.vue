@@ -40,7 +40,9 @@
         watch: {
         // whenever select changes, this function will run
         selected() {
+            //emit whenever selected
             this.updateBooking(this.selected)
+            this.$emit("filter-attraction", this.selected)
             }
         },
         created() {

@@ -4,7 +4,7 @@
       <b-modal ref="my-modal" 
       hide-footer title="Book New Pass">
         <div class="d-block text-center">
-          <h3>There are {{no_avail}} available passes on {{date}} </h3>
+          <h3>There are {{no_avail}} available passes on {{selected_date}} </h3>
           <ul>
             <li>You can only borrow 1 day to 8 weeks prior visitation.</li>
             <li>You may borrow a maximum of 2 passes each time.</li>
@@ -42,11 +42,11 @@
   <script>
     export default {
         name: 'booking-popup',
+        props:['selected_date', 'no_avail'],
         data() {
             return {
                 //TODO: replace dummy data for no. available with backend data
-                no_avail: 3,
-                date: null,
+                // date: null,
                 no_passes:null,
                 pass_type:null,
             };
