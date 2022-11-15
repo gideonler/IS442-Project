@@ -4,6 +4,7 @@ import 'mutationobserver-shim'
 import Vue from 'vue'
 import './plugins/bootstrap-vue'
 import App from './App.vue'
+import VueSimpleAlert from 'vue-simple-alert'
 import router from './router'// loads from src/router/index.js
 
 // LightBootstrap plugin
@@ -13,6 +14,7 @@ import './assets/scss/app.scss'
 import './assets/sass/light-bootstrap-dashboard.scss'
 
 Vue.use(LightBootstrap)
+Vue.use(VueSimpleAlert)
 
 Vue.config.productionTip = false
 
