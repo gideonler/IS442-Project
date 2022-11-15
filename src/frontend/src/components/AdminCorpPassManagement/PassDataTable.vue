@@ -163,8 +163,6 @@
       </template>
       <template #cell(activate)="data" >
         <div>
-          <!-- <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="handleDeactivate(items[data.index].passId)" variant="danger">Deactivate</b-button> 
-          <b-button v-if="items[data.index].passStatus == 'DEACTIVATED'" @click="handleActivate(items[data.index].passId)" variant="success">Reactivate</b-button> -->
           <b-button v-if="items[data.index].passStatus == 'INOFFICE'" @click="showPopup('Deactivation', items[data.index].passId)" variant="danger">Deactivate</b-button> 
           <b-button v-if="items[data.index].passStatus == 'DEACTIVATED'" @click="showPopup('Reactivation', items[data.index].passId)" variant="success">Reactivate</b-button>
         </div>
@@ -209,25 +207,25 @@ export default {
   data() {
     return {
       action: '',
+      curr_passno_list: [],
       pass_to_upate:  '',
       placeOfInterest: '',
       api: { view_passes: "http://localhost:8080/pass/passes/",
             activate_pass: "http://localhost:8080/passmanagement/activate",
-            deactivate_pass: "http://localhost:8080/passmanagement/deactivate"
+            deactivate_pass: "http://localhost:8080/passmanagement/deactivate",
+            edit_pass: "http://localhost:8080/passmanagement/",
     },
       items: null,
       updatedRow: {},
       fields: [
-        // { key: "delete", label: "" },
-        { key: "edit", label: "" },
+        { key: "edit", label: "",  class:"edit-col"  },
         {
           key: "passId",
           label: "Pass Id",
           type: "text",
-          editable: true,
+          editable: false,
           placeholder: "Enter Name...",
           class: "id-col",
-          validate: this.validateName,
           sortable: true,
         },
         {
@@ -236,6 +234,7 @@ export default {
           type: "text",
           editable: true,
           class: "pass-no-col",
+          validate: this.validateNo,
           sortable: true,
         },
         {
@@ -250,7 +249,7 @@ export default {
             { value: "DEACTIVATED", text: "DEACTIVATED" },
           ],
         },
-        { key: "activate", label: "" },
+        { key: "activate", label: "" , class:"activate-col"},
       ],
       rowUpdate: {},
       totalRows: 1,
@@ -292,14 +291,23 @@ export default {
         },
       };
     },
-    handleSubmit(data, update) {
+    async handleSubmit(data, update) {
+      await axios 
+            .put(this.api.edit_pass + this.updatedRow.passId + '/edit' , 
+              {
+                "passNo" : this.updatedRow.passNo
+              }
+              )
+            .then((response) => {
+              console.log(response);
+            }); 
+
       this.rowUpdate = {
         edit: false,
         id: data.id,
         action: update ? "update" : "cancel",
       };
-    
-     console.log(this.updatedRow)
+      
      this.updatedRow = {}
     },
     handleEdit(data) {
@@ -347,11 +355,14 @@ export default {
             .get(view_pass_api)
             .then((response) => {
                 var passes_list = response.data.body;
+                var curr_passno_list= [];
                 console.log(passes_list)
                 passes_list.forEach(function (value, i) {
+                    curr_passno_list.push(value.passNo)
                     value["id"]= i+1
                 });
                 this.items= passes_list
+                this.curr_passno_list = curr_passno_list 
                 console.log(this.items)
             })
             .catch((error) => {
@@ -359,11 +370,12 @@ export default {
             })
           this.totalRows = this.items.length
       },
-    validateName(value) {
-        if (value === '') {
+    validateNo(value) {
+      
+        if (this.curr_passno_list.includes(value)) {
           return {
             valid: false,
-            errorMessage: 'Please enter name'
+            errorMessage: 'Current pass number exists. Please set a unique number.'
           }
         }
         return {valid: true};
