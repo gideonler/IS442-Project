@@ -23,8 +23,6 @@
       data() {
         return {
           componentKey:0,
-          user: '',
-          user_email: '',
           api: {
             get_avail_passes: "http://localhost:8080/loan/availpasses" ,
             get_passes: 'http://localhost:8080/pass/passes/',
@@ -72,10 +70,6 @@
           this.getPasses()
           this.loadData();
         }
-          this.user = JSON.parse(localStorage.getItem('user'));
-          this.user_email= this.user.username
-          // this.user_email='singaporesportsschooltest@outlook.com'
-    
     },
     computed:{
       hasExceeededForMonth(date){
@@ -89,9 +83,10 @@
     methods: {
       async getBookings() {
         await axios
-            .get(this.api.get_bookings + this.user_email)
+            //change to user email
+            .get(this.api.get_bookings + "singaporesportsschooltest@outlook.com")
             .then((response) => {
-                console.log(response.data)
+                // console.log(response.data)
                 var loans_in_month= {}
                 this.curr_bookings = response.data;
                 var unique_ids= [];

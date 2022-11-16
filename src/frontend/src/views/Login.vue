@@ -102,9 +102,9 @@ export default {
 
     onSubmit() {
       this.$v.form.$touch();
-      if (this.$v.form.$anyError) {
-        return;
-      }
+      // if (this.$v.form.$anyError) {
+      //   return;
+      // }
       axios
         .post(this.api.sign_in, {
           "email": this.form.email,
