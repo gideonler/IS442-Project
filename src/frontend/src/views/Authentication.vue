@@ -1,12 +1,12 @@
 <template>
-    <div>
-
+    <div style="margin-top: 10%; margin-left: 10%; margin-right: 10%">
         <b-form @submit.stop.prevent="onSubmit">
             <b-form-group id="example-input-group-1" label="Contact Number" label-for="example-input-1">
                 <b-form-input id="example-input-1" name="example-input-1" v-model="$v.form.contact.$model"
                     :state="validateState('contact')" aria-describedby="input-1-live-feedback"></b-form-input>
 
-                <b-form-invalid-feedback id="input-1-live-feedback">This is a required field and only numeric values are
+                <b-form-invalid-feedback id="input-1-live-feedback">This is a required field and only Singapore phone
+                    numbers are
                     accepted.</b-form-invalid-feedback>
             </b-form-group>
 
@@ -49,8 +49,6 @@
             <br>
 
             <b-button type="submit" variant="primary">Register</b-button>
-
-            <register/> register ( {{email_address}})
         </b-form>
     </div>
 </template>
@@ -58,21 +56,17 @@
 <script>
 import axios from "axios";
 import { validationMixin } from "vuelidate";
-import { required, minLength, numeric, sameAs } from "vuelidate/lib/validators";
-import register from "./Register.vue"
+import { required, minLength, numeric, sameAs, between } from "vuelidate/lib/validators";
 
 export default {
     mixins: [validationMixin],
-    components: {
-        register
-    },
     data() {
         return {
-            email: "",
             form: {
+                contact: "",
                 password: null,
                 cpassword: null,
-                activation: null,
+                token: null,
             },
             api: {
                 confirm: "http://localhost:8080/auth/confirm",
@@ -83,7 +77,7 @@ export default {
         form: {
             contact: {
                 required,
-                numeric
+                between: between(10000000, 99999999),
             },
             password: {
                 required,
@@ -116,34 +110,25 @@ export default {
             const { $dirty, $error } = this.$v.form[token];
             return $dirty ? !$error : null;
         },
-        // resetForm() {
-        //   this.form = {
-        //     email: null,
-        //     food: null
-        //   };
-
-        //   this.$nextTick(() => {
-        //     this.$v.$reset();
-        //   });
-        // },
 
         onSubmit() {
             this.$v.form.$touch();
             if (this.$v.form.$anyError) {
                 return;
             }
-            // alert("Form submitted!");
 
             return axios
-                .get(this.api.confirm, {
-                    "contact": this.form.contact,
-                    "password": this.form.password,
-                    "cpassword": this.form.cpassword,
-                    "token": this.form.token,
-                })
+                .get(this.api.confirm,
+                    {
+                        params: {
+                            token: this.form.token,
+                            password: this.form.password,
+                            contactno: this.form.contact,
+                        }
+                    })
                 .then((response) => {
                     console.log(response.data);
-                    this.$router.push("/login");
+                    this.$router.push("/booking");
                 })
                 .catch((error) => {
                     console.log(error);
@@ -151,35 +136,39 @@ export default {
         },
         resend(event) {
             event.preventDefault()
-            alert("Please check your email for the token")
+            this.$alert("Please check your email for the token")
             return axios
                 .post("http://localhost:8080/auth/resend", {
                     contact: this.form.contact,
                 })
                 .then((response) => {
                     console.log(response.data);
+                    window.location.reload();
                 })
                 .catch((error) => {
                     console.log(error);
+                    window.location.reload();
                 });
         }
     }
 
 };
 
-var timeleft = 10;
-var downloadTimer = setInterval(function () {
-    const btn = document.getElementById("myBtn")
-    if (timeleft <= 0) {
-        clearInterval(downloadTimer);
-        btn.disabled = false;
-        document.getElementById("countdown").innerHTML = "";
-    } else {
-        btn.disabled = true;
-        document.getElementById("countdown").innerHTML = "Didn't receive the token? Resend in " + timeleft + " seconds";
-    }
-    timeleft -= 1;
-}, 1000);
+document.addEventListener("DOMContentLoaded", function (event) {
+    var timeleft = 60;
+    var downloadTimer = setInterval(function () {
+        const btn = document.getElementById("myBtn")
+        if (timeleft <= 0) {
+            clearInterval(downloadTimer);
+            btn.disabled = false;
+            document.getElementById("countdown").innerHTML = "";
+        } else {
+            btn.disabled = true;
+            document.getElementById("countdown").innerHTML = "Didn't receive the token? Resend in " + timeleft + " seconds";
+        }
+        timeleft -= 1;
+    }, 1000);
+})
 
 </script>
 

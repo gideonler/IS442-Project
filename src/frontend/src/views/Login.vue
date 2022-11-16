@@ -37,8 +37,6 @@
         </b-form-checkbox>
       </b-form-group>
 
-      <!-- <div>State: <strong>{{ status }}</strong></div> -->
-
       <b-button type="submit" variant="primary">Login</b-button>
 
       <br>
@@ -81,11 +79,11 @@ export default {
     form: {
       email: {
         required,
-        // email_validation
+        email_validation
       },
       password: {
         required,
-        // minLength: minLength(6)
+        minLength: minLength(6)
       }
     }
   },
@@ -98,32 +96,16 @@ export default {
       const { $dirty, $error } = this.$v.form[password];
       return $dirty ? !$error : null;
     },
-    // resetForm() {
-    //   this.form = {
-    //     email: null,
-    //     food: null
-    //   };
-
-    //   this.$nextTick(() => {
-    //     this.$v.$reset();
-    //   });
-    // },
 
     onSubmit() {
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
         return;
       }
-
-      // alert("Form submitted!");
-      // console.log(this.form.email);
-      // console.log(this.form.password);
-      // console.log(this.status);
       axios
         .post(this.api.sign_in, {
           "email": this.form.email,
           "password": this.form.password,
-          // "status": this.status
         })
         .then(response => {
           console.log(response.data);
@@ -153,18 +135,5 @@ export default {
         });
     }
   },
-  // mounted() {
-  //   axios
-  //     .get("http://localhost:8080/auth/signup")
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       var login_details = response.data;
-  //       this.login_details = login_details;
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }
-
 };
 </script>

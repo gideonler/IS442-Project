@@ -32,18 +32,6 @@
 
       <b-button type="submit" variant="primary">Get Activation Link</b-button>
 
-      <!-- <b-button class="ml-2" @click="resetForm()">Reset</b-button> -->
-
-      <!-- <b-button variant="primary" v-b-modal.modal-prevent-closing>Get Activation Link</b-button> -->
-      <!-- <b-modal id="modal-prevent-closing" ref="modal" title="Check your email for activation link" @show="resetModal"
-        @hidden="resetModal" @ok="handleOk">
-        <form ref="form" @submit.stop.prevent="handleSubmit">
-          <b-form-group label="Paste activation link" label-for="name-input" invalid-feedback="Link is required"
-            :state="nameState">
-            <b-form-input id="name-input" v-model="name" :state="nameState" required></b-form-input>
-          </b-form-group>
-        </form>
-      </b-modal> -->
     </b-form>
   </div>
 </template>
@@ -73,7 +61,6 @@ export default {
       },
     };
   },
-  props: ['email'],
   validations: {
     form: {
       name: {
@@ -95,24 +82,12 @@ export default {
       const { $dirty, $error } = this.$v.form[email];
       return $dirty ? !$error : null;
     },
-    // resetForm() {
-    //   this.form = {
-    //     email: null,
-    //     food: null
-    //   };
 
-    //   this.$nextTick(() => {
-    //     this.$v.$reset();
-    //   });
-    // },
     onSubmit() {
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
         return;
       }
-      // this.$router.push('/authentication')
-      // console.log(this.form.email);
-      // alert("Form submitted!");
 
       return axios
         .post(this.api.register, {
@@ -121,13 +96,12 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
-          // this.$alert(response.data.message)
           this.$router.push('/authentication')
         })
         .catch((error) => {
           console.log(error);
-          console.C
-          if (error.response.request.reponse == "{\"message\":\"Error: User with this email is already registered. Please check email for verification link.\"}") {
+          console.log(error.response.request.response);
+          if (error.response.request.response == "{\"message\":\"Error: User with this email is already registered. Please check email for verification link.\"}") {
             this.$alert("Error: User with this email is already registered. Please check email for verification link.")
           }
         });
