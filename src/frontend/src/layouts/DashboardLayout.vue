@@ -67,7 +67,7 @@
     },
     data(){
       return {
-        user: 'USER'
+        user: 'STAFF'
       }
     },
     methods: {
