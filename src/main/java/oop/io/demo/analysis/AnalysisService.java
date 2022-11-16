@@ -40,12 +40,8 @@ public class AnalysisService {
             List<Loan> loans = loanRepository.findAll();
 
             for (Loan loan: loans){
-                LocalDate loanDate1 = loan.getLoanDate();
-                DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
-                String strYear = dateFormat1.format(loanDate1);
-                LocalDate loanDate2 = loan.getLoanDate();
-                DateFormat dateFormat2 = new SimpleDateFormat("MM");
-                String strMonth = dateFormat2.format(loanDate2);
+                String strYear = ""+loan.getLoanDate().getYear();
+                String strMonth = ""+loan.getLoanDate().getMonth().getValue();
                 if (output.containsKey(strYear)){
                     if (output.get(strYear).containsKey(strMonth)){
                         output.get(strYear).put(strMonth, output.get(strYear).get(strMonth) + 1);

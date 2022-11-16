@@ -98,6 +98,8 @@ import axios from 'axios';
         },
       }
     },
+
+    
     computed: {
         hasYear() {
             return this.containsKey(this.year_stats, this.selected_year);
@@ -116,6 +118,7 @@ import axios from 'axios';
       containsKey(obj, key ) {
         return Object.keys(obj).includes(String(key));
         },
+
       async loadData(){          
           // await axios
           // .get(this.api.get_total_attractions)
@@ -163,6 +166,57 @@ import axios from 'axios';
           console.log(this.total_loans, this.total_attractions,
           this.avg_loans, this.total_employees, this.year_stats)
         },
+        exportToCsv(filename, jsonObj) {
+            var rows =[]
+            rows.push(Object.keys(jsonObj[0]))
+            Object.values(jsonObj).forEach((value) => {
+              var temp_row= []
+              Object.values(value).forEach((val) => {
+                temp_row.push(val)           
+              });
+              rows.push(temp_row)
+            });
+
+
+            var processRow = function (row) {
+                var finalVal = '';
+                for (var j = 0; j < row.length; j++) {
+                    var innerValue = row[j] === null ? '' : row[j].toString();
+                    if (row[j] instanceof Date) {
+                        innerValue = row[j].toLocaleString();
+                    };
+                    var result = innerValue.replace(/"/g, '""');
+                    if (result.search(/("|,|\n)/g) >= 0)
+                        result = '"' + result + '"';
+                    if (j > 0)
+                        finalVal += ',';
+                    finalVal += result;
+                }
+                return finalVal + '\n';
+            };
+
+            var csvFile = '';
+            for (var i = 0; i < rows.length; i++) {
+                csvFile += processRow(rows[i]);
+            }
+
+            var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+            if (navigator.msSaveBlob) { // IE 10+
+                navigator.msSaveBlob(blob, filename);
+            } else {
+                var link = document.createElement("a");
+                if (link.download !== undefined) { // feature detection
+                    // Browsers that support HTML5 download attribute
+                    var url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+        },
        csvJSON(csvStr){
         var lines=csvStr.split("\n");
         var result = [];
@@ -191,17 +245,10 @@ import axios from 'axios';
           console.log('dfe')
           await axios
           .get(this.api.exportCsv,
-          {responseType: 'blob'}
           )
           .then((response) => {
            const file = response.data;
-           console.log(file)
-          //  file.text().then((csvStr) => {
-          //   console.log(csvStr)
-            // const jsonObj = this.csvJSON(csvStr);
-            // console.log(jsonObj);
-          // })
-
+           this.exportToCsv('Loan.csv', file)
           })
           .catch((error) => {
               if (error) {
