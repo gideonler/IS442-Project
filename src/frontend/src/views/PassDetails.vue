@@ -1,35 +1,35 @@
 <template>
-    <div style="padding-bottom: 30px">
+    <div style="padding-bottom: 10%">
         <div class="row">
-            <div class="card col-md-12">
-                <div class="card-header">
-                    <h3 class="card-title">Pass Status</h3>
+            <div class="card col-md-12 bg-secondary">
+                <div class="card-header bg-secondary">
+                    <h3 class="card-title font-weight-bold">Pass Status</h3>
                 </div>
                 <div class="card-body">
                     <ul>
-                        <li> Passes can be collected 1 day before the intended visit date</li>
-                        <li> Passes must be returned 1 day after the intended visit date, with the exception of Friday
+                        <li> Passes can be <u>collected 1 day before</u> the intended visit date</li>
+                        <li> Passes must be <u>returned 1 day after</u> the intended visit date, with the exception of Friday
                             and Saturday</li>
-                        <li> Cancellation of loan requests are allowed at least 1 day before the intended visit date
+                        <li> Cancellation of loan requests are allowed <u>at least 1 day before</u> the intended visit date
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="row d-flex">
-            <div class="card col-md-5 mr-5" v-if="bookingList[0].attractionName.length > 0" v-for="(booking, b) in bookingList" :key="b">
-                <h5 class="card-header">
+        <div class="row d-flex justify-content-around" v-if="bookingList[0].attractionName.length > 0" >
+            <div class="card bg-light col-md-5" v-for="(booking, b) in bookingList" :key="b">
+                <h4 class="card-header font-weight-bold">
                     {{ booking.attractionName }}
-                </h5>
+                </h4>
                 <div class="card-body">
                     <p class="card-text">Loan Date: {{ booking.loanDate.split("T")[0] }}</p>
                     <p class="card-text">Pass ID: {{ booking.passId }}</p>
                     <p class="card-text">Booking Status: {{ booking.status }}</p>
-                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info"
+                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="secondary"
                         @click="getPassStatus(booking.passId); previousBorrower(booking.passId, booking.loanDate)">
                         Check Pass Status
                     </b-button>
-                    <b-button v-b-modal.modal-2 class="btn-sm ml-1 mt-1" variant="danger"
+                    <b-button v-b-modal.modal-2 class="btn-sm mt-1 float-right" variant="danger"
                         @click="sendInfo(booking.attractionName, booking.passNo)">
                         Report Pass Loss
                     </b-button>
@@ -38,14 +38,14 @@
         </div>
         <b-modal id="modal-1" title="Pass Status" alignment="center">
             <p>Pass Status: {{ passStatus }}</p>
-            <p>Previous Day Borrower:</p>
-            <ul>
-                <li> {{ borrower.email }} </li>
-                <li> {{ borrower.contactNo }} </li>
-                <li> {{ borrower.name }} </li>
+            <p v-if="borrower.email.length > 0">Previous Day Borrower:</p>
+            <ul v-if="borrower.email.length > 0">
+                <li> Email: {{ borrower.email }} </li>
+                <li> Contact No: {{ borrower.contactNo }} </li>
+                <li> Name: {{ borrower.name }} </li>
             </ul>
             <template #modal-footer>
-                <b-button variant="success" @click="$bvModal.hide('modal-1')">Ok</b-button>
+                <b-button variant="primary" @click="$bvModal.hide('modal-1')">Ok</b-button>
             </template>
         </b-modal>
 
@@ -70,16 +70,18 @@ export default {
     name: "Pass-Details",
     created() {
         this.$emit("update:layout", DashboardLayout);
+        this.user = JSON.parse(localStorage.getItem('user'));
+        this.userEmail = this.user.username;
     },
 
     data() {
         return {
-            userEmail: this.user.username,
+            user: "",
+            userEmail: "",
             bookingList: [{ attractionName: "", loanDate: "", passId: "", status: "", loanID: "" }],
             bookingId: "",
             passStatus: "",
             previousDate: "",
-            // passDetails: [{ passId: "", passNo: "", attractionName: "", passStatus: "" }],
             replacementFee: "",
             borrower: { email: "", contactNo: "", name: "" },
             api: {
@@ -90,10 +92,6 @@ export default {
                 previousBorrower: "http://localhost:8080/loan/previousborrower"
             }
         };
-    },
-
-    created() {
-        this.user = JSON.parse(localStorage.getItem('user'));
     },
 
     mounted() {
@@ -147,7 +145,6 @@ export default {
                 .get(this.api.attractionDetails + attractionName + "/details")
                 .then((response) => {
                     console.log(response.data);
-                    // this.passDetails = response.data;
                     this.replacementFee = response.data.replacementFee;
                 })
                 .catch((error) => {
@@ -197,11 +194,14 @@ export default {
                     },
                 )
                 .then((response) => {
-                    console.log(response.data)
-                    this.borrower = response.data;
+                    this.borrower = response.data.body;
+                    if (response.data.body.contactNo == null) {
+                        this.borrower.contactNo = "N/A";
+                    }
+                    console.log(this.borrower)
                     if (response.data == "No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.") {
                         this.$alert("No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.");
-                        this.borrower = { email: "None", contactNo: "None", name: "None" };
+                        this.borrower = { email: "", contactNo: "", name: "" };
                     }
                 })
                 .catch((error) => {
