@@ -38,7 +38,8 @@ import oop.io.demo.user.UserService;
 import oop.io.demo.mail.*;
 import oop.io.demo.mail.payload.BookingRequest;
 
-@CrossOrigin(origins = "*", maxAge = 7000)
+//@CrossOrigin(origins = "*", maxAge = 7000)
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/loan")
 @Controller
