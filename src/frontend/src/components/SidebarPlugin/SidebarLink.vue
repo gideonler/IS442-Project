@@ -7,6 +7,7 @@
       <slot>
         <i v-if="link.icon" :class="link.icon"></i>
         <p>{{link.name}}</p>
+        <p hidden>{{link.userTypes}}</p>
       </slot>
     </a>
   </component>
@@ -26,7 +27,8 @@
           return {
             name: '',
             path: '',
-            icon: ''
+            icon: '',
+            userTypes: ''
           }
         }
       },

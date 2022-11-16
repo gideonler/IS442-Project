@@ -6,33 +6,40 @@
       <sidebar-link to="/user">
         <i class="nc-icon nc-circle-09"></i>
         <p>User Profile</p>
+        <p hidden>USER,GENERALOFFICE,STAFF</p>
       </sidebar-link>
       <sidebar-link to="/booking">
         <i class="nc-icon nc-notes"></i>
         <p>My Bookings</p>
+        <p hidden>USER,GENERALOFFICE,STAFF</p>
       </sidebar-link>
       <sidebar-link to="/analytics">
         <i class="nc-icon nc-chart-bar-32"></i>
         <p>Analytics</p>
+        <p hidden>STAFF</p>
       </sidebar-link>
       <sidebar-link to="/corporate-pass-creation">
         <i class="nc-icon nc-badge"></i>
         <p>Create Passes</p>
+        <p hidden>STAFF</p>
       </sidebar-link>
       <sidebar-link to="/corporate-pass-management">
         <i class="nc-icon nc-ruler-pencil"></i>
         <p>Manage Passes</p>
+        <p hidden>STAFF</p>
       </sidebar-link>
       <sidebar-link to="/notifications">
         <i class="nc-icon nc-bell-55"></i>
         <p>Notifications</p>
+        <p hidden>STAFF,USER,GENERALOFFICE</p>
       </sidebar-link>
 
       <template slot="bottom-links">
         <sidebar-link class="active"
-                      to="/admin/upgrade">
+                      to="/booking">
           <i class="nc-icon nc-notes"></i>
           <p>Book Now</p>
+          <p hidden>STAFF,USER,GENERALOFFICE</p>
         </sidebar-link>
       </template>
     </side-bar> 
@@ -53,7 +60,7 @@
   import TopNavBar from './TopNavBar'
   import ContentFooter from './ContentFooter.vue'
   import DashboardContent from './Content.vue'
-  // import MobileMenu from './MobileMenu.vue'
+  import MobileMenu from './MobileMenu.vue'
   
 
   export default {
@@ -61,7 +68,7 @@
       TopNavBar,
       ContentFooter,
       DashboardContent,
-      // MobileMenu
+      MobileMenu
 
     },
     methods: {
