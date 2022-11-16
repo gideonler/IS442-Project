@@ -216,9 +216,12 @@ public class LoanController {
             ArrayList<Loan> savedLoans = new ArrayList<>();
             for (Loan loan : reminderLoans) {
                 LocalDate currentDate = LocalDate.now();
+                
+                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate loanDate = LocalDate.parse(loan.getDueDate(), dateFormat);
 
-                System.out.println(currentDate.compareTo(loan.getDueDate()) < 0);
-                if (currentDate.compareTo(loan.getDueDate()) > 0) {
+                System.out.println(currentDate.compareTo(loanDate) < 0);
+                if (currentDate.compareTo(loanDate) > 0) {
                     loan.setStatus(LOANSTATUS.OVERDUE);
                     savedLoans.add(loan);
                     System.out.println("Overdue Status Set");

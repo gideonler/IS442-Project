@@ -85,10 +85,10 @@ public class Loan {
         return LocalDate.parse(this.loanDate, dateFormat);
     }
 
-    public LocalDate getDueDate(){
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return LocalDate.parse(this.dueDate, dateFormat);
+    public String getDueDate(){
+        return dueDate;
     }
+
     public void setDueDate(LocalDate dueDate){
         LocalDate tomorrow = dueDate.plusDays(1);
         this.dueDate=tomorrow.toString();

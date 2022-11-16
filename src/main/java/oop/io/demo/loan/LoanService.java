@@ -28,6 +28,7 @@ import oop.io.demo.user.UserRepository;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -235,8 +236,8 @@ public class LoanService {
 
             for (Loan loan: loans){
                 String attraction = loan.getAttractionName();
-                LocalDate loanDate = loan.getDueDate();
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate loanDate = LocalDate.parse(loan.getDueDate(), dateFormat);
                 String strDate = dateFormat.format(loanDate);
                 int availPass = passRepository.findByAttractionName(attraction).get().size();
                 if (output.containsKey(attraction)){
