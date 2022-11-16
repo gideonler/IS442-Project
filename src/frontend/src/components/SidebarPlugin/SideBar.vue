@@ -21,9 +21,8 @@
                         :key="link.name + index"
                         :to="link.path"
                         @click="closeNavbar"
-                        :link="link">
-            <i :class="link.icon"></i>
-            <p>{{link.name}}</p>
+                        :link="link"
+                        >
           </sidebar-link>
         </slot>
       </ul>
