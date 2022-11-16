@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
@@ -37,6 +40,9 @@ public class AttractionManagementController {
 
     private final PassRepository passRepository;
 
+    @Autowired
+    JwtUtils jwtUtils;
+
     public AttractionManagementController(AttractionRepository attractionRepository, PassRepository passRepository) {
         this.repository= attractionRepository;
         this.passRepository = passRepository;
@@ -45,7 +51,6 @@ public class AttractionManagementController {
     //Create new place of interest
     @PostMapping("/new")
     public ResponseEntity createAttraction(@RequestBody AttractionRequest attractionRequest) {
-
         String attractionName = attractionRequest.getAttraction();
         double replacementFee = attractionRequest.getReplacementFee();
         PASSTYPE passtype = PASSTYPE.valueOf(attractionRequest.getPassType().toUpperCase());

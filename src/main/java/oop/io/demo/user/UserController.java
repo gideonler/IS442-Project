@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(maxAge = 3600)
@@ -49,8 +50,8 @@ public class UserController {
     ////USER AND ADMIN ACCESS
     //Get user by username
     //Access: only admin and user with {username} can access
-    @GetMapping("/mydetails/{useremail}")
-    public ResponseEntity getMyDetails(@PathVariable("useremail") String userEmail) {
+    @GetMapping("/mydetails")
+    public ResponseEntity getMyDetails(@RequestParam("useremail") String userEmail) {
         try {
             User user= this.repository.findByEmail(userEmail).get();
             return ResponseEntity.ok(user);
@@ -63,8 +64,8 @@ public class UserController {
     ////USER ONLY ACCESS
     //Edit user profile details
     //Access: user
-    @PutMapping("/editprofile/{useremail}")
-    public ResponseEntity editProfile(@PathVariable("useremail") String userEmail, @RequestBody EditProfileRequest editProfileRequest/*, Principal principal*/) {
+    @PutMapping("/editprofile")
+    public ResponseEntity editProfile(@RequestParam("useremail") String userEmail, @RequestBody EditProfileRequest editProfileRequest/*, Principal principal*/) {
         //Authentication authentication = (Authentication) principal;
         //User u = (User) authentication.getPrincipal();
         try {
