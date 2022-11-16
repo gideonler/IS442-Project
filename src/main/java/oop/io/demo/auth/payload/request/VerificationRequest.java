@@ -8,8 +8,6 @@ public class VerificationRequest {
     @NotBlank
     String password;
     @NotBlank
-    String retypePassword;
-    @NotBlank
     String contactNo;
 
     
@@ -19,14 +17,6 @@ public class VerificationRequest {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getRetypePassword() {
-        return retypePassword;
-    }
-
-    public void setRetypePassword(String retypePassword) {
-        this.retypePassword = retypePassword;
     }
 
     public String getToken() {

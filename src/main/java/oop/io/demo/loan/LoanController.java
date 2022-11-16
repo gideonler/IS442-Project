@@ -61,15 +61,23 @@ public class LoanController {
     public ResponseEntity addBooking(@RequestBody LoanRequest loanRequest) {
 
         String userEmail = loanRequest.getUserEmail();
+
+        if(!userRepository.findByEmail(userEmail).isPresent()) return ResponseEntity.badRequest().body("User not found");
+
+        String attractionName = loanRequest.getAttractionName();
+        int noOfPass = loanRequest.getNoOfPass();
+
         String dateString = loanRequest.getLoanDate();
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate loanDate = LocalDate.parse(dateString, dateFormat);
-        String attractionName = loanRequest.getAttractionName();
-        int noOfPass = loanRequest.getNoOfPass();
+
+        System.out.println(loanDate);
+        
         loanService = new LoanService(loanRepository, passRepository, userRepository);
+
         if(noOfPass==0) return ResponseEntity.badRequest().body("Please enter the number of passes you want (1 or 2)");
-        if (checkBooking(userEmail, loanDate)) {
-            countBooking(userEmail);
+        
+        if (checkBooking(userEmail, loanDate) && countBooking(userEmail)<2) {
             if (noOfPass == 1) {
                 Loan loan = loanService.addBooking(userEmail, loanDate, attractionName, "1");
                 if (loan != null) {
@@ -100,28 +108,28 @@ public class LoanController {
         return ResponseEntity.badRequest().body("Booking unsuccessful!");
     }
     
-    //check if booking matches
+    //check booking exists
     public Boolean checkBooking(String userEmail, LocalDate loanDate) {
-        Boolean status = true;
         for (Loan loan : loanRepository.findAll()) {
             if (loan.getUserEmail().equals(userEmail) && loan.getLoanDate().equals(loanDate)) {
-                status = false;
+                System.out.println(loanDate);
+                return false;
             }
         }
-        return status;
+        return true;
     }
 
     //GET number of bookings made
     @GetMapping("/getbookingcount")
-    public ResponseEntity countBooking(@RequestParam("userEmail") String userEmail) {
-        int count = 0;
+    public int countBooking(@RequestParam("userEmail") String userEmail) {
         ArrayList<Loan> loan = loanRepository.findAllByUserEmail(userEmail);
-        if (loan != null) {
-            count = loan.size();
+        List<LocalDate> dates = loan.stream().map(l->l.getLoanDate()).filter(d->d.getMonth()==LocalDate.now().getMonth()).toList();
+        Set<LocalDate> uniqueDates = new HashSet<>(dates);
+        if (!loan.isEmpty()) {
+            return uniqueDates.size();
         } else {
-            return ResponseEntity.ok("No bookings made for this user" );
+            return 0;
         }
-        return ResponseEntity.ok(count);
     }
 
     //GET loanID based on userEmail

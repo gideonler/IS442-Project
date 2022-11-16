@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.auth.confirmationToken.ConfirmationToken;
@@ -75,6 +76,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailImplementation userDetails = (UserDetailImplementation) authentication.getPrincipal();
+        
         if(!userDetails.isEnabled()){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: You are not authenticated yet. Please check your inbox for an email with a link to complete your registration."));
             //we might want to have a button 'Resend email' which triggers a service to send an email with the link to complete registration
@@ -113,14 +115,13 @@ public class AuthController {
         }
 
         @GetMapping("/confirm")
-        public ResponseEntity<?> confirmUser(@RequestBody VerificationRequest verificationRequest) {
+        public ResponseEntity<?> confirmUser(@RequestParam("token") String token, @RequestParam("password") String password, @RequestParam("contactno") String contactno) {
             AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
-            String token = verificationRequest.getToken();
             ConfirmationToken confirmationToken = authService.confirmToken(token);
             //set password           
             User user = confirmationToken.getUser();
-            user.setPassword(encoder.encode(verificationRequest.getPassword()));
-            user.setContactNo(verificationRequest.getContactNo());
+            user.setPassword(encoder.encode(password));
+            user.setContactNo(contactno);
             
             //set confirmedAt to now
             confirmationTokenService = new ConfirmationTokenService(confirmationTokenRepository);

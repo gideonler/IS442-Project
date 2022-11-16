@@ -12,8 +12,7 @@ import org.springframework.stereotype.Repository;
 //by extending MongoRepository, we can use MongoRepository’s methods: save(), findOne(), findById(), findAll(), count(), delete(), deleteById()
 public interface LoanRepository extends MongoRepository<Loan, String>{
 
-//Attribute first letter has to be in caps e.g UserEmail    
-   
+//Attribute first letter has to be in caps e.g UserEmail
     ArrayList<Loan> findAll();
     ArrayList<Loan> findAllByUserEmail(String userEmail);
     ArrayList<Loan> findAllByAttractionName(String attractionName);
