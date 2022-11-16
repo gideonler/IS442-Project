@@ -69,7 +69,7 @@ public class CsvExportService {
                 temp.put("AttractionName", loan.getAttractionName());
                 temp.put("UserEmail", loan.getUserEmail());
                 temp.put("ContactNo", loan.getContactNo());
-                temp.put("PassNo", loan.getPassNo());
+                temp.put("PassNo", loan.getPassId());
                 temp.put("Status", loan.getStatus().toString());
                 output.put(counter, temp);
                 counter++;
