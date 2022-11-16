@@ -1,15 +1,17 @@
 package oop.io.demo.loan;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import javax.persistence.Column;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.Id;
 
 public class Loan {
 
-    private LocalDate loanDate;
+    private String loanDate;
     @Column(nullable = false)
-    private LocalDate dueDate;
+    private String dueDate;
 
     private String attractionName;
 
@@ -34,7 +36,7 @@ public class Loan {
 
     public Loan(String userEmail, LocalDate loanDate, String attractionName) {
         this.loanId = userEmail;
-        this.loanDate = loanDate;// the date where the user is making the booking
+        this.loanDate = loanDate.toString();// the date where the user is making the booking
         this.attractionName = attractionName;
         this.userEmail = userEmail;
         this.status = LOANSTATUS.CONFIRMED;
@@ -42,7 +44,7 @@ public class Loan {
 
     public Loan(String userEmail, LocalDate loanDate, String attractionName, String loanId) {
         this.loanId = loanId;
-        this.loanDate = loanDate;// the date where the user is making the booking
+        this.loanDate = loanDate.toString();// the date where the user is making the booking
         this.attractionName = attractionName;
         this.userEmail = userEmail;
         this.status = LOANSTATUS.CONFIRMED;
@@ -55,7 +57,7 @@ public class Loan {
     }
 
     public void setLoanDate(LocalDate loanDate) {
-        this.loanDate = loanDate;
+        this.loanDate = loanDate.toString();
     }
 
     public void setEmail(String userEmail) {
@@ -79,15 +81,17 @@ public class Loan {
     }
 
     public LocalDate getLoanDate() {
-        return this.loanDate;
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(this.loanDate, dateFormat);
     }
 
     public LocalDate getDueDate(){
-        return this.dueDate;
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(this.dueDate, dateFormat);
     }
     public void setDueDate(LocalDate dueDate){
         LocalDate tomorrow = dueDate.plusDays(1);
-        this.dueDate=tomorrow;
+        this.dueDate=tomorrow.toString();
     }
 
 
