@@ -1,3 +1,19 @@
+/**
+ * Contains methods called by LoanController
+ * 1. get passID by attraction extractPassId(String attractionName,LocalDate loanDate)
+ * 2. get loan user contact number by userEmail extractContactNo(userEmail)
+ * 3. add a booking using addBooking(String userEmail, LocalDate loanDate, String attractionName, String loanId)
+ * 4. change to cancel status by cancelLoan(String loanID, LOANSTATUS loanStatus) 
+ * 5. change loan status by changeLoanStatus(String loanId, LOANSTATUS loanstatus)
+ * 6. delete all loan bookings by deleteBooking(String loanId, LocalDate loanDate)
+ * 7. change all loan statuses once user has collected passes by GO based on userEmail LoanCollect(String userEmail)
+ * 8. get loan bookings by userEmail and check if there is an active loan by checkLoan(String userEmail) 
+ * 9. check if there is a booking available for the attraction on that date using checkAvail(LocalDate loanDate, String attractionName)
+ * 10. return user info of the particular loan based on loanDate and attractionName by getUserInfo(LocalDate loanDate, String attractionName)
+ * 11. change status to LOSS if pass is lost based on the loanID ReportLoss(String loanID, LOANSTATUS loanStatus)
+ * 12. cancels all loans made based on date and passID by cancelAllLoans(String passId, LocalDate date)
+ * 13. get passes that are unavailable returning all unavailable passes by checkUnavailPasses()
+ */
 package oop.io.demo.loan;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +31,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Service
-// Service component is used to annotate class at service layer, build business
-// logic
+
 public class LoanService {
 
     @Autowired
@@ -69,13 +84,7 @@ public class LoanService {
 
 
 
-    // LoanRepository lr=new LoanRepository();
-    // loan service should:
-    // have method be able to change pass status (when pass is made available)
 
-    // method to allow user to make booking
-
-    // method to allow user to cancel booking
 
     public Loan addBooking(String userEmail, LocalDate loanDate, String attractionName, String loanId) {
     
@@ -91,12 +100,6 @@ public class LoanService {
             return loan;
         }
 
-        // if (checkAvail(loanDate,attractionName)){
-        // repository.save(loan);
-        // return "Booking to " + loan.getAttractionName() + " made by " +
-        // loan.getUserEmail() + " has been added.";
-        // }
-        // getUserInfo(loanDate,attractionName);
         return null;
     }
 
@@ -122,24 +125,23 @@ public class LoanService {
 
     public String deleteBooking(String loanId, LocalDate loanDate) {
         Loan loan = loanRepository.findByLoanId(loanId);
-        // ArrayList<Loan>loan=loanRepository.findByUserEmail(userEmail);
         loanRepository.delete(loan);
         return "Booking to " + loan.getAttractionName() + " made by " + loan.getUserEmail() + " has been deleted.";
     }
 
     // Method for GO to update the status of the loanpass once user has collected
     public String LoanCollect(String userEmail) {
-        Calendar cal = Calendar.getInstance();
         LocalDate todayDate = LocalDate.now();
         String checkID = userEmail + todayDate;
         Loan loan = loanRepository.findByLoanId(checkID);
-        // ArrayList<Loan>loan=loanRepository.findByLoanId(checkID);
         loan.setStatus(LOANSTATUS.ACTIVE);
         // trigger email here
         return "Loan has been collected by the user";
 
     }
-    
+
+
+    //Method to check if loan is active
     public String checkLoan(String userEmail) {
         ArrayList<Loan> loanList = loanRepository.findAllByUserEmail(userEmail);
         LocalDate todayDate = LocalDate.now();
@@ -185,7 +187,6 @@ public class LoanService {
             LocalDate checkDate = loan.getLoanDate();
             if (checkDate == loanDate) {
                 String passId = p.getPassId();
-                String uEmail = loan.getUserEmail();
                 Loan booked_user = loanRepository.findByUserEmail(userEmail).get();
                 String userName = booked_user.getName();
                 String contactNo = booked_user.getContactNo();
@@ -203,7 +204,7 @@ public class LoanService {
 
     // Method for the user to report loss of cards
 
-    public ResponseEntity ReportLoss(String loanID, LOANSTATUS loanStatus) {
+    public ResponseEntity ReportLoss(String loanID, LOANSTATUS loanStatus){
         Loan l = loanRepository.findByLoanId(loanID);
         l.setStatus(LOANSTATUS.LOST);
         return ResponseEntity.ok("Card changed to lost: " + loanStatus.toString());

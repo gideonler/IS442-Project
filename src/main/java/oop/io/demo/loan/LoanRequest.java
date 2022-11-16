@@ -1,5 +1,4 @@
 package oop.io.demo.loan;
-import java.time.LocalDate;
 
 public class LoanRequest {
     private String userEmail;

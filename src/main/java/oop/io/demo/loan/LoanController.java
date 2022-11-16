@@ -1,13 +1,22 @@
+/**
+ * Contains endpoints for Staff and Admins to get loans
+ * 1. Post new loan booking by /loan/book
+ * 2. Get number of loans by /loan/getbookingcount
+ * 3. Get Pass by attraction /loan/getLoanID/{userEmail}
+ * 4. Get loanID /loan/getLoanID/{userEmail}
+ * 5. Change status to cancelled /loan/cancel
+ * 6. Delete a new booking /loan/delete/{loanId}
+ * 7. Get the previous borrowers of the pass /loan/previousborrower
+ * 8. Get all loans by userEmail /loan/{userEmail}
+ * 9. Get the availability of the passes using /loan/availpasses
+ */
+
 package oop.io.demo.loan;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,10 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import oop.io.demo.pass.PassRepository;
-import oop.io.demo.user.User;
-import oop.io.demo.user.UserPublicDetails;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.user.UserService;
 import oop.io.demo.mail.*;
@@ -35,11 +41,7 @@ import oop.io.demo.mail.payload.BookingRequest;
 @RequestMapping("/loan")
 @Controller
 public class LoanController {
-    // loan controller should:
-    // have method endpoint: "newbooking" calls method in loanservice to make new
-    // booking
-    //// access: both staff and admin can access to make booking for themself-
-    // userEmail automatically assigned based on their identity
+
 
     LOANSTATUS passStatus = LOANSTATUS.ACTIVE;
     @Autowired
@@ -53,6 +55,8 @@ public class LoanController {
     @Autowired
     private EmailSender emailSender;
 
+
+    //POST new loan booking
     @PostMapping("/book")
     public ResponseEntity addBooking(@RequestBody LoanRequest loanRequest) {
 
@@ -95,7 +99,8 @@ public class LoanController {
         }
         return ResponseEntity.badRequest().body("Booking unsuccessful!");
     }
-
+    
+    //check if booking matches
     public Boolean checkBooking(String userEmail, LocalDate loanDate) {
         Boolean status = true;
         for (Loan loan : loanRepository.findAll()) {
@@ -106,6 +111,7 @@ public class LoanController {
         return status;
     }
 
+    //GET number of bookings made
     @GetMapping("/getbookingcount")
     public ResponseEntity countBooking(@RequestParam("userEmail") String userEmail) {
         int count = 0;
@@ -118,7 +124,7 @@ public class LoanController {
         return ResponseEntity.ok(count);
     }
 
-    //endpoint to get loan ID
+    //GET loanID based on userEmail
     @GetMapping("/getLoanID/{userEmail}")
     public ResponseEntity getLoanID(@PathVariable("userEmail") String loanId) {
         Optional<Loan> loan = this.loanRepository.findById(loanId);
@@ -129,6 +135,7 @@ public class LoanController {
         }
     }
 
+    //to set a loan status to cancelled
     @GetMapping("/cancel")
     public ResponseEntity cancellLoan(@RequestParam("loanId") String loanId) {
         ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository)
@@ -136,6 +143,7 @@ public class LoanController {
         return responseEntity;
     }
 
+    //to set a loan status to lost
     @GetMapping("/lost")
     public ResponseEntity ReportLoss(@RequestBody Map<String, String> loanIdMap) {
         String loanId = loanIdMap.get("loanId");// key JSON in postman
@@ -144,7 +152,7 @@ public class LoanController {
         return responseEntity;
     }
 
-
+    //DELETE loan booking
     @DeleteMapping("/delete/{loanId}")
     public ResponseEntity deleteBooking(@RequestBody Map<String, String> loanIdMap) {
         String loanId = loanIdMap.get("loanId");
@@ -157,7 +165,7 @@ public class LoanController {
         }
     }
 
-    //GET previous borrower
+    //GET previous borrower of a pass
     @GetMapping("/previousborrower")
     public ResponseEntity getPreviousBorrower(@RequestParam(value="passId") String passId, @RequestParam(value="date") String dateString) {
         LocalDate loanDate = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -180,6 +188,7 @@ public class LoanController {
         return ResponseEntity.ok("No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.");
     }
 
+    //GET all loans based on userEmail
     @GetMapping("/{userEmail}")
     public ResponseEntity getLoansByUserEmail(@PathVariable("userEmail") String userEmail){
         List<Loan> loans = loanRepository.findAllByUserEmail(userEmail);
@@ -191,8 +200,8 @@ public class LoanController {
         }
     }
 
-    @Scheduled(cron = "0 0 9 * * MON-FRI") // overdue sent at 9AM
-
+    //check the dates of all loans at 9AM from Monday to Friday, and change status of loans to OVERDUE if it is past overdue date
+    @Scheduled(cron = "0 0 9 * * MON-FRI")
     public ResponseEntity setOverDueDate() throws Exception {
         try {
             // Take user email to direct the collected message to the user
@@ -218,12 +227,13 @@ public class LoanController {
         }
     }
 
+    //check whether the dates are equal
     public static boolean isSameDay(LocalDate date1, LocalDate date2) {
         return date1.equals(date2);
     }
 
-    @Scheduled(cron = "0 0 9 * * MON-FRI") // Reminder sent at 9am 1 day before
-
+    //check the dates of all loans at 9AM from Monday to Friday, and change status of loans to REMINDER if it is 1 day before the loan date
+    @Scheduled(cron = "0 0 9 * * MON-FRI") 
     public ResponseEntity setReminder() throws Exception {
         try {
             // Take user email to direct the collected message to the user
@@ -234,7 +244,7 @@ public class LoanController {
                 LocalDate oneDayBefore = currentDate.minusDays(1);
 
                 if (isSameDay(currentDate, oneDayBefore)) {
-                    loan.setStatus(LOANSTATUS.OVERDUE);
+                    loan.setStatus(LOANSTATUS.REMINDER);
                     savedLoans.add(loan);
 
                 }
@@ -247,6 +257,8 @@ public class LoanController {
         }
     }
 
+
+    //GET the availability of each pass
     @GetMapping("/availpasses")
     public ResponseEntity availPass() throws Exception {
         try {
@@ -256,23 +268,5 @@ public class LoanController {
         }
     }
 
-    /**
-     * GET /read --> Read a booking by booking id from the database.
-     */
-
-    // have method endpoint: "cancelbooking" calls loanservice to cancel booking
-    //// access: both staff and admin
-
-    // have method to allow user to report loss of card (associated with booking?)
-    // endpoint: reportloss
-
-    // have method endpoint: "loans" calls loanservice to retrieve loan for a user
-    // by email
-    //// access: staff can only see their own but admin can see for any selected
-    // user
-    // have method to retrieve all bookings made on a certain date for a certain
-    // attraction
-    //// access: all because it is for calendar display- should this be under
-    // service then?
 
 }
