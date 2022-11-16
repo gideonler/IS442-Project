@@ -11,11 +11,7 @@ import DashboardLayout from '../layouts/DashboardLayout'
 import PassStatus from '../components/GOPassManagement/PassStatus.vue';
 
 export default {
-    data() {
-      return {
-        // componentKey: 0,
-      };
-    },
+
     name: "GO-pass-status",
     created() {
         this.$emit("update:layout", DashboardLayout);

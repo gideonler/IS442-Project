@@ -65,6 +65,7 @@
 import DashboardLayout from '../layouts/DashboardLayout';
 import axios from "axios";
 
+
 export default {
     name: "Pass-Details",
     created() {
@@ -73,6 +74,7 @@ export default {
 
     data() {
         return {
+            userEmail: this.user.username,
             bookingList: [{ attractionName: "", loanDate: "", passId: "", status: "", loanID: "" }],
             bookingId: "",
             passStatus: "",
@@ -90,8 +92,12 @@ export default {
         };
     },
 
+    created() {
+        this.user = JSON.parse(localStorage.getItem('user'));
+    },
+
     mounted() {
-        this.getBookingList();
+        this.getBookingList(this.userEmail);
         this.getPassStatus(this.passId);
         this.previousBorrower(this.passId, this.loanDate);
     },
@@ -99,8 +105,7 @@ export default {
     methods: {
         getBookingList() {
             return axios
-                // .get(this.api.bookingList + this.form.email)
-                .get(this.api.bookingList + "oopg2t4@outlook.com")
+                .get(this.api.bookingList + this.userEmail)
                 .then((response) => {
                     console.log(response.data)
                     this.bookingList = response.data;
@@ -190,13 +195,6 @@ export default {
                             date: yesterdayDate
                         }
                     },
-                    // {
-                    //     headers: {
-                    //         'Access-Control-Allow-Origin': '*',
-                    //         'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
-                    //         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-                    //     },
-                    // }
                 )
                 .then((response) => {
                     console.log(response.data)

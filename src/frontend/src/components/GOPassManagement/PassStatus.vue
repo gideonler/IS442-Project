@@ -61,7 +61,7 @@ export default {
     },
 
     created() {
-        this.getPassStatus(this.passId)       
+        this.getPassStatus(this.passId)    
     },
 
     methods: {
