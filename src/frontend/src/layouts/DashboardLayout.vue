@@ -1,12 +1,8 @@
 <template>
   
     <div class="wrapper">
-      <side-bar >
+      <side-bar :title="this.user">
       <mobile-menu slot="content"></mobile-menu>
-      <sidebar-link  to="/user">
-        <i class="nc-icon nc-circle-09"></i>
-        <p>User Profile</p>
-      </sidebar-link>
       <sidebar-link to="/booking">
         <i class="nc-icon nc-notes"></i>
         <p>My Bookings</p>
@@ -23,11 +19,7 @@
         <i class="nc-icon nc-ruler-pencil"></i>
         <p>Manage Passes</p>
       </sidebar-link>
-      <sidebar-link  to="/notifications">
-        <i class="nc-icon nc-bell-55"></i>
-        <p>Notifications</p>
-        <p hidden>STAFF,USER,GENERALOFFICE</p>
-      </sidebar-link>
+
 
       <template slot="bottom-links">
         <sidebar-link class="active"
@@ -63,11 +55,13 @@
       ContentFooter,
       DashboardContent,
       MobileMenu
-
+    },
+    created(){
+      this.user= JSON.parse(localStorage.getItem('user')).userType.authority
     },
     data(){
       return {
-        user: 'STAFF'
+        user: '',
       }
     },
     methods: {

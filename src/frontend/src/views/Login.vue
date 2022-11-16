@@ -64,6 +64,7 @@ export default {
   mixins: [validationMixin],
   data() {
     return {
+      user_details: '',
       form: {
         email: '',
         password: '',
@@ -109,6 +110,11 @@ export default {
         })
         .then(response => {
           console.log(response.data);
+          //store jwt into local storage 
+
+          // this.user_details= response.data
+          localStorage.setItem('user', JSON.stringify(response.data));
+
           this.$router.push('/booking');
         })
         .catch(error => {

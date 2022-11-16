@@ -41,13 +41,15 @@
   
   <script>
   import axios from 'axios';
-import BookingReply from './BookingReply.vue';
+  import BookingReply from './BookingReply.vue';
     export default {
-  components: { BookingReply },
+    components: { BookingReply },
         name: 'booking-popup',
         props:['selected_date', 'no_avail', 'attraction_name'],
         data() {
             return {
+                user: '',
+                user_email :'',
                 api: { 
                   create_booking: "http://localhost:8080/loan/book",
                   get_booking_count: 'http://localhost:8080/loan/getbookingcount',
@@ -60,17 +62,17 @@ import BookingReply from './BookingReply.vue';
             };
         },
         created() {
-        this.checkUserBookings()
-        this.getBookings()
-        this.$root.$refs.BookingPopUp = this;
-
+          this.user = JSON.parse(localStorage.getItem('user'));
+          this.user_email= this.user.username
+          this.$root.$refs.BookingPopUp = this;
+        },
+        mounted(){
+          // this.checkUserBookings()
+          this.getBookings()
         },
         computed:{
           hasExceeededForMonth(){
             var month = this.selected_date.substring(0,7)
-            console.log(month)
-            console.log(this.loans_in_month)
-            console.log(this.loans_in_month[month])
             if(this.loans_in_month[month]>=2){
               return true
             }
@@ -91,27 +93,25 @@ import BookingReply from './BookingReply.vue';
         containsKey(obj, key ) {
         return Object.keys(obj).includes(String(key));
         },
-        async checkUserBookings(){
-          await axios
-          .get(this.api.get_booking_count,{
-            params: {
-              userEmail:  "gideonTest3@sss.com"
-            }})
-          .then((response) => {
-            this.loan_count = response.data
-            console.log(this.loan_count)
-          })
-          .catch((error) => {
-              if (error) {
-                  console.log(error);
-              }
-          });
-
-        },
+        // async checkUserBookings(){
+        //   await axios
+        //   .get(this.api.get_booking_count,{
+        //     params: {
+        //       userEmail:  this.user_email
+        //     }})
+        //   .then((response) => {
+        //     this.loan_count = response.data
+        //   })
+        //   .catch((error) => {
+        //       if (error) {
+        //           console.log(error);
+        //       }
+        //   });
+        // },
         async getBookings() {
         await axios
             //change to user email
-            .get(this.api.get_bookings + "singaporesportsschooltest@outlook.com")
+            .get(this.api.get_bookings + this.user_email)
             .then((response) => {
                 // console.log(response.data)
                 var loans_in_month= {}
@@ -120,35 +120,36 @@ import BookingReply from './BookingReply.vue';
                 for(var booking of this.curr_bookings){
                   var month = booking.loanDate.substring(0,7)
                   var loanId = booking.loanID
-                  if(this.containsKey(loans_in_month, month) && (!unique_ids.includes(loanId))){
+                  var status= booking.status;
+                  if(status== "CONFIRMED" && this.containsKey(loans_in_month, month) && (!unique_ids.includes(loanId))){
                     //alr exists and is unique
                     loans_in_month[month]+= 1
                     unique_ids.push(loanId)
-                  }else{
+                  }else if (status== "CONFIRMED") {
                     loans_in_month[month]= 1 
                 }
                 this.loans_in_month= loans_in_month
-                console.log(this.loans_in_month)
               }
               })
             .catch((error) => {
                 console.log(error.response);
             });
         },
-        async confirmBooking(no_passes) {
+         confirmBooking(no_passes) {
           //check if passes has been exceeded
           if(this.hasExceeededForMonth){
+            this.$refs['my-modal'].toggle('#toggle-btn')
+
             this.$root.$refs.BookingReply.showModal(
               "Unable to book. Max loans have been met for this month."
               ) 
           }
           else{
-            await axios 
-               //TO DO: REPLACE WITH USER EMAIL. CAN GET FROM API.
+            return axios 
             .post(this.api.create_booking, 
               {
                 "loanDate" : this.selected_date,
-                "userEmail" : "gideonTest3@sss.com",
+                "userEmail" : this.user_email,
                 "attractionName" : this.attraction_name,
                 "noOfPass": this.no_passes
               }
@@ -157,13 +158,18 @@ import BookingReply from './BookingReply.vue';
               console.log(response.data)
               var status = response.data
               status.includes("unsuccessful") ? this.$root.$refs.BookingReply.showModal(status) :  this.$root.$refs.BookingConfirmation.showModal(this.selected_date, no_passes)
-            }); 
+              this.$refs['my-modal'].toggle('#toggle-btn')
+            })
+            .catch((err)=>{
+              this.$root.$refs.BookingReply.showModal('Booking Unsuccessful. Try again later')
+              this.$refs['my-modal'].toggle('#toggle-btn')
+            });
+            ; 
 
           }
 
          
           // close current modal
-          this.$refs['my-modal'].toggle('#toggle-btn')
 
           //show confirmation message
           // this.$root.$refs.BookingConfirmation.showModal(this.selected_date, no_passes);
