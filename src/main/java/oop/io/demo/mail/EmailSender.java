@@ -18,6 +18,8 @@ import oop.io.demo.mail.payload.CollectedRequest;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javax.validation.Valid;
@@ -63,11 +65,11 @@ public class EmailSender {
             model.put("name", user.getName());
             String attractionName = loan.getAttractionName();
             model.put("attractionName", attractionName);
-            model.put("corpPassNumber", loan.getPassNo());
-            Date loanDate = loan.getLoanDate();
-            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy");
-            String strDate = formatter.format(loanDate);  
-            model.put("loanDate", strDate);
+            model.put("corpPassNumber", loan.getPassId());
+            
+            String dateString = loan.getLoanDate().toString();
+
+            model.put("loanDate", dateString);
             email.setModel(model);
     
             // Prepare template path and attachment path (if found)

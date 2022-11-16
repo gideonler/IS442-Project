@@ -11,9 +11,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,25 +42,17 @@ public class UserController {
     //Get public user details by username
     @GetMapping("/userdetails")
     public ResponseEntity getPublicDetailsByEmail(@RequestBody Map<String, String> map) {
-        try {
-            String email = (String) map.get("email");
-            User user= this.repository.findByEmail(email).get();
-            UserPublicDetails publicUser = new UserPublicDetails(user.getEmail(), user.getContactNo(), user.getName());
-            return ResponseEntity.ok(publicUser);
-        }
-        catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error fetching user details. Please check that username is entered correctly.");
-        }
+        UserService userService = new UserService(repository);
+        return userService.getPublicUserDetailsByEmail(map.get("email"));
     }
 
     ////USER AND ADMIN ACCESS
     //Get user by username
     //Access: only admin and user with {username} can access
-    @GetMapping("/mydetails")
-    public ResponseEntity getMyDetails(@RequestBody Map<String, String> map) {
+    @GetMapping("/mydetails/{useremail}")
+    public ResponseEntity getMyDetails(@PathVariable("useremail") String userEmail) {
         try {
-            String email = (String) map.get("email");
-            User user= this.repository.findByEmail(email).get();
+            User user= this.repository.findByEmail(userEmail).get();
             return ResponseEntity.ok(user);
         }
         catch (Exception e) {
@@ -69,10 +63,12 @@ public class UserController {
     ////USER ONLY ACCESS
     //Edit user profile details
     //Access: user
-    @PutMapping("/editprofile")
-    public ResponseEntity editProfile(@RequestBody EditProfileRequest editProfileRequest) {
+    @PutMapping("/editprofile/{useremail}")
+    public ResponseEntity editProfile(@PathVariable("useremail") String userEmail, @RequestBody EditProfileRequest editProfileRequest/*, Principal principal*/) {
+        //Authentication authentication = (Authentication) principal;
+        //User u = (User) authentication.getPrincipal();
         try {
-            User user = repository.findByEmail(editProfileRequest.getEmail()).get();
+            User user = repository.findByEmail(userEmail).get();
             if(editProfileRequest.getContactNo()!=null) user.setContactNo(editProfileRequest.getContactNo());
             if(editProfileRequest.getName()!=null) user.setName(editProfileRequest.getName());
             return ResponseEntity.ok(repository.save(user));

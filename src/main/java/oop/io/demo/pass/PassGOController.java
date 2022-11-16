@@ -45,7 +45,7 @@ public class PassGOController {
         PASSSTATUS passStatus = PASSSTATUS.valueOf(loanIdAndStatusMap.get("passStatus"));
         Loan loan = loanRepository.findByLoanId(loanId);
         if(loan==null) return ResponseEntity.badRequest().body("Loan not found!");
-        String passId = loan.getAttractionName()+loan.getPassNo();
+        String passId = loan.getLoanID();
         if(passStatus.toString().equals("ONLOAN")){
             try {
                 CollectedRequest collected = new CollectedRequest(loan.getUserEmail());

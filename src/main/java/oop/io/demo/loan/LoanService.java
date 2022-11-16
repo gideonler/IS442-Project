@@ -11,6 +11,7 @@ import oop.io.demo.user.UserRepository;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -33,28 +34,28 @@ public class LoanService {
     }
 
 
-    public String extractPassNo(String attractionName, Date loanDate){
-        String passNo="";
+    public String extractPassId(String attractionName, LocalDate loanDate){
+        String passId="";
         List<String> loanedPasses = new ArrayList<String>();
         Optional<List<Pass>> passList = passRepository.findByAttractionName(attractionName);
         ArrayList<Loan> loanList = loanRepository.findAllByAttractionName(attractionName);
         for (Loan loan: loanList){
             String checkAttraction = loan.getAttractionName();
-            Date checkDate = loan.getLoanDate();
+            LocalDate checkDate = loan.getLoanDate();
             if ((checkAttraction.equals(attractionName)) && (loanDate.equals(checkDate))){
-                loanedPasses.add(loan.getPassNo());
+                loanedPasses.add(loan.getPassId());
             }
             for (Pass pass : passList.get()){
-                String checkPassNo = pass.getPassNo();
-                if (!loanedPasses.contains(checkPassNo)){
-                    passNo = checkPassNo;
+                String checkPassId = pass.getPassId();
+                if (!loanedPasses.contains(checkPassId)){
+                    passId = checkPassId;
                     break;
                 }
             }
         }
 
 
-        return passNo;
+        return passId;
     }
 
     public String extractContactNo(String userEmail){
@@ -76,13 +77,13 @@ public class LoanService {
 
     // method to allow user to cancel booking
 
-    public Loan addBooking(String userEmail, Date loanDate, String attractionName, String loanId) {
+    public Loan addBooking(String userEmail, LocalDate loanDate, String attractionName, String loanId) {
     
-        String passNo = extractPassNo(attractionName, loanDate);
-        if (passNo != ""){
+        String passId = extractPassId(attractionName, loanDate);
+        if (passId != ""){
             String contactNo = extractContactNo(userEmail);
             Loan loan = new Loan(userEmail, loanDate, attractionName, loanId);
-            loan.setPassNo(passNo);
+            loan.setPassId(passId);
             loan.setLoanId();
             loan.setStatus(LOANSTATUS.CONFIRMED);
             loan.setContactNo(contactNo);
@@ -119,7 +120,7 @@ public class LoanService {
         return ResponseEntity.ok("Changed status of loan successfully to: " +loanstatus.toString());
     }
 
-    public String deleteBooking(String loanId, Date loanDate) {
+    public String deleteBooking(String loanId, LocalDate loanDate) {
         Loan loan = loanRepository.findByLoanId(loanId);
         // ArrayList<Loan>loan=loanRepository.findByUserEmail(userEmail);
         loanRepository.delete(loan);
@@ -129,7 +130,7 @@ public class LoanService {
     // Method for GO to update the status of the loanpass once user has collected
     public String LoanCollect(String userEmail) {
         Calendar cal = Calendar.getInstance();
-        Date todayDate = cal.getTime();
+        LocalDate todayDate = LocalDate.now();
         String checkID = userEmail + todayDate;
         Loan loan = loanRepository.findByLoanId(checkID);
         // ArrayList<Loan>loan=loanRepository.findByLoanId(checkID);
@@ -141,12 +142,11 @@ public class LoanService {
     
     public String checkLoan(String userEmail) {
         ArrayList<Loan> loanList = loanRepository.findAllByUserEmail(userEmail);
-        Calendar cal = Calendar.getInstance();
-        Date todayDate = cal.getTime();
+        LocalDate todayDate = LocalDate.now();
         for (int i = 0; i < loanList.size(); i++) {
             Loan loan = loanList.get(i);
-            Date checkDate = loan.getLoanDate();
-            if (todayDate == checkDate) {
+            LocalDate checkDate = loan.getLoanDate();
+            if (todayDate.equals(checkDate)) {
                 return "Booking exists on " + todayDate;
             } else {
                 return "Booking does not exist on " + todayDate;
@@ -158,7 +158,7 @@ public class LoanService {
 
     // The system checks whether a booking for an attraction on a date is available
     // or not.
-    public boolean checkAvail(Date loanDate, String attractionName) {
+    public boolean checkAvail(LocalDate loanDate, String attractionName) {
         ArrayList<Loan> loans = loanRepository.findAllByAttractionName(attractionName);
         Iterator<Loan> iter = loans.iterator();
 
@@ -176,21 +176,21 @@ public class LoanService {
 
 
     // Method for getting userinfo of a loan
-    public String getUserInfo(Date loanDate, String attractionName) {
+    public String getUserInfo(LocalDate loanDate, String attractionName) {
         ArrayList<Loan> loans = loanRepository.findAllByAttractionName(attractionName);
         String userEmail = u.getEmail();
         String toReturn = "";
 
         for (Loan loan : loans) {
-            Date checkDate = loan.getLoanDate();
+            LocalDate checkDate = loan.getLoanDate();
             if (checkDate == loanDate) {
-                String passNo = p.getPassNo();
+                String passId = p.getPassId();
                 String uEmail = loan.getUserEmail();
                 Loan booked_user = loanRepository.findByUserEmail(userEmail).get();
                 String userName = booked_user.getName();
                 String contactNo = booked_user.getContactNo();
 
-                toReturn = "The booking for pass " + passNo + " is already loaned by " + userName + " (Contact No: "
+                toReturn = "The booking for pass " + passId + " is already loaned by " + userName + " (Contact No: "
                         + contactNo + ")";
             } else {
                 toReturn = "Not found!";
@@ -211,13 +211,13 @@ public class LoanService {
 
 
     // Method to cancel all loans
-    public String cancelAllLoans(String passNo, Date date) {
-        ArrayList<Loan> loans = loanRepository.findAllByPassNo(passNo);
+    public String cancelAllLoans(String passId, LocalDate date) {
+        ArrayList<Loan> loans = loanRepository.findAllByPassId(passId);
         if (!loans.isEmpty()) {
             for (Loan loan : loans) {
-                Date checkDate = loan.getLoanDate();
+                LocalDate checkDate = loan.getLoanDate();
                 // to check whether the loan is made for later dates
-                if (date.compareTo(checkDate) < 0) {
+                if (date.isBefore(checkDate)) {
                     loan.setStatus(LOANSTATUS.LOST);
                 }
             }
@@ -233,7 +233,7 @@ public class LoanService {
 
             for (Loan loan: loans){
                 String attraction = loan.getAttractionName();
-                Date loanDate = loan.getDueDate();
+                LocalDate loanDate = loan.getDueDate();
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String strDate = dateFormat.format(loanDate);
                 int availPass = passRepository.findByAttractionName(attraction).get().size();
