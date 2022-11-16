@@ -229,6 +229,8 @@
 
             this.$root.$refs.AttractionCreationConfirmation.showModal(this.attractionname);
           }
+
+          this.$emit('update-creation')
           this.formReset()
         },
 
