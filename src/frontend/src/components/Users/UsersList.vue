@@ -153,11 +153,18 @@ export default {
             this.filterByType();
         }
     },
-
+    created() {
+        this.user = JSON.parse(localStorage.getItem('user'));
+    },
     methods: {
         getUsers() {
             return axios
-                .get(this.api.users)
+                .get(this.api.users, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                        userEmail: this.userEmail
+                    }
+                })
                 .then((response) => {
                     console.log(response.data);
                     this.usersList = response.data;
@@ -172,6 +179,7 @@ export default {
             await axios
                 .get(this.api.filterUsers, {
                     params: {
+                        Authorization: "Bearer " + this.user.jwt,
                         "userType": userType
                     }
                 })
@@ -193,6 +201,10 @@ export default {
             return axios
                 .put(this.api.enableUser, {
                     "email": email,
+                }, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
                 })
                 .then((response) => {
                     console.log(response.data);
@@ -209,7 +221,11 @@ export default {
             return axios
                 .put(this.api.disableUser, {
                     "email": email,
-                })
+                }, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
+            })
                 .then((response) => {
                     console.log(response.data);
                     this.$alert("User has been disabled successfully").then(() => {
@@ -225,7 +241,11 @@ export default {
             return axios
                 .put(this.api.deleteUser, {
                     "email": email,
-                })
+                }, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
+            })
                 .then((response) => {
                     console.log(response.data);
                     this.$alert("User has been deleted successfully").then(() => {
@@ -241,7 +261,11 @@ export default {
             return axios
                 .put(this.api.promoteAdmin, {
                     "email": email,
-                })
+                }, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
+            })
                 .then((response) => {
                     console.log(response.data);
                     this.$alert("User has been promoted to Admin successfully").then(() => {
@@ -257,7 +281,11 @@ export default {
             return axios
                 .put(this.api.makeGO, {
                     "email": email,
-                })
+                }, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
+            })
                 .then((response) => {
                     console.log(response.data);
                     this.$alert("User has been promoted to GO successfully").then(() => {
@@ -273,7 +301,11 @@ export default {
             return axios
                 .put(this.api.demoteStaff, {
                     "email": email,
-                })
+                }, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
+            })
                 .then((response) => {
                     console.log(response.data);
                     this.$alert("User has been demoted to Staff successfully").then(() => {

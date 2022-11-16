@@ -59,14 +59,19 @@ export default {
     },
 
     created() {
-        this.passLocation = this.getPassStatus(this.passId)    
+        this.passLocation = this.getPassStatus(this.passId);
+        this.user = JSON.parse(localStorage.getItem('user'));
     },
 
     methods: {
         onSubmit(event) {
             event.preventDefault()
             return axios
-                .get(this.api.bookingList + this.form.email)
+                .get(this.api.bookingList + this.form.email, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
+                })
                 .then((response) => {
                     console.log(response.data)
                     this.bookingList = response.data;
@@ -87,6 +92,11 @@ export default {
                 .put(this.api.passStatus, {
                     "loanId": bookingId,
                     "passStatus": status,
+                },
+                {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
                 })
                 .then((response) => {
                     console.log(response.data)
@@ -100,7 +110,11 @@ export default {
         async getPassStatus(passId) {
             console.log(passId)
             await axios
-                .get(this.api.passDetails + passId)
+                .get(this.api.passDetails + passId, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
+                })
                 .then((response) => {
                     // console.log(response.data.passStatus)
                     this.passLocation = response.data.passStatus;

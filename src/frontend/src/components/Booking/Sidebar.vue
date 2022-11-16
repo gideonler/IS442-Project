@@ -75,6 +75,7 @@ export default {
     created() {
         this.user = JSON.parse(localStorage.getItem('user'));
         this.userEmail= this.user.username
+        console.log(this.user)
     },
 
     mounted() {
@@ -87,6 +88,7 @@ export default {
             return axios
                 .get(this.api.numberBooking, {
                     params: {
+                        Authorization: "Bearer " + this.user.jwt,
                         userEmail: this.userEmail
                     }
                 })
@@ -101,7 +103,11 @@ export default {
 
         getBookings() {
             return axios
-                .get(this.api.bookingList + this.userEmail)
+                .get(this.api.bookingList + this.userEmail, {
+                    params: {
+                        Authorization: "Bearer " + this.user.jwt,
+                    }
+                })
                 .then((response) => {
                     console.log(response.data)
                     this.bookingList = response.data;
@@ -154,9 +160,9 @@ export default {
 <style scoped>
 .vertical-nav {
     min-width: 10rem;
-    margin-top: 5%;
+    margin-top: 3%;
     width: 100%;
-    height: 55%;
+    height: 53%;
     right: 0;
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.4s;
