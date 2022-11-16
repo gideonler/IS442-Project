@@ -5,7 +5,7 @@
     <div class="sidebar-wrapper">
       
       <div class="logo">
-        <a href="#" class="simple-text logo__container">
+        <a class="simple-text logo__container">
             <div class="logo-img">
                 <img src="../../assets/images/sss_logo1.jpg" alt="">
             </div>
@@ -40,6 +40,7 @@
     components: {
       SidebarLink
     },
+   
     props: {
       title: {
         type: String,
