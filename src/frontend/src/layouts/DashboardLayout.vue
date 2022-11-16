@@ -69,6 +69,7 @@
     },
     created(){
       this.user= JSON.parse(localStorage.getItem('user')).userType.authority
+      this.user="ADMIN"
     },
     data(){
       return {

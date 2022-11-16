@@ -12,7 +12,7 @@
 
         <div class="scroll px-3 bg-booking " tabindex="0">
             <div v-if="bookingList.length > 1">
-                <ul class="no-bullets" v-for="(booking, b) in bookingList" :key="b" v-if="booking.status != 'CANCELLED'">
+                <ul class="no-bullets" v-for="(booking, b) in bookingList" :key="b" >
                     <li>Attraction Name: {{ booking.attractionName }}</li>
                     <li>Loan Date: {{ booking.loanDate.split("T")[0] }}</li>
                     <li>Pass ID: {{ booking.passId }}</li>
@@ -39,7 +39,14 @@
 
         <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Contact</p>
         <p class="px-3"> General Office Phone: +65 6766 0100</p>
+        <!-- <ul>
+            <li>General Office Phone: 12345678</li>
+            <li>For futher queries, please contact
+                <p class="text-primary text-decoration-underline">ineedhelp@sss.edu.sg</p>
+            </li>
+        </ul> -->
     </div>
+    <!-- End vertical navbar -->
 </template>
   
 <script>
@@ -61,7 +68,6 @@ export default {
         return {
             number: "",
             month: "",
-            userEmail: this.user.username,
             bookingList: [{ attractionName: "", loanDate: "", passId: "", status: "", loanID: "" }],
             bookingId: "",
             api: {
@@ -73,13 +79,9 @@ export default {
         }
     },
 
-    created() {
-        this.user = JSON.parse(localStorage.getItem('user'));
-    },
-
     mounted() {
         this.numberBookings();
-        this.getBookings(this.userEmail);
+        this.getBookings();
     },
 
     methods: {
@@ -87,7 +89,8 @@ export default {
             return axios
                 .get(this.api.numberBooking, {
                     params: {
-                        userEmail: this.userEmail
+                        // userEmail: this.userEmail
+                        userEmail: "janedo@sportsschool.edu.sg"
                     }
                 })
                 .then((response) => {
@@ -101,7 +104,8 @@ export default {
 
         getBookings() {
             return axios
-                .get(this.api.bookingList + this.userEmail)
+                // .get(this.api.bookingList + "janedo@sportsschol.edu.sg")
+                .get(this.api.bookingList + "singaporesportsschooltest@outlook.com")
                 .then((response) => {
                     console.log(response.data)
                     this.bookingList = response.data;

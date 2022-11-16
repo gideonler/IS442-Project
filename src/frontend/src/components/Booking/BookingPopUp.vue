@@ -64,6 +64,7 @@
         created() {
           this.user = JSON.parse(localStorage.getItem('user'));
           this.user_email= this.user.username
+          // this.user_email= "singaporesportsschooltest@outlook.com"
           this.$root.$refs.BookingPopUp = this;
         },
         mounted(){
@@ -93,21 +94,6 @@
         containsKey(obj, key ) {
         return Object.keys(obj).includes(String(key));
         },
-        // async checkUserBookings(){
-        //   await axios
-        //   .get(this.api.get_booking_count,{
-        //     params: {
-        //       userEmail:  this.user_email
-        //     }})
-        //   .then((response) => {
-        //     this.loan_count = response.data
-        //   })
-        //   .catch((error) => {
-        //       if (error) {
-        //           console.log(error);
-        //       }
-        //   });
-        // },
         async getBookings() {
         await axios
             //change to user email
