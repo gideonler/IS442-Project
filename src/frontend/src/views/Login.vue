@@ -1,5 +1,7 @@
 <template>
-  <div style="margin-top: 15%; margin-left: 10%; margin-right: 10%">
+  <div style="margin-top: 5%; margin-left: 10%; margin-right: 10%">
+    <div><img src="../assets/logo.png" class=" mx-auto my-5 d-block"></div>
+
     <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
       <li class="nav-item" role="presentation">
         <a class="nav-link active" id="tab-login" data-mdb-toggle="pill" href="#" role="tab" aria-controls="pills-login"
@@ -100,9 +102,9 @@ export default {
 
     onSubmit() {
       this.$v.form.$touch();
-      if (this.$v.form.$anyError) {
-        return;
-      }
+      // if (this.$v.form.$anyError) {
+      //   return;
+      // }
       axios
         .post(this.api.sign_in, {
           "email": this.form.email,
@@ -112,7 +114,7 @@ export default {
           console.log(response.data);
           //store jwt into local storage 
 
-          // this.user_details= response.data
+          this.user_details= response.data
           localStorage.setItem('user', JSON.stringify(response.data));
 
           this.$router.push('/booking');
