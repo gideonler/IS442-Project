@@ -1,3 +1,11 @@
+/**
+ * Contains endpoints for ADMIN to export JSON of the following
+ * 1. Loans [GET] /export/loans
+ * 2. Attractions [GET] /export/attractions
+ * 3. Passes [GET] /export/passes
+ * 4. Users [GET] /export/users
+*/
+
 package oop.io.demo.csvexporter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +22,6 @@ public class CsvExporterController {
     @Autowired
     CsvExportService csvExportService;
 
-    /* 
-    @GetMapping("/loans")
-    public ResponseEntity getAllLoansInCsv() throws Exception {
-        try{
-            csvExportService.writeLoansToCsv();
-            return ResponseEntity.ok("Loans CSV exported!");
-        } catch (Exception e){
-            return ResponseEntity.ok("Loans CSV not sent! :(");
-        }
-    }
-*/
     @GetMapping("/loans")
     public ResponseEntity getAllLoansInCsv() throws Exception {
         try{
@@ -37,8 +34,7 @@ public class CsvExporterController {
     @GetMapping("/attractions")
     public ResponseEntity getAllAttractionsInCsv() throws Exception {
         try{
-            csvExportService.writeAttractionsToCsv();
-            return ResponseEntity.ok("Attractions CSV exported!");
+            return ResponseEntity.ok(csvExportService.writeAttractionsToJSON());
         } catch (Exception e){
             return ResponseEntity.ok("Attractions CSV not sent! :(");
         }
@@ -47,8 +43,7 @@ public class CsvExporterController {
     @GetMapping("/passes")
     public ResponseEntity getAllPassesInCsv() throws Exception {
         try{
-            csvExportService.writePassesToCsv();
-            return ResponseEntity.ok("Passes CSV exported!");
+            return ResponseEntity.ok(csvExportService.writePassesToJSON());
         } catch (Exception e){
             return ResponseEntity.ok("Passes CSV not sent! :(");
         }
@@ -57,8 +52,7 @@ public class CsvExporterController {
     @GetMapping("/users")
     public ResponseEntity getAllUsersInCsv() throws Exception {
         try{
-            csvExportService.writeUsersToCsv();
-            return ResponseEntity.ok("Users CSV exported!");
+            return ResponseEntity.ok(csvExportService.writeUsersToJSON());
         } catch (Exception e){
             return ResponseEntity.ok("Users CSV not sent! :(");
         }

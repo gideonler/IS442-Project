@@ -1,10 +1,15 @@
+/**
+ * Contains methods called by CsvExporterController to export the following as Maps:
+ * 1. Loans writeLoansToJSON()
+ * 2. Attractions writeAttractionsToJSON()
+ * 3. Passes writePassesToJSON()
+ * 4. Users writeUsersToJSON()
+ */
+
 package oop.io.demo.csvexporter;
 
 import org.springframework.stereotype.Service;
 
-import com.opencsv.CSVWriter;
-
-import java.io.*;
 import java.util.*;
 
 import oop.io.demo.loan.Loan;
@@ -29,30 +34,6 @@ public class CsvExportService {
         this.attractionRepository = attractionRepository;
         this.userRepository = userRepository;
         this.passRepository = passRepository;
-    }
-
-    //Export Loans CSV
-    public void writeLoansToCsv() throws Exception{
-        try{
-            String emailTemplateUploadDir = "src/main/resources/CsvExports/Loan.csv";
-
-            File file = new File(emailTemplateUploadDir);
-    
-            FileWriter outputfile = new FileWriter(file);
-    
-            List<Loan> loans = loanRepository.findAll();
-
-            CSVWriter writer = new CSVWriter(outputfile); 
-            String[] header = {"LoanId", "LoanDate", "AttractionName", "UserEmail", "ContactNo", "PassId", "Status"};
-            writer.writeNext(header);
-            for (Loan loan : loans) {
-                String[] data = {loan.getLoanID(), loan.getLoanDate().toString(), loan.getAttractionName(), loan.getUserEmail(), loan.getContactNo(), loan.getPassId(), loan.getStatus().toString()};
-                writer.writeNext(data);
-            }
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     //Export Loans as Map
@@ -80,76 +61,74 @@ public class CsvExportService {
         return output;
     }
 
-    //Export Attractions CSV
-    public void writeAttractionsToCsv() throws Exception{
-        try{
-            String emailTemplateUploadDir = "src/main/resources/CsvExports/Attractions.csv";
-
-            File file = new File(emailTemplateUploadDir);
-    
-            FileWriter outputfile = new FileWriter(file);
-    
+    //Export Attractions as Map
+    public Map<Integer,Map<String,String>> writeAttractionsToJSON() throws Exception{
+        Map<Integer,Map<String,String>> output = new TreeMap<>();
+        try{    
             List<Attraction> attractions = attractionRepository.findAll();
 
-            CSVWriter writer = new CSVWriter(outputfile); 
-            String[] header = {"AttractionName", "ReplacementFee", "PassType", "isActive", "Template", "Image", "Attachment"};
-            writer.writeNext(header);
+            int counter = 0;
             for (Attraction attraction : attractions) {
-                String[] data = {attraction.getAttractionName(), String.valueOf(attraction.getReplacementFee()), attraction.getPassType().toString(), String.valueOf(attraction.isActive()), attraction.getTemplateFilename(), attraction.getImageFilename(), attraction.getAttachmentPDFFilename()};
-                writer.writeNext(data);
+                Map<String,String> temp = new TreeMap();
+                temp.put("AttractionName", attraction.getAttractionName());
+                temp.put("ReplacementFee",String.valueOf(attraction.getReplacementFee()));
+                temp.put("PassType", attraction.getPassType().toString());
+                temp.put("isActive", String.valueOf(attraction.isActive()));
+                temp.put("Template", attraction.getTemplateFilename());
+                temp.put("Image", attraction.getImageFilename());
+                temp.put("Attachment", attraction.getAttachmentPDFFilename());
+                output.put(counter, temp);
+                counter++;
             }
-            writer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return output;
     }
-
-    //Export Pass CSV
-    public void writePassesToCsv() throws Exception{
-        try{
-            String emailTemplateUploadDir = "src/main/resources/CsvExports/Pass.csv";
-
-            File file = new File(emailTemplateUploadDir);
-    
-            FileWriter outputfile = new FileWriter(file);
-    
+            
+    //Export Passes as Map
+    public Map<Integer,Map<String,String>> writePassesToJSON() throws Exception{
+        Map<Integer,Map<String,String>> output = new TreeMap<>();
+        try{    
             List<Pass> passes = passRepository.findAll();
 
-            CSVWriter writer = new CSVWriter(outputfile); 
-            String[] header = {"PassId", "PassNo", "AttractionName", "PassStatus"};
-            writer.writeNext(header);
+            int counter = 0;
             for (Pass pass : passes) {
-                String[] data = {pass.getPassId(),pass.getPassNo(), pass.getAttractionName(), pass.getPassStatus().toString()};
-                writer.writeNext(data);
+                Map<String,String> temp = new TreeMap();
+                temp.put("PassId", pass.getPassId());
+                temp.put("PassNo",pass.getPassNo());
+                temp.put("AttractionName", pass.getAttractionName());
+                temp.put("PassStatus", pass.getPassStatus().toString());
+                output.put(counter, temp);
+                counter++;
             }
-            writer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return output;
     }
 
-    //Export Users CSV
-    public void writeUsersToCsv() throws Exception{
-        try{
-            String emailTemplateUploadDir = "src/main/resources/CsvExports/Users.csv";
-
-            File file = new File(emailTemplateUploadDir);
-    
-            FileWriter outputfile = new FileWriter(file);
-    
+    //Export Users as Map
+    public Map<Integer,Map<String,String>> writeUsersToJSON() throws Exception{
+        Map<Integer,Map<String,String>> output = new TreeMap<>();
+        try{    
             List<User> users = userRepository.findAll();
 
-            CSVWriter writer = new CSVWriter(outputfile); 
-            String[] header = {"Email", "Name", "ContactNo", "UserType", "isVerified", "OutstandingFees"};
-            writer.writeNext(header);
+            int counter = 0;
             for (User user : users) {
-                String[] data = {user.getEmail(), user.getName(), user.getContactNo(), user.getUserType().toString(),String.valueOf(user.isVerified()),String.valueOf(user.getOutstandingFees())};
-                writer.writeNext(data);
+                Map<String,String> temp = new TreeMap();
+                temp.put("Email", user.getEmail());
+                temp.put("Name",user.getName());
+                temp.put("ContactNo", user.getContactNo());
+                temp.put("UserType", user.getUserType().toString());
+                temp.put("isVerified", String.valueOf(user.isVerified()));
+                temp.put("OutstandingFees", String.valueOf(user.getOutstandingFees()));
+                output.put(counter, temp);
+                counter++;
             }
-            writer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return output;
     }
-   
 }

@@ -1,20 +1,20 @@
+/**
+ * Contains endpoints for ADMIN to
+ * 1. Get total loans/month per year [GET] /analysis/totalloans
+ * 2. Get average loans/month per year [GET] /analysis/averageloans
+ * 3. Get total loans/attraction/month per year [GET] /analysis/totalattractions
+ * 4. Get total unique employee/month per year [GET] /analysis/totalemployees
+ * 5. Get total borrowers & total loans & avg loans per year [GET] /analysis/yearstats
+*/
+
 package oop.io.demo.analysis;
-
-import java.util.Map;
-
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import oop.io.demo.analysis.payload.AnalysisRequest;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
@@ -23,7 +23,7 @@ public class AnalysisController {
     @Autowired
     AnalysisService analysisService;
 
-    //Total Loans/Month by Year -->both must be "yyyy-MM" format
+    //Total Loans/Month by Year
     @GetMapping("/totalloans")
     public ResponseEntity getTotalLoans() throws Exception {
         try{
@@ -92,31 +92,4 @@ public class AnalysisController {
             return ResponseEntity.badRequest().body("Year Summary not shown! :(");
         }
     }
-
-/* 
-    //No. of Available Passes Left to Loan
-    @GetMapping("/loans")
-    public ResponseEntity getAllLoansInCsv() throws Exception {
-        try{
-            analysisService.writeLoansToCsv();
-            return ResponseEntity.ok("Loans CSV exported!");
-        } catch (Exception e){
-            return ResponseEntity.ok("Loans CSV not sent! :(");
-        }
-    }
-*/
-
-    
 }
-
-/*
-@GetMapping("/totalloans")
-    public ResponseEntity getTotalLoans(@RequestParam("year") String year, @RequestParam(value = "month", defaultValue = "0") String month) throws Exception {
-        try{
-            int output = analysisService.allLoans(year, month);
-            return ResponseEntity.ok(output);
-        } catch (Exception e){
-            return ResponseEntity.ok("Loans not shown! :(");
-        }
-    }
- */
