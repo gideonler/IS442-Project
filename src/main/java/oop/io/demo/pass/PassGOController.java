@@ -7,6 +7,7 @@ package oop.io.demo.pass;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.attraction.AttractionRepository;
+import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.loan.Loan;
 import oop.io.demo.loan.LoanRepository;
 import oop.io.demo.mail.EmailSender;
@@ -24,6 +26,10 @@ import oop.io.demo.mail.payload.CollectedRequest;
 @RestController
 @RequestMapping("/passstatus")
 public class PassGOController {
+
+    @Autowired
+    JwtUtils jwtUtils;
+    
     private final EmailSender emailSender;
     
     private final PassRepository repository;
