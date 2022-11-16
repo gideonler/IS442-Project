@@ -1,22 +1,24 @@
 <template>
     <div style="padding-bottom: 10%">
         <div class="row">
-            <div class="card col-md-12 bg-secondary">
-                <div class="card-header bg-secondary">
+            <div class="card col-md-12" style="background-color: #808588">
+                <div class="card-header" style="background-color: #808588">
                     <h3 class="card-title font-weight-bold">Pass Status</h3>
                 </div>
                 <div class="card-body">
                     <ul>
                         <li> Passes can be <u>collected 1 day before</u> the intended visit date</li>
-                        <li> Passes must be <u>returned 1 day after</u> the intended visit date, with the exception of Friday
+                        <li> Passes must be <u>returned 1 day after</u> the intended visit date, with the exception of
+                            Friday
                             and Saturday</li>
-                        <li> Cancellation of loan requests are allowed <u>at least 1 day before</u> the intended visit date
+                        <li> Cancellation of loan requests are allowed <u>at least 1 day before</u> the intended visit
+                            date
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="row d-flex justify-content-around" v-if="bookingList[0].attractionName.length > 0" >
+        <div class="row d-flex justify-content-around" v-if="bookingList[0].attractionName.length > 0">
             <div class="card bg-light col-md-5" v-for="(booking, b) in bookingList" :key="b">
                 <h4 class="card-header font-weight-bold">
                     {{ booking.attractionName }}
@@ -30,7 +32,7 @@
                         Check Pass Status
                     </b-button>
                     <b-button v-b-modal.modal-2 class="btn-sm mt-1 float-right" variant="danger"
-                        @click="sendInfo(booking.attractionName, booking.passNo)">
+                        @click="sendInfo(booking.loanID); getReplacementFee(booking.attractionName)">
                         Report Pass Loss
                     </b-button>
                 </div>
@@ -113,26 +115,22 @@ export default {
                 });
         },
 
-        sendInfo(attractionName, passNo) {
-            this.attractionName = attractionName;
-            this.getReplacementFee(this.attractionName);
+        sendInfo(loanID) {
+            this.bookingId = loanID;
         },
 
         reportLoss(bookingId) {
+            console.log(bookingId)
             return axios
-                .post(this.api.reportLoss, {
-                    "loanId": bookingId,
-                },
-                    {
-                        headers: {
-                            'Access-Control-Allow-Origin': '*',
-                            'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
-                            'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-                        },
-                    })
+                .get(this.api.reportLoss, {
+                    params: {
+                        loanId: bookingId
+                    }
+                })
                 .then((response) => {
                     console.log(response.data);
                     this.$alert("Pass reported lost successfully");
+                    window.location.reload();
                 })
                 .catch((error) => {
                     console.log(error.response);
@@ -152,10 +150,10 @@ export default {
                 });
         },
 
-        async getPassStatus(passId) {
+        getPassStatus(passId) {
             console.log(passId)
             if (passId != null) {
-                await axios
+                axios
                     .get(this.api.passDetails + passId,
                         {
                             headers: {
@@ -195,13 +193,16 @@ export default {
                 )
                 .then((response) => {
                     this.borrower = response.data.body;
+                    console.log(response.data)
                     if (response.data.body.contactNo == null) {
                         this.borrower.contactNo = "N/A";
                     }
-                    console.log(this.borrower)
                     if (response.data == "No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.") {
+                        console.log(response.data)
                         this.$alert("No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.");
-                        this.borrower = { email: "", contactNo: "", name: "" };
+                        this.borrower.email = "", 
+                        this.borrower.contactNo = "",
+                        this.borrower.name = "";
                     }
                 })
                 .catch((error) => {

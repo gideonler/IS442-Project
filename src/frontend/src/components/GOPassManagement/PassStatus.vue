@@ -1,37 +1,35 @@
 <template>
-    <div style="padding-bottom: 30px">
+    <div style="padding-bottom: 10%">
         <b-form @submit="onSubmit">
-            <b-form-group id="input-group-1" label="Email address:" label-for="input-1">
-                <b-form-input id="input-1" v-model="form.email" type="email" placeholder="Enter email" required>
+            <b-form-group id="input-group-1" label="Enter Email address:" label-for="input-1">
+                <b-form-input id="input-1" v-model="form.email" type="email" placeholder="Email Address" required>
                 </b-form-input>
             </b-form-group>
 
             <b-button type="submit" variant="primary" class="mb-4">Submit</b-button>
         </b-form>
 
-        <div class="row gx-3">
-            <div class="card col-md-5 mx-4" v-if="bookingList[0].attractionName.length > 0" v-for="(booking, b) in bookingList" :key="b"> 
-                <small class="text-white"> {{getPassStatus(booking.passId)}} </small>
-                <h3 class="card-header font-weight-bold">
+        <div class="row gx-3" v-if="bookingList[0].attractionName.length > 0">
+            <div class="card col-md-5 mx-4" v-for="(booking, b) in bookingList" :key="b"> 
+                <h4 class="card-header font-weight-bold">
                     {{ booking.attractionName }}
-                </h3>
+                </h4>
                 <div class="card-body">
                     <p class="card-text">Loan Date: {{ booking.loanDate.split("T")[0] }}</p>
                     <p class="card-text">Pass ID: {{ booking.passId }}</p>
                     <p class="card-text">Booking Status: {{ booking.status }}</p>
-                    <p class="card-text">Current Pass Status: {{ passLocation }}</p>
-
-                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info" @click="sendInfo(booking.loanID)">
+                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="secondary" @click="sendInfo(booking.loanID); getPassStatus(booking.passId)">
                         Edit Pass Status
                     </b-button>
                 </div>
             </div>
         </div>
         <b-modal id="modal-1" title="Update Pass Status" alignment="center">
+            <p class="card-text">Current Pass Status: {{ passLocation }}</p>
             <template #modal-footer>
-                <b-button variant="success" @click="passStatus(bookingId, 'INOFFICE'); $bvModal.hide('modal-1')">
+                <b-button variant="secondary" @click="passStatus(bookingId, 'INOFFICE'); $bvModal.hide('modal-1')">
                     Returned</b-button>
-                <b-button variant="primary" @click="passStatus(bookingId, 'ONLOAN'); $bvModal.hide('modal-1')">Collected
+                <b-button variant="success" @click="passStatus(bookingId, 'ONLOAN'); $bvModal.hide('modal-1')">Collected
                 </b-button>
             </template>
         </b-modal>
@@ -61,7 +59,7 @@ export default {
     },
 
     created() {
-        this.getPassStatus(this.passId)    
+        this.passLocation = this.getPassStatus(this.passId)    
     },
 
     methods: {
@@ -100,10 +98,11 @@ export default {
         },
 
         async getPassStatus(passId) {
+            console.log(passId)
             await axios
                 .get(this.api.passDetails + passId)
                 .then((response) => {
-                    console.log(response.data.passStatus)
+                    // console.log(response.data.passStatus)
                     this.passLocation = response.data.passStatus;
                     console.log(this.passLocation)
                 })

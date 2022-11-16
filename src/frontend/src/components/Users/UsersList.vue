@@ -3,7 +3,7 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <h1>Employee Management</h1>
+                    <h2>Employee Management</h2>
                 </div>
                 <div class="col text-right">
                     <b-dropdown id="dropdown-buttons" text="Filter By" variant="warning">
@@ -20,7 +20,7 @@
             </div>
 
             <div>
-                <table class="table text-center">
+                <table class="table text-nowrap">
                     <thead>
                         <tr>
                             <th scope="col" id="Name">Name</th>
@@ -82,7 +82,7 @@
 
                 <b-modal id="modal-1" title="Enable User" alignment="center">
                     <template #modal-footer>
-                        <b-button variant="success" @click="$bvModal.hide('modal-1')">
+                        <b-button variant="secondary" @click="$bvModal.hide('modal-1')">
                             Cancel</b-button>
                         <b-button variant="primary" @click="enableUser(email); $bvModal.hide('modal-1')">Yes
                         </b-button>
@@ -90,7 +90,7 @@
                 </b-modal>
                 <b-modal id="modal-2" title="Disable User" alignment="center">
                     <template #modal-footer>
-                        <b-button variant="success" @click="$bvModal.hide('modal-2')">
+                        <b-button variant="secondary" @click="$bvModal.hide('modal-2')">
                             Cancel</b-button>
                         <b-button variant="primary" @click="disableUser(email); $bvModal.hide('modal-2')">Yes
                         </b-button>
@@ -98,7 +98,7 @@
                 </b-modal>
                 <b-modal id="modal-3" title="Delete User" alignment="center">
                     <template #modal-footer>
-                        <b-button variant="success" @click="$bvModal.hide('modal-3')">
+                        <b-button variant="secondary" @click="$bvModal.hide('modal-3')">
                             Cancel</b-button>
                         <b-button variant="primary" @click="deleteUser(email); $bvModal.hide('modal-3')">Yes
                         </b-button>
@@ -106,12 +106,12 @@
                 </b-modal>
                 <b-modal id="modal-4" title="Update User Type" alignment="center">
                     <div>
-                        <b-button class="mx-1 my-2" @click="promoteAdmin(email)">Promote to Admin</b-button>
-                        <b-button class="mx-1 my-2" @click="makeGO(email)">Make GO</b-button>
-                        <b-button class="mx-1 my-2" @click="demoteStaff(email)">Demote to Staff</b-button>
+                        <b-button class="mx-2 my-2 btn-warning" @click="promoteAdmin(email)">Promote to Admin</b-button>
+                        <b-button class="mx-2 my-2 btn-warning" @click="makeGO(email)">Make GO</b-button>
+                        <b-button class="mx-2 my-2 btn-warning" @click="demoteStaff(email)">Demote to Staff</b-button>
                     </div>
                     <template #modal-footer>
-                        <b-button variant="success" @click="$bvModal.hide('modal-4')">
+                        <b-button variant="secondary" @click="$bvModal.hide('modal-4')">
                             Cancel</b-button>
                         <b-button variant="primary" @click="updateUser(email); $bvModal.hide('modal-4')">Yes
                         </b-button>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Pass Management</h1>
+        <h2>Pass Management</h2>
         <PassStatus></PassStatus>
     </div>
 </template>

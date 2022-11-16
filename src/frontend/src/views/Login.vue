@@ -30,19 +30,19 @@
         </b-form-invalid-feedback>
       </b-form-group>
 
-      <b-form-group id="example-input-group-4" label-for="example-input-4">
+      <!-- <b-form-group id="example-input-group-4" label-for="example-input-4">
         <b-form-checkbox id="checkbox-1" v-model="status" name="checkbox-1" value="remember_me"
           unchecked-value="forget_me">
           Remember me
         </b-form-checkbox>
-      </b-form-group>
+      </b-form-group> -->
 
       <b-button type="submit" variant="primary">Login</b-button>
 
       <br>
 
-      Forget password?
-      <b-button class="ml-2" @click="forgetPassword()">Reset Password</b-button>
+      <!-- Forget password?
+      <b-button class="ml-2" @click="forgetPassword()">Reset Password</b-button> -->
 
     </b-form>
   </div>
@@ -80,11 +80,11 @@ export default {
     form: {
       email: {
         required,
-        email_validation
+        // email_validation
       },
       password: {
         required,
-        minLength: minLength(6)
+        // minLength: minLength(6)
       }
     }
   },
