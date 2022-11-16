@@ -26,7 +26,8 @@
           return {
             name: '',
             path: '',
-            icon: ''
+            icon: '',
+            userTypes: ''
           }
         }
       },

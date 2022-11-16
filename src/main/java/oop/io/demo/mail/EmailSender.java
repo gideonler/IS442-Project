@@ -1,3 +1,13 @@
+/**
+ * Contains endpoints for STAFF & ADMIN to
+ * 1. Receive an email on their booking details [POST] /email/booking
+ * 2. Receive an email to indicate that they have collected their pass [POST] /email/collected
+ * 
+ * There are scheduled emails as well for the following:
+ * 1. Reminder emails one day before booking (7am Everyday)
+ * 2. Overdue emails to remind them to return their passes (10am every week from Monday to Friday)
+*/
+
 package oop.io.demo.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +27,6 @@ import oop.io.demo.mail.payload.BookingRequest;
 import oop.io.demo.mail.payload.CollectedRequest;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javax.validation.Valid;
@@ -109,7 +116,6 @@ public class EmailSender {
 
     // Sending To Collect Emails
     @Scheduled(cron = "0 0 7 * * *")
-    //@Scheduled(cron = "0 */2 * * * *")
     public ResponseEntity sendToCollectMessage() throws Exception {
         try {
             //Take user email to direct the collected message to the user
@@ -128,7 +134,6 @@ public class EmailSender {
 
     // Sending Overdue Emails
     @Scheduled(cron = "0 0 10 * * MON-FRI")
-    //@Scheduled(cron = "0 */3 * * * *")
     public ResponseEntity sendOverdueMessage() throws Exception {
         try {
             //Take user email to direct the collected message to the user
