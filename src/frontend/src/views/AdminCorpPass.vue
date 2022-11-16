@@ -6,10 +6,10 @@
         </div>
         <div class="row">
             <div class="col-md-7">
-                <EditPassForm></EditPassForm>
+                <EditPassForm :key="componentKey" v-on:update-creation="forceRerender"></EditPassForm>
             </div>
             <div class="col-md-5">
-            <UserCard></UserCard>
+                <UserCard :key="componentKey" v-on:update-creation="forceRerender"></UserCard>
             </div>
         </div>
         </div>
@@ -26,14 +26,22 @@
 
 export default {
         name: "admin-coporate-pass-page",
-
+        data(){
+            return{
+                componentKey: 0
+            }
+        },  
         created() {
             this.$emit('update:layout', DashboardLayout);
          },
          components: {
             EditPassForm,
             UserCard,
-        }
+        },
+        methods: {
+        forceRerender() {
+            this.componentKey+=1
+        }}
     };
 
 </script>

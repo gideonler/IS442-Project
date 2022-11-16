@@ -144,8 +144,10 @@
               }
               )
             .then((response) => {
-              console.log(response);
+              console.log(response)
+              this.$emit('update-creation');
             }); 
+
           }
           this.$root.$refs.PassCreationConfirmation.showModal(this.corporate_passes.length, this.selected_attraction);
           this.formReset()

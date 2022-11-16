@@ -3,7 +3,7 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <h1>All Users</h1>
+                    <h1>Employee Management</h1>
                 </div>
                 <div class="col text-right">
                     <b-dropdown id="dropdown-buttons" text="Filter By" variant="warning">

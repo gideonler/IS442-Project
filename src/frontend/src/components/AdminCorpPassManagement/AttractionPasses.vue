@@ -1,15 +1,8 @@
     <template >
     <div >
-
-        
-
-
         <b-card no-body>
-            
     <b-tabs card>
-   
       <b-tab title="Active" style="background-color: #f7f7f8;" active>
-
         <b-carousel
         class="mx-5"
         id="all-passes-carousel"
@@ -18,7 +11,6 @@
         :interval="0"
     >
     
-    
     <b-carousel-slide :key="index" v-for="index in no_active_card_groups">
         <template #img>
             <b-card-group deck >    
@@ -26,15 +18,15 @@
                 :title="attraction.attractionName" img-height="200px" 
                 :img-src="getImgUrl(attraction.imageFilename,attraction.attractionName)"  img-alt="Image" img-top>
                     <b-card-text>
-                {{attraction.attractionName}}
+                    Replacement Fee: ${{attraction.replacementFee}}
                 </b-card-text>
                 <template #footer>
                     <small class="text-muted">{{attraction.passType}}</small>
                     <br>
                     <b-button  @click="editDetails(attraction.attractionName, attraction.replacementFee, attraction.templateFilename,attraction.attachmentPDFFilename, attraction.imageFilename, attraction.passType)" variant="success" class="mx-1">Edit Details</b-button>
                     <b-button @click=viewPasses(attraction.attractionName) class="mx-1">View Passes</b-button>
+                    <b-button variant="outline-danger"   @click="showPopup('Deactivation',attraction.attractionName)"  class="mx-1 mt-3">Deactivate Attraction</b-button>
                 </template>
-
                 
             </b-card>
         </b-card-group>
@@ -47,11 +39,12 @@
     
       <b-tab title="Inactive" style="background-color: #f7f7f8;" >
             <b-carousel
-        class="mx-5"
-        id="all-passes-carousel"
-        controls
-        no-animation
-    >
+                class="mx-5"
+                id="all-passes-carousel"
+                controls
+                no-animation
+                :interval="0"
+            >
     <b-carousel-slide  :key="index" v-for="index in no_inactive_card_groups">
         <template #img>
             <b-card-group deck >    
@@ -59,13 +52,15 @@
                 :title="attraction.attractionName" img-height="200px" 
                 :img-src="getImgUrl(attraction.imageFilename,attraction.attractionName)" :img-alt="attraction.imageFilename" img-top>
                     <b-card-text>
-                {{attraction.attractionName}}
+                        Replacement Fee: ${{attraction.replacementFee}}
                 </b-card-text>
                 <template #footer>
                     <small class="text-muted">{{attraction.passType}}</small>
                     <br>
                     <b-button  @click="editDetails(attraction.attractionName, attraction.replacementFee, attraction.templateFilename,attraction.attachmentPDFFilename, attraction.imageFilename, attraction.passType)" variant="success" class="mx-1">Edit Details</b-button>
                     <b-button @click=viewPasses(attraction.attractionName) class="mx-1">View Passes</b-button>
+                    <b-button variant="outline-success"  @click="showPopup('Reactivation', attraction.attractionName)"  class="mx-1 mt-3">Reactivate Attraction</b-button>
+
                 </template>
             </b-card>
         </b-card-group>
@@ -81,6 +76,7 @@
   <div hidden>
         <PassDataTable></PassDataTable>
         <EditAttractionModal v-on:update-attraction="forceRerender"></EditAttractionModal>
+        <AttractionStatusChangePopUp :action="this.action" :attraction="this.selected_attraction" v-on:confirm-update-status="handleUpdate" ></AttractionStatusChangePopUp>
     </div>
     </div>
   </template>
@@ -89,24 +85,33 @@
     import axios from 'axios'
     import PassDataTable from './PassDataTable.vue'
     import EditAttractionModal from './EditAttractionModal.vue'
-    
+    import AttractionStatusChangePopUp from './AttractionStatusChangePopUp.vue'
+
     export default {
       data() {
         return {
             attraction_list: [],
+            selected_attraction: '',
+            action: '',
             componentKey: 0,
+            api:{
+                attractionmanagement: 'http://localhost:8080/attractionmanagement/'
+            }
     
       }
     },
     methods: {
+
         forceRerender() {
-            console.log('hellooo')
-            
             this.$emit("update-attraction")
             
       },
+        showPopup(action, data){
+        this.action= action;
+        this.selected_attraction= data;
+        this.$root.$refs.AttractionStatusChangePopUp.showModal();
+        },
         forceUpdate() {
-            console.log('helo')
             this.$forceUpdate();  
         },
         viewPasses(placeofinterest){
@@ -122,11 +127,33 @@
             }catch{
                 return require('../../../../main/resources/attractionicons/null/notfound.jpeg')
             }
-        }
+        },
+        async handleUpdate() {
+            await this.action=="Reactivation"? this.handleActivate(this.selected_attraction) : this.handleDeactivate(this.selected_attraction)            
+            },
+        async handleActivate(data) {
+        await axios 
+        .put(this.api.attractionmanagement + data + '/reactivate')
+        .then((response) => {
+            console.log(response);
+            this.$emit('update-attraction');
+        }); 
+        
+        },
+        async handleDeactivate(data) {
+        await axios 
+                .put(this.api.attractionmanagement + data + '/deactivate'
+                )
+                .then((response) => {
+                console.log(response);
+                this.$emit('update-attraction');
+                }); 
+        },
     },
     components: {
         PassDataTable,
-        EditAttractionModal
+        EditAttractionModal,
+        AttractionStatusChangePopUp
     },
     computed: {
         active_attractions: function() {
