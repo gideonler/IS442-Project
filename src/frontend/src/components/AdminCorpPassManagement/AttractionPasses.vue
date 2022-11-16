@@ -43,6 +43,7 @@
                 id="all-passes-carousel"
                 controls
                 no-animation
+                :interval="0"
             >
     <b-carousel-slide  :key="index" v-for="index in no_inactive_card_groups">
         <template #img>
@@ -58,7 +59,7 @@
                     <br>
                     <b-button  @click="editDetails(attraction.attractionName, attraction.replacementFee, attraction.templateFilename,attraction.attachmentPDFFilename, attraction.imageFilename, attraction.passType)" variant="success" class="mx-1">Edit Details</b-button>
                     <b-button @click=viewPasses(attraction.attractionName) class="mx-1">View Passes</b-button>
-                    <b-button variant="outline-success"  @click="showPopup('Rectivation', attraction.attractionName)"  class="mx-1 mt-3">Reactivate Attraction</b-button>
+                    <b-button variant="outline-success"  @click="showPopup('Reactivation', attraction.attractionName)"  class="mx-1 mt-3">Reactivate Attraction</b-button>
 
                 </template>
             </b-card>
