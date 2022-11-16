@@ -55,6 +55,31 @@ public class CsvExportService {
         }
     }
 
+    //Export Loans as Map
+    public Map<Integer,Map<String,String>> writeLoansToJSON() throws Exception{
+        Map<Integer,Map<String,String>> output = new TreeMap<>();
+        try{    
+            List<Loan> loans = loanRepository.findAll();
+
+            int counter = 0;
+            for (Loan loan : loans) {
+                Map<String,String> temp = new TreeMap();
+                temp.put("LoanId", loan.getLoanID());
+                temp.put("LoanDate",loan.getLoanDate().toString());
+                temp.put("AttractionName", loan.getAttractionName());
+                temp.put("UserEmail", loan.getUserEmail());
+                temp.put("ContactNo", loan.getContactNo());
+                temp.put("PassNo", loan.getPassNo());
+                temp.put("Status", loan.getStatus().toString());
+                output.put(counter, temp);
+                counter++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return output;
+    }
+
     //Export Attractions CSV
     public void writeAttractionsToCsv() throws Exception{
         try{

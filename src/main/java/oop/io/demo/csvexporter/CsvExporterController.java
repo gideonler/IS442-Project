@@ -14,6 +14,7 @@ public class CsvExporterController {
     @Autowired
     CsvExportService csvExportService;
 
+    /* 
     @GetMapping("/loans")
     public ResponseEntity getAllLoansInCsv() throws Exception {
         try{
@@ -21,6 +22,15 @@ public class CsvExporterController {
             return ResponseEntity.ok("Loans CSV exported!");
         } catch (Exception e){
             return ResponseEntity.ok("Loans CSV not sent! :(");
+        }
+    }
+*/
+    @GetMapping("/loans")
+    public ResponseEntity getAllLoansInCsv() throws Exception {
+        try{
+            return ResponseEntity.ok(csvExportService.writeLoansToJSON());
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Loans CSV not sent! :(");
         }
     }
 

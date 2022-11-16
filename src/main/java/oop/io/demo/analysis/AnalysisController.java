@@ -29,7 +29,7 @@ public class AnalysisController {
         try{
             return ResponseEntity.ok(analysisService.allLoans());
         } catch (Exception e){
-            return ResponseEntity.ok("Loans not shown! :(");
+            return ResponseEntity.badRequest().body("Total loans not shown! :(");
         }
     }
 
@@ -39,7 +39,7 @@ public class AnalysisController {
         try{
             return ResponseEntity.ok(analysisService.averageLoans());
         } catch (Exception e){
-            return ResponseEntity.ok("Loans CSV not sent! :(");
+            return ResponseEntity.badRequest().body("Average loans not shown! :(");
         }
     }
 
@@ -49,7 +49,7 @@ public class AnalysisController {
         try{
             return ResponseEntity.ok(analysisService.allAttractionLoans());
         } catch (Exception e){
-            return ResponseEntity.ok("Loans CSV not sent! :(");
+            return ResponseEntity.badRequest().body("Attractions not shown! :(");
         }
     }
 
@@ -59,7 +59,7 @@ public class AnalysisController {
         try{
             return ResponseEntity.ok(analysisService.allEmployees());
         } catch (Exception e){
-            return ResponseEntity.ok("Loans CSV not sent! :(");
+            return ResponseEntity.badRequest().body("Total employees not shown! :(");
         }
     }
 
@@ -69,7 +69,7 @@ public class AnalysisController {
         try{
             return ResponseEntity.ok(analysisService.allYearLoans());
         } catch (Exception e){
-            return ResponseEntity.ok("Loans CSV not sent! :(");
+            return ResponseEntity.badRequest().body("Total year loans not shown! :(");
         }
     }
 
@@ -79,7 +79,7 @@ public class AnalysisController {
         try{
             return ResponseEntity.ok(analysisService.allYearEmployees());
         } catch (Exception e){
-            return ResponseEntity.ok("Loans CSV not sent! :(");
+            return ResponseEntity.badRequest().body("Total year employees not shown! :(");
         }
     }
 
@@ -89,7 +89,7 @@ public class AnalysisController {
         try{
             return ResponseEntity.ok(analysisService.yearSummary());
         } catch (Exception e){
-            return ResponseEntity.ok("Loans CSV not sent! :(");
+            return ResponseEntity.badRequest().body("Year Summary not shown! :(");
         }
     }
 
