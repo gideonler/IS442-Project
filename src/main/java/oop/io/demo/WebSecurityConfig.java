@@ -73,19 +73,36 @@ public class WebSecurityConfig {
       http.cors().and().csrf().disable()
           .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
           .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-             .authorizeRequests().antMatchers("/auth/**").permitAll()
-             .antMatchers("/password/**").permitAll()
-             .antMatchers(h2ConsolePath + "/**").permitAll();
-            //  .antMatchers("/usermanagement/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
-            //  .antMatchers("/user").hasAnyAuthority(USERTYPE.ADMIN.toString())
-            // // .antMatchers("/user/editprofile").hasAnyAuthority(only the user themself)
-            // // .antMatchers("/user/userbyusername").hasAnyAuthority(admin or the user themself)
-            //   .antMatchers("/passmanagement/**").hasAnyAuthority("ADMIN")
-            //   .antMatchers("/pass/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
-            //   .antMatchers("/attractionmanagement/**").hasAnyAuthority("ROLE_ADMIN")
-            //   .antMatchers("/attraction/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
-            //   .antMatchers("/send").hasAnyAuthority(USERTYPE.ADMIN.toString())
-            //   .antMatchers("/book/**").permitAll()
+          
+            .authorizeRequests()
+
+            //  .antMatchers(h2ConsolePath + "/**").permitAll()
+            
+            .antMatchers("/uploadcsv/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+
+            .antMatchers("/export/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+
+            .antMatchers("/analysis/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+
+            .antMatchers("/usermanagement/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            .antMatchers("/user/editprofile").hasAnyAuthority(USERTYPE.STAFF.toString())
+            .antMatchers("/user/userbyusername").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+            .antMatchers("/user/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+            
+            .antMatchers("/passmanagement/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            .antMatchers("/pass/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+            .antMatchers("/passstatus/**").hasAnyAuthority(USERTYPE.GENERALOFFICE.toString())
+            
+            .antMatchers("/attractionmanagement/**").hasAnyAuthority("ROLE_ADMIN")
+            .antMatchers("/attraction/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+
+            .antMatchers("/loan/delete/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            .antMatchers("/loan/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+
+            .antMatchers("/email/**").permitAll()
+
+            .antMatchers("/auth/**").permitAll()
+            .antMatchers("/password/**").permitAll();
             //   .anyRequest().authenticated()
             // .and().formLogin().loginPage("/login").failureUrl("/login?error=true")
             //   .defaultSuccessUrl("/home", true)

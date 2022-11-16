@@ -24,6 +24,7 @@ import oop.io.demo.auth.confirmationToken.ConfirmationToken;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.PasswordRequest;
+import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 
@@ -37,6 +38,9 @@ public class PasswordController {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     private final UserRepository userRepository;
 
