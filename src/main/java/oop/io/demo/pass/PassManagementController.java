@@ -9,6 +9,8 @@
 package oop.io.demo.pass;
 
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,10 +22,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 import oop.io.demo.attraction.AttractionRepository;
+import oop.io.demo.auth.security.jwt.JwtUtils;
 @CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/passmanagement")
 public class PassManagementController {
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     private final PassRepository repository;
 

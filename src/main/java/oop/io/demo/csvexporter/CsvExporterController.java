@@ -15,10 +15,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import oop.io.demo.auth.security.jwt.JwtUtils;
+
 @CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/export")
 public class CsvExporterController {
+
+    @Autowired
+    JwtUtils jwtUtils;
+    
     @Autowired
     CsvExportService csvExportService;
 

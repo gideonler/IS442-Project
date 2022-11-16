@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.user.UserService;
+import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.mail.*;
 import oop.io.demo.mail.payload.BookingRequest;
 
@@ -43,7 +46,9 @@ import oop.io.demo.mail.payload.BookingRequest;
 @RequestMapping("/loan")
 @Controller
 public class LoanController {
-
+    
+    @Autowired
+    JwtUtils jwtUtils;
 
     LOANSTATUS passStatus = LOANSTATUS.ACTIVE;
     @Autowired
@@ -56,7 +61,6 @@ public class LoanController {
     private LoanService loanService;
     @Autowired
     private EmailSender emailSender;
-
 
     //POST new loan booking
     @PostMapping("/book")

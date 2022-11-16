@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import oop.io.demo.attraction.Attraction;
 import oop.io.demo.attraction.AttractionRepository;
+import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.loan.Loan;
 import oop.io.demo.loan.LoanRepository;
 import oop.io.demo.mail.payload.BookingRequest;
@@ -35,6 +36,10 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/email")
 public class EmailSender {
+
+    @Autowired
+    JwtUtils jwtUtils;
+    
     @Autowired
     EmailService emailService;
 

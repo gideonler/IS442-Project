@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import oop.io.demo.auth.security.jwt.JwtUtils;
+
 @CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/usermanagement")
@@ -36,7 +38,7 @@ public class UserAdminController {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    PasswordEncoder encoder;
+    JwtUtils jwtUtils;
 
     private final UserRepository repository;
 
