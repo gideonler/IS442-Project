@@ -1,34 +1,29 @@
 <template>
   
     <div class="wrapper">
-      <side-bar>
+      <side-bar >
       <mobile-menu slot="content"></mobile-menu>
-      <sidebar-link to="/user">
+      <sidebar-link  to="/user">
         <i class="nc-icon nc-circle-09"></i>
         <p>User Profile</p>
-        <p hidden>USER,GENERALOFFICE,STAFF</p>
       </sidebar-link>
       <sidebar-link to="/booking">
         <i class="nc-icon nc-notes"></i>
         <p>My Bookings</p>
-        <p hidden>USER,GENERALOFFICE,STAFF</p>
       </sidebar-link>
-      <sidebar-link to="/analytics">
+      <sidebar-link v-if="this.user=='STAFF'" to="/analytics">
         <i class="nc-icon nc-chart-bar-32"></i>
         <p>Analytics</p>
-        <p hidden>STAFF</p>
       </sidebar-link>
-      <sidebar-link to="/corporate-pass-creation">
+      <sidebar-link v-if="this.user=='STAFF'" to="/corporate-pass-creation">
         <i class="nc-icon nc-badge"></i>
         <p>Create Passes</p>
-        <p hidden>STAFF</p>
       </sidebar-link>
-      <sidebar-link to="/corporate-pass-management">
+      <sidebar-link v-if="this.user=='STAFF'" to="/corporate-pass-management">
         <i class="nc-icon nc-ruler-pencil"></i>
         <p>Manage Passes</p>
-        <p hidden>STAFF</p>
       </sidebar-link>
-      <sidebar-link to="/notifications">
+      <sidebar-link  to="/notifications">
         <i class="nc-icon nc-bell-55"></i>
         <p>Notifications</p>
         <p hidden>STAFF,USER,GENERALOFFICE</p>
@@ -39,7 +34,6 @@
                       to="/booking">
           <i class="nc-icon nc-notes"></i>
           <p>Book Now</p>
-          <p hidden>STAFF,USER,GENERALOFFICE</p>
         </sidebar-link>
       </template>
     </side-bar> 
@@ -70,6 +64,11 @@
       DashboardContent,
       MobileMenu
 
+    },
+    data(){
+      return {
+        user: 'USER'
+      }
     },
     methods: {
       toggleSidebar () {

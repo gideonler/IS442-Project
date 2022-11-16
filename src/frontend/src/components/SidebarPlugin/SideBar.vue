@@ -23,8 +23,6 @@
                         @click="closeNavbar"
                         :link="link"
                         >
-            <i :class="link.icon"></i>
-            <p>{{link.name}}</p>
           </sidebar-link>
         </slot>
       </ul>
