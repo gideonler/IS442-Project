@@ -60,12 +60,12 @@ public class LoanService {
             if ((checkAttraction.equals(attractionName)) && (loanDate.equals(checkDate))){
                 loanedPasses.add(loan.getPassId());
             }
-            for (Pass pass : passList.get()){
-                String checkPassId = pass.getPassId();
-                if (!loanedPasses.contains(checkPassId)){
-                    passId = checkPassId;
-                    break;
-                }
+        }
+        for (Pass pass : passList.get()){
+            String checkPassId = pass.getPassId();
+            if (!loanedPasses.contains(checkPassId)){
+                passId = checkPassId;
+                break;
             }
         }
 
@@ -89,6 +89,7 @@ public class LoanService {
     public Loan addBooking(String userEmail, LocalDate loanDate, String attractionName, String loanId) {
     
         String passId = extractPassId(attractionName, loanDate);
+
         if (passId != ""){
             String contactNo = extractContactNo(userEmail);
             Loan loan = new Loan(userEmail, loanDate, attractionName, loanId);

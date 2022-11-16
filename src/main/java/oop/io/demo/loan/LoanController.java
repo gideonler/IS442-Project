@@ -112,7 +112,6 @@ public class LoanController {
     public Boolean checkBooking(String userEmail, LocalDate loanDate) {
         for (Loan loan : loanRepository.findAll()) {
             if (loan.getUserEmail().equals(userEmail) && loan.getLoanDate().equals(loanDate)) {
-                System.out.println(loanDate);
                 return false;
             }
         }
