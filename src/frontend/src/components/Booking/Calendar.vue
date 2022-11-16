@@ -22,12 +22,15 @@
       props:['selected_attraction'],
       data() {
         return {
+          componentKey:0,
           api: {
             get_avail_passes: "http://localhost:8080/loan/availpasses" ,
-            get_passes: 'http://localhost:8080/pass/passes/'
+            get_passes: 'http://localhost:8080/pass/passes/',
+            get_bookings: 'http://localhost:8080/loan/',
           },
+          loans_in_month: {},
+          curr_bookings: [],
           availabilities: [],
-          // selected_attraction: '',
           avail_passes: [],
           selected_date: '',
           selected_no_pass:'',
@@ -62,13 +65,48 @@
         }
       },
       created() {
-        console.log(this.selected_attraction)
+        this.getBookings();
         if(this.selected_attraction!= null){
           this.getPasses()
           this.loadData();
         }
     },
+    computed:{
+      hasExceeededForMonth(date){
+        var month = date.substring(0,7)
+        if(this.loans_in_month[month]>=2){
+          return true
+        }
+        return false
+      }
+    },
     methods: {
+      async getBookings() {
+        await axios
+            //change to user email
+            .get(this.api.get_bookings + "singaporesportsschooltest@outlook.com")
+            .then((response) => {
+                // console.log(response.data)
+                var loans_in_month= {}
+                this.curr_bookings = response.data;
+                var unique_ids= [];
+                for(var booking of this.curr_bookings){
+                  var month = booking.loanDate.substring(0,7)
+                  var loanId = booking.loanID
+                  if(this.containsKey(loans_in_month, month) && (!unique_ids.includes(loanId))){
+                    //alr exists and is unique
+                    loans_in_month[month]+= 1
+                    unique_ids.push(loanId)
+                  }else{
+                    loans_in_month[month]= 1 
+                }
+                this.loans_in_month= loans_in_month
+              }
+              })
+            .catch((error) => {
+                console.log(error.response);
+            });
+        },
       async getPasses(){
         await axios
           .get(this.api.get_passes + this.selected_attraction)
@@ -86,9 +124,7 @@
           .get(this.api.get_avail_passes)
           .then((response) => {
             this.total_loans = response.data
-            this.availabilities=  response.data[this.selected_attraction]
             var result= []
-
             const today = new Date()
             var tomorrow =  new Date()
             tomorrow.setDate(today.getDate() + 1)
@@ -105,18 +141,27 @@
                 avail_dates.push(yyyy+"-" +mm+ "-"+ dd)
             }
             var temp;
-            for(date of avail_dates){
-              if(this.containsKey(this.availabilities,date)){
-                //all available
-                if(this.availabilities[date]!=0){
-                  temp= { title: 'available', 'date': date,   display: 'background', passes_left: availabilities[date]  }
+
+            if(this.containsKey(this.total_loans,this.selected_attraction)){
+              this.availabilities=  response.data[this.selected_attraction]
+              for(date of avail_dates){
+                if(this.containsKey(this.availabilities,date)){
+                  //all available
+                  if(this.availabilities[date]!=0){
+                    temp= { title: 'available', 'date': date,   display: 'background', passes_left: this.availabilities[date]  }
+                  }
                 }
+                //all still available
+                else{
+                  temp= { title: 'available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
+                }
+                result.push(temp)
               }
-              //all still available
-              else{
-                temp= { title: 'available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
-              }
-              result.push(temp)
+            }else{
+              for(date of avail_dates){
+                  temp= { title: 'available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
+                  result.push(temp)
+                }
             }
 
             this.calendarOptions.events= result;
@@ -133,6 +178,9 @@
         },
         toggleWeekends: function() {
         this.calendarOptions.weekends = !this.calendarOptions.weekends // toggle the boolean!
+        },
+        forceRerender(){
+          this.componentKey+=1
         },
         handleDateClick: function(info){ 
           let availability=  info.dayEl.innerText.split("\n")[1];
@@ -154,10 +202,10 @@
     </script>
     <template>
       <div>
-        <FullCalendar :options="calendarOptions" />
+        <FullCalendar :key="componentKey" :options="calendarOptions" />
         <BookingPopUp :key="this.selected_date" :selected_date='this.selected_date' :no_avail="this.selected_no_pass" :attraction_name="this.selected_attraction" ></BookingPopUp>
         <WaitingListPopUp></WaitingListPopUp>
-        <BookingConfirmation></BookingConfirmation>
+        <BookingConfirmation v-on:booking-confirmation="forceRerender"></BookingConfirmation>
         <WaitingListConfirmation></WaitingListConfirmation>   
       </div>
     </template>

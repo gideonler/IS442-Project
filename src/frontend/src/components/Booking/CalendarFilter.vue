@@ -2,14 +2,7 @@
     <div>
         <strong>Filter Booking Calendar</strong>
         <div class="row mb-3">
-            <b-form-select class="col-md-6 mx-3" v-model="selected" :options="options" size="sm" ></b-form-select>
-            <b-form-checkbox-group
-            class="col-md-5 mx-1"
-            id="availability"
-            v-model="selected_avail"
-            :options="options_avail"
-            :aria-describedby="ariaDescribedby"
-            ></b-form-checkbox-group>  
+            <b-form-select class="col-md-6 mx-3" v-model="selected" :options="options" size="sm" ></b-form-select> 
         </div>
     </div>
         
@@ -31,10 +24,6 @@
             get_attractions: "http://localhost:8080/attraction/attractions"
           },
             options: [],
-            options_avail: [
-            { text: 'Available', value: 'available' },
-            { text: 'Waiting List', value: 'unavailable' }
-            ]
             }
         },
         watch: {
