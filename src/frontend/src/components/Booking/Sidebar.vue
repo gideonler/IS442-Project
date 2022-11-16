@@ -12,12 +12,11 @@
 
         <div class="scroll px-3 bg-booking " tabindex="0">
             <div v-if="bookingList.length > 1">
-                <ul class="no-bullets" v-for="(booking, b) in bookingList" :key="b">
+                <ul class="no-bullets" v-for="(booking, b) in bookingList" :key="b" v-if="booking.status != 'CANCELLED'">
                     <li>Attraction Name: {{ booking.attractionName }}</li>
                     <li>Loan Date: {{ booking.loanDate.split("T")[0] }}</li>
-                    <li>Pass Number: {{ booking.passNo }}</li>
+                    <li>Pass ID: {{ booking.passId }}</li>
                     <li>Booking Status: {{ booking.status }}</li>
-                    <li>Pass Status: {{ getPassStatus(booking.loanID) }}</li>
                     <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info" @click="sendInfo(booking.loanID)">
                         Cancel booking
                     </b-button>
@@ -28,7 +27,7 @@
         </div>
 
         <b-modal id="modal-1" title="Booking Cancellation" alignment="center">
-            <p class="my-4">Are you sure you want to cancel your booking? {{ bookingId }}</p>
+            <p class="my-4">Are you sure you want to cancel your booking?</p>
             <template #modal-footer>
                 <b-button variant="danger" @click="$bvModal.hide('modal-1')">No</b-button>
                 <b-button variant="primary" @click="cancelBooking(bookingId); $bvModal.hide('modal-1')">Yes</b-button>
@@ -36,14 +35,10 @@
         </b-modal>
 
         <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Note</p>
-        <ul>
-            <li>Passes can be collected 1 day before the trip from the General Office</li>
-            <li>Passes must be returned to the General Office the day after the trip</li>
-            <li> Report loss and found <a href="#"> here </a></li>
-        </ul>
+        <p class="px-3">Click <a href="/pass-details"> here </a> for more information regarding the passes</p>
 
         <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Contact</p>
-        <p class="px-3"> General Office Phone: 6766 0100</p>
+        <p class="px-3"> General Office Phone: +65 6766 0100</p>
         <!-- <ul>
             <li>General Office Phone: 12345678</li>
             <li>For futher queries, please contact
@@ -73,9 +68,8 @@ export default {
         return {
             number: "",
             month: "",
-            bookingList: [{ attractionName: "", loanDate: "", passNo: "", status: "", loanID: "" }],
+            bookingList: [{ attractionName: "", loanDate: "", passId: "", status: "", loanID: "" }],
             bookingId: "",
-            passStatus: "",
             api: {
                 numberBooking: "http://localhost:8080/loan/getbookingcount/",
                 bookingList: "http://localhost:8080/loan/",
@@ -121,24 +115,6 @@ export default {
                 });
         },
 
-        getPassStatus(loanID) {
-            // return axios
-            // .put(this.api.passStatus), {
-            //     // "loanId": "16/11/2022singaporesportsschooltest@outlook.com5",
-            //     "loanId": loanID,
-            //     "passStatus": "INOFFICE"
-            // }
-            // .then((response) => {
-            //     console.log(response.data)
-            //     this.passStatus = response.data;
-            //     return this.passStatus;
-            // })
-            // .catch((error) => {
-            //     console.log(error.response);
-            // });
-            return "INOFFICE";
-        },
-
         sendInfo(loanID) {
             this.bookingId = loanID;
         },
@@ -158,12 +134,14 @@ export default {
             } else {
                 return axios
                 .get(this.api.cancelBooking, {
-                    // "loanId": "bookingId"
-                    "loanId": "16/11/2022singaporesportsschooltest@outlook.com5"
+                    params: {
+                        loanId: bookingId
+                    }
                 })
                 .then((response) => {
                     console.log(response.data);
                     this.$alert("Booking cancelled successfully");
+                    window.location.reload();
                 })
                 .catch((error) => {
                     console.log(error.response);

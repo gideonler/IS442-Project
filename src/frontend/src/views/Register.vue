@@ -59,7 +59,6 @@ import axios from "axios";
 import { validationMixin } from "vuelidate";
 import { required, maxLength, helpers } from "vuelidate/lib/validators";
 const email_validation = helpers.regex('email', /(?:[a-z0-9]+@nysi.org.sg|[a-z0-9]+@sportsschool.edu.sg)/);
-import authentication from "./Authentication.vue"
 
 export default {
   mixins: [validationMixin],
@@ -74,6 +73,7 @@ export default {
       },
     };
   },
+  props: ['email'],
   validations: {
     form: {
       name: {
@@ -85,9 +85,6 @@ export default {
         email_validation
       }
     }
-  },
-  components: {
-    authentication
   },
   methods: {
     validateState(name) {
@@ -124,10 +121,15 @@ export default {
         })
         .then((response) => {
           console.log(response.data);
+          // this.$alert(response.data.message)
           this.$router.push('/authentication')
         })
         .catch((error) => {
           console.log(error);
+          console.C
+          if (error.response.request.reponse == "{\"message\":\"Error: User with this email is already registered. Please check email for verification link.\"}") {
+            this.$alert("Error: User with this email is already registered. Please check email for verification link.")
+          }
         });
     },
     login() {

@@ -1,25 +1,26 @@
 <template>
     <div class="users-admin">
-        <div class="container my-4">
-
+        <div class="container">
             <div class="row">
                 <div class="col">
                     <h1>All Users</h1>
                 </div>
                 <div class="col text-right">
-                    <b-dropdown id="dropdown-buttons" text="Filter By" variant="info">
-                        <b-dropdown-item-button v-b-modal.modal-1 @click="filterStaff('Staff')">View Staff Only
+                    <b-dropdown id="dropdown-buttons" text="Filter By" variant="warning">
+                        <b-dropdown-item-button @click="getUsers()">View All Users
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-b-modal.modal-2 @click="filterAdmin('Admin')">View Admin Only
+                        <b-dropdown-item-button @click="filterByType('STAFF')">View Staff Only
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-b-modal.modal-3 @click="filterGO('GO')">View GO Only
+                        <b-dropdown-item-button @click="filterByType('ADMIN')">View Admin Only
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button @click="filterByType('GENERALOFFICE')">View GO Only
                         </b-dropdown-item-button>
                     </b-dropdown>
                 </div>
             </div>
 
             <div>
-                <table class="table mx-1 w-auto text-center">
+                <table class="table text-center">
                     <thead>
                         <tr>
                             <th scope="col" id="Name">Name</th>
@@ -132,7 +133,7 @@ export default {
         return {
             usersList: [{ name: "", email: "", userType: "", outstandingFees: "", verified: "" }],
             email: '',
-            filter: 'nofilter',
+            filter: false,
             api: {
                 users: "http://localhost:8080/usermanagement/users",
                 filterUsers: "http://localhost:8080/usermanagement/usersbytype",
@@ -148,10 +149,10 @@ export default {
     },
 
     mounted() {
-        if (this.filter == 'nofilter') {
+        if (this.filter == false) {
             this.getUsers();
         } else {
-
+            this.filterByType();
         }
     },
 
@@ -168,12 +169,17 @@ export default {
                 });
         },
 
-        filterStaff() {
-            return axios
-            .get(this.api.filterUsers)
+        async filterByType(userType) {
+            console.log(userType)
+            await axios
+            .get(this.api.filterUsers, {params:{
+                "userType": userType
+            }
+            })
                 .then((response) => {
                     console.log(response.data);
                     this.usersList = response.data;
+                    this.filter = true;
                 })
                 .catch((error) => {
                     console.log(error.response);

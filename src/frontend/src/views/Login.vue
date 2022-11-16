@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-top: 15%; margin-left: 10%; margin-right: 10%">
     <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
       <li class="nav-item" role="presentation">
         <a class="nav-link active" id="tab-login" data-mdb-toggle="pill" href="#" role="tab" aria-controls="pills-login"
@@ -85,7 +85,7 @@ export default {
       },
       password: {
         required,
-        minLength: minLength(6)
+        // minLength: minLength(6)
       }
     }
   },
@@ -131,6 +131,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
+          this.$alert("Invalid email or password")
         });
     },
 

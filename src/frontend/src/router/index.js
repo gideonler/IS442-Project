@@ -19,6 +19,7 @@ import Register from '../views/Register.vue'
 import Authentication from '../views/Authentication.vue'
 import GOPass from '../views/GOPassManagement.vue'
 import UsersManagement from '../views/UsersManagement.vue'
+import PassDetails from '../views/PassDetails.vue'
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
 
@@ -43,6 +44,7 @@ const routes = [
   { path: '/register', component: Register },
   { path: '/gopass', component: GOPass },
   { path: '/users', component: UsersManagement },
+  { path: '/pass-details', component: PassDetails },
 ]
 
 const router = new VueRouter({

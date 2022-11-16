@@ -50,6 +50,7 @@
 
             <b-button type="submit" variant="primary">Register</b-button>
 
+            <register/> register ( {{email_address}})
         </b-form>
     </div>
 </template>
@@ -58,14 +59,17 @@
 import axios from "axios";
 import { validationMixin } from "vuelidate";
 import { required, minLength, numeric, sameAs } from "vuelidate/lib/validators";
+import register from "./Register.vue"
 
 export default {
     mixins: [validationMixin],
+    components: {
+        register
+    },
     data() {
-        props: ["email"]
         return {
+            email: "",
             form: {
-                email: null,
                 password: null,
                 cpassword: null,
                 activation: null,

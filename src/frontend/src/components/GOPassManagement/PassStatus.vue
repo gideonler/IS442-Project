@@ -10,14 +10,17 @@
         </b-form>
 
         <div class="row gx-3">
-            <div class="card col-md-5 mx-2" v-if="bookingList.length > 1" v-for="(booking, b) in bookingList" :key="b">
-                <h5 class="card-header">
+            <div class="card col-md-5 mx-4" v-if="bookingList[0].attractionName.length > 0" v-for="(booking, b) in bookingList" :key="b"> 
+                <small class="text-white"> {{getPassStatus(booking.passId)}} </small>
+                <h3 class="card-header font-weight-bold">
                     {{ booking.attractionName }}
-                </h5>
+                </h3>
                 <div class="card-body">
                     <p class="card-text">Loan Date: {{ booking.loanDate.split("T")[0] }}</p>
-                    <p class="card-text">Pass Number: {{ booking.passNo }}</p>
+                    <p class="card-text">Pass ID: {{ booking.passId }}</p>
                     <p class="card-text">Booking Status: {{ booking.status }}</p>
+                    <p class="card-text">Current Pass Status: {{ passLocation }}</p>
+
                     <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info" @click="sendInfo(booking.loanID)">
                         Edit Pass Status
                     </b-button>
@@ -25,7 +28,6 @@
             </div>
         </div>
         <b-modal id="modal-1" title="Update Pass Status" alignment="center">
-            <!-- <p class="my-4">Change pass status to:</p> -->
             <template #modal-footer>
                 <b-button variant="success" @click="passStatus(bookingId, 'INOFFICE'); $bvModal.hide('modal-1')">
                     Returned</b-button>
@@ -46,15 +48,22 @@ export default {
             form: {
                 email: '',
             },
-            bookingList: [{ attractionName: "", loanDate: "", passNo: "", status: "", loanID: "" }],
+            bookingList: [{ attractionName: "", loanDate: "", passId: "", status: "", loanID: "" }],
             bookingId: "",
+            passLocation: "",
             api: {
                 bookingList: "http://localhost:8080/loan/",
                 passStatus: "http://localhost:8080/passstatus/change",
                 emailCollected: "http://localhost:8080/email/collected",
+                passDetails: "http://localhost:8080/pass/",
             }
         }
     },
+
+    created() {
+        this.getPassStatus(this.passId)       
+    },
+
     methods: {
         onSubmit(event) {
             event.preventDefault()
@@ -84,32 +93,48 @@ export default {
                 .then((response) => {
                     console.log(response.data)
                     this.$alert(response.data);
+                    // this.getPassStatus(attractionName, passNo);
 
-                    if (status == "ONLOAN") {
-                        return axios
-                            .post(this.api.emailCollected, {
-                                "email": this.form.email,
-                            },
-                                {
-                                    headers: {
-                                        'Access-Control-Allow-Origin': '*',
-                                        'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
-                                        'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-                                    },
-                                })
-                            .then((response) => {
-                                console.log(response.data)
-                                this.$alert(response.data);
-                            })
-                            .catch((error) => {
-                                console.log(error.response);
-                            });
-                    }
+                    // if (status == "ONLOAN") {
+                    //     console.log(this.form.email)
+                    //     return axios
+                    //         .post(this.api.emailCollected, {
+                    //             "email": this.form.email,
+                    //         })
+                    //             // {
+                    //             //     headers: {
+                    //             //         'Access-Control-Allow-Origin': '*',
+                    //             //         'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
+                    //             //         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+                    //             //     },
+                    //             // })
+                    //         .then((response) => {
+                    //             console.log(response.data)
+                    //             this.$alert(response.data);
+                    //         })
+                    //         .catch((error) => {
+                    //             console.log(error.response);
+                    //         });
+                    // }
                 })
                 .catch((error) => {
                     console.log(error.response);
                 });
-        }
+        },
+
+        async getPassStatus(passId) {
+            await axios
+                .get(this.api.passDetails + passId)
+                .then((response) => {
+                    console.log(response.data.passStatus)
+                    this.passLocation = response.data.passStatus;
+                    console.log(this.passLocation)
+                    // return this.passLocation;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
+        },
     },
 }
 </script>
