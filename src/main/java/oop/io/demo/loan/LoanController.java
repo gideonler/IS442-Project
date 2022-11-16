@@ -17,6 +17,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -71,13 +73,12 @@ public class LoanController {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate loanDate = LocalDate.parse(dateString, dateFormat);
 
-        System.out.println(loanDate);
         
         loanService = new LoanService(loanRepository, passRepository, userRepository);
 
         if(noOfPass==0) return ResponseEntity.badRequest().body("Please enter the number of passes you want (1 or 2)");
         
-        if (checkBooking(userEmail, loanDate) && countBooking(userEmail)<2) {
+        if (checkBooking(userEmail, loanDate)) {
             if (noOfPass == 1) {
                 Loan loan = loanService.addBooking(userEmail, loanDate, attractionName, "1");
                 if (loan != null) {
@@ -122,10 +123,9 @@ public class LoanController {
     @GetMapping("/getbookingcount")
     public int countBooking(@RequestParam("userEmail") String userEmail) {
         ArrayList<Loan> loan = loanRepository.findAllByUserEmail(userEmail);
-        List<LocalDate> dates = loan.stream().map(l->l.getLoanDate()).filter(d->d.getMonth()==LocalDate.now().getMonth()).toList();
-        Set<LocalDate> uniqueDates = new HashSet<>(dates);
+        List<Loan> thisMonthsLoans = loan.stream().filter(l-> l.getLoanDate().getMonth().equals(LocalDate.now().getMonth())).collect(Collectors.toList());
         if (!loan.isEmpty()) {
-            return uniqueDates.size();
+            return thisMonthsLoans.size();
         } else {
             return 0;
         }
