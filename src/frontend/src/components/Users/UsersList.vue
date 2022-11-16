@@ -50,8 +50,7 @@
                                 </b-dropdown>
                             </td>
                             <td class="text-nowrap">
-                                <b-button v-b-modal.modal-4 class="btn-sm" variant="info"
-                                    @click="sendInfo(user.email)">
+                                <b-button v-b-modal.modal-4 class="btn-sm" variant="info" @click="sendInfo(user.email)">
                                     Update User Type
                                 </b-button>
                             </td>
@@ -73,8 +72,7 @@
                                 </b-dropdown>
                             </td>
                             <td class="text-nowrap">
-                                <b-button v-b-modal.modal-4 class="btn-sm" variant="info"
-                                    @click="sendInfo(user.email)">
+                                <b-button v-b-modal.modal-4 class="btn-sm" variant="info" @click="sendInfo(user.email)">
                                     Update User Type
                                 </b-button>
                             </td>
@@ -172,10 +170,11 @@ export default {
         async filterByType(userType) {
             console.log(userType)
             await axios
-            .get(this.api.filterUsers, {params:{
-                "userType": userType
-            }
-            })
+                .get(this.api.filterUsers, {
+                    params: {
+                        "userType": userType
+                    }
+                })
                 .then((response) => {
                     console.log(response.data);
                     this.usersList = response.data;
@@ -288,3 +287,9 @@ export default {
     },
 };
 </script>
+
+<style>
+    .table{
+        font-size: 13px;
+    }
+</style>

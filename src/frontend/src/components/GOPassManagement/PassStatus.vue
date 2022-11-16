@@ -93,29 +93,6 @@ export default {
                 .then((response) => {
                     console.log(response.data)
                     this.$alert(response.data);
-                    // this.getPassStatus(attractionName, passNo);
-
-                    // if (status == "ONLOAN") {
-                    //     console.log(this.form.email)
-                    //     return axios
-                    //         .post(this.api.emailCollected, {
-                    //             "email": this.form.email,
-                    //         })
-                    //             // {
-                    //             //     headers: {
-                    //             //         'Access-Control-Allow-Origin': '*',
-                    //             //         'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
-                    //             //         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-                    //             //     },
-                    //             // })
-                    //         .then((response) => {
-                    //             console.log(response.data)
-                    //             this.$alert(response.data);
-                    //         })
-                    //         .catch((error) => {
-                    //             console.log(error.response);
-                    //         });
-                    // }
                 })
                 .catch((error) => {
                     console.log(error.response);
@@ -129,7 +106,6 @@ export default {
                     console.log(response.data.passStatus)
                     this.passLocation = response.data.passStatus;
                     console.log(this.passLocation)
-                    // return this.passLocation;
                 })
                 .catch((error) => {
                     console.log(error.response);

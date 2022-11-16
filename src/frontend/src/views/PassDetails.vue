@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="row d-flex">
-            <div class="card col-md-5 mr-5" v-for="(booking, b) in bookingList" :key="b">
+            <div class="card col-md-5 mr-5" v-if="bookingList[0].attractionName.length > 0" v-for="(booking, b) in bookingList" :key="b">
                 <h5 class="card-header">
                     {{ booking.attractionName }}
                 </h5>
@@ -25,21 +25,24 @@
                     <p class="card-text">Loan Date: {{ booking.loanDate.split("T")[0] }}</p>
                     <p class="card-text">Pass ID: {{ booking.passId }}</p>
                     <p class="card-text">Booking Status: {{ booking.status }}</p>
-                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info" @click="getPassStatus(booking.attractionName, booking.passNo); borrower(booking.passId, booking.loanDate)">
+                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info"
+                        @click="getPassStatus(booking.passId); previousBorrower(booking.passId, booking.loanDate)">
                         Check Pass Status
                     </b-button>
-                    <b-button v-b-modal.modal-2 class="btn-sm ml-1 mt-1" variant="danger" @click="sendInfo(booking.attractionName, booking.passNo)">
+                    <b-button v-b-modal.modal-2 class="btn-sm ml-1 mt-1" variant="danger"
+                        @click="sendInfo(booking.attractionName, booking.passNo)">
                         Report Pass Loss
                     </b-button>
                 </div>
             </div>
         </div>
         <b-modal id="modal-1" title="Pass Status" alignment="center">
-            <p>Pass Status: {{passStatus}}</p>
-            <ul>Previous Day Borrower: 
-                <li> {{borrower.email}} </li>
-                <li> {{borrower.contactNo}} </li>
-                <li> {{borrower.name}} </li>
+            <p>Pass Status: {{ passStatus }}</p>
+            <p>Previous Day Borrower:</p>
+            <ul>
+                <li> {{ borrower.email }} </li>
+                <li> {{ borrower.contactNo }} </li>
+                <li> {{ borrower.name }} </li>
             </ul>
             <template #modal-footer>
                 <b-button variant="success" @click="$bvModal.hide('modal-1')">Ok</b-button>
@@ -72,7 +75,6 @@ export default {
         return {
             bookingList: [{ attractionName: "", loanDate: "", passId: "", status: "", loanID: "" }],
             bookingId: "",
-            passId: "",
             passStatus: "",
             previousDate: "",
             // passDetails: [{ passId: "", passNo: "", attractionName: "", passStatus: "" }],
@@ -83,7 +85,7 @@ export default {
                 reportLoss: "http://localhost:8080/loan/lost",
                 passDetails: "http://localhost:8080/pass/",
                 attractionDetails: "http://localhost:8080/attraction/",
-                borrower: "http://localhost:8080/previousborrower"
+                previousBorrower: "http://localhost:8080/loan/previousborrower"
             }
         };
     },
@@ -91,14 +93,14 @@ export default {
     mounted() {
         this.getBookingList();
         this.getPassStatus(this.passId);
-        this.borrower(this.passId, this.previousDate);
+        this.previousBorrower(this.passId, this.loanDate);
     },
 
     methods: {
         getBookingList() {
             return axios
                 // .get(this.api.bookingList + this.form.email)
-                .get(this.api.bookingList + "gideonTest3@sss.com")
+                .get(this.api.bookingList + "oopg2t4@outlook.com")
                 .then((response) => {
                     console.log(response.data)
                     this.bookingList = response.data;
@@ -150,16 +152,64 @@ export default {
 
         async getPassStatus(passId) {
             console.log(passId)
-            await axios
-                .get(this.api.passDetails + passId)
+            if (passId != null) {
+                await axios
+                    .get(this.api.passDetails + passId,
+                        {
+                            headers: {
+                                'Access-Control-Allow-Origin': '*',
+                                'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
+                                'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+                            },
+                        }
+                    )
+                    .then((response) => {
+                        console.log(response.data.passStatus)
+                        this.passStatus = response.data.passStatus;
+                    })
+                    .catch((error) => {
+                        console.log(error.response);
+                    });
+            }
+        },
+        previousBorrower(passId, date) {
+            var yesterday = new Date(date);
+            yesterday.setDate(yesterday.getDate() - 1);
+            var yesterdaySplit = yesterday.toISOString().split(' ');
+            var yesterdayDate = yesterdaySplit[0].split('T');
+            yesterdayDate = yesterdayDate[0];
+
+            console.log(passId)
+            console.log(yesterdayDate)
+
+            return axios
+                .get(this.api.previousBorrower,
+                    {
+                        params: {
+                            passId: passId,
+                            date: yesterdayDate
+                        }
+                    },
+                    // {
+                    //     headers: {
+                    //         'Access-Control-Allow-Origin': '*',
+                    //         'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
+                    //         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+                    //     },
+                    // }
+                )
                 .then((response) => {
-                    console.log(response.data.passStatus)
-                    this.passStatus = response.data.passStatus;
+                    console.log(response.data)
+                    this.borrower = response.data;
+                    if (response.data == "No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.") {
+                        this.$alert("No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.");
+                        this.borrower = { email: "None", contactNo: "None", name: "None" };
+                    }
                 })
                 .catch((error) => {
                     console.log(error.response);
                 });
-        },
+        }
     }
 };
 
