@@ -43,10 +43,10 @@ public class CsvExportService {
             List<Loan> loans = loanRepository.findAll();
 
             CSVWriter writer = new CSVWriter(outputfile); 
-            String[] header = {"LoanId", "LoanDate", "AttractionName", "UserEmail", "ContactNo", "PassNo", "Status"};
+            String[] header = {"LoanId", "LoanDate", "AttractionName", "UserEmail", "ContactNo", "PassId", "Status"};
             writer.writeNext(header);
             for (Loan loan : loans) {
-                String[] data = {loan.getLoanID(), loan.getLoanDate().toString(), loan.getAttractionName(), loan.getUserEmail(), loan.getContactNo(), loan.getPassNo(), loan.getStatus().toString()};
+                String[] data = {loan.getLoanID(), loan.getLoanDate().toString(), loan.getAttractionName(), loan.getUserEmail(), loan.getContactNo(), loan.getPassId(), loan.getStatus().toString()};
                 writer.writeNext(data);
             }
             writer.close();

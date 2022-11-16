@@ -1,13 +1,13 @@
 package oop.io.demo.loan;
-import java.util.*;
+import java.time.LocalDate;
 
 public class LoanRequest {
     private String userEmail;
     private String attractionName;
-    private Date loanDate;
+    private String loanDate;
     private int noOfPass;
 
-    public LoanRequest(String userEmail, String attractionName, Date loanDate, int noOfPass){
+    public LoanRequest(String userEmail, String attractionName, String loanDate, int noOfPass){
         this.userEmail = userEmail;
         this.attractionName = attractionName;
         this.loanDate = loanDate;
@@ -24,7 +24,7 @@ public class LoanRequest {
         
     }
 
-    public Date getLoanDate(){
+    public String getLoanDate(){
         return this.loanDate;
     }
     

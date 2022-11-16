@@ -27,7 +27,7 @@
             components: { Calendar, CalendarFilter, Sidebar },
             data(){
               return {
-                selected_attraction: '',
+                selected_attraction: null,
               }
             },
             created() {
@@ -39,7 +39,4 @@
               }
             }
         };
-
 </script>
-
-

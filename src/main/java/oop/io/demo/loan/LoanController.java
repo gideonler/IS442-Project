@@ -2,6 +2,10 @@ package oop.io.demo.loan;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.pass.PassRepository;
+import oop.io.demo.user.User;
+import oop.io.demo.user.UserPublicDetails;
 import oop.io.demo.user.UserRepository;
+import oop.io.demo.user.UserService;
 import oop.io.demo.mail.*;
 import oop.io.demo.mail.payload.BookingRequest;
 
@@ -47,16 +54,16 @@ public class LoanController {
     private EmailSender emailSender;
 
     @PostMapping("/book")
-    public String addBooking(@RequestBody LoanRequest loanRequest) {
+    public ResponseEntity addBooking(@RequestBody LoanRequest loanRequest) {
 
         String userEmail = loanRequest.getUserEmail();
-        Date loanDate = loanRequest.getLoanDate();
+        String dateString = loanRequest.getLoanDate();
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate loanDate = LocalDate.parse(dateString, dateFormat);
         String attractionName = loanRequest.getAttractionName();
         int noOfPass = loanRequest.getNoOfPass();
         loanService = new LoanService(loanRepository, passRepository, userRepository);
-        DateFormat monthFormat = new SimpleDateFormat("MM");
-        String strMonth = monthFormat.format(loanDate);
-
+        if(noOfPass==0) return ResponseEntity.badRequest().body("Please enter the number of passes you want (1 or 2)");
         if (checkBooking(userEmail, loanDate)) {
             countBooking(userEmail);
             if (noOfPass == 1) {
@@ -66,9 +73,9 @@ public class LoanController {
                         BookingRequest booking = new BookingRequest(userEmail, loan.getLoanID());
                         emailSender.sendAttachmentMessage(booking);
                     } catch (Exception e) {
-                        return "Booking error.";
+                        return ResponseEntity.badRequest().body("Booking error.");
                     }
-                    return "One pass was created for " + attractionName + " for use on " + loanDate;
+                    return ResponseEntity.ok("One pass was created for " + attractionName + " for use on " + loanDate);
                 }
             } else {
                 Loan loan1 = loanService.addBooking(userEmail, loanDate, attractionName, "1");
@@ -80,16 +87,16 @@ public class LoanController {
                         BookingRequest booking2 = new BookingRequest(userEmail, loan2.getLoanID());
                         emailSender.sendAttachmentMessage(booking2);
                     } catch (Exception e) {
-                        return "Booking error.";
+                        return ResponseEntity.badRequest().body("Booking error.");
                     }
-                    return "Two passes were created for " + attractionName + " for use on " + loanDate;
+                    return ResponseEntity.ok("Two passes were created for " + attractionName + " for use on " + loanDate);
                 }
             }
         }
-        return "Booking unsuccessful!";
+        return ResponseEntity.badRequest().body("Booking unsuccessful!");
     }
 
-    public Boolean checkBooking(String userEmail, Date loanDate) {
+    public Boolean checkBooking(String userEmail, LocalDate loanDate) {
         Boolean status = true;
         for (Loan loan : loanRepository.findAll()) {
             if (loan.getUserEmail().equals(userEmail) && loan.getLoanDate().equals(loanDate)) {
@@ -117,17 +124,13 @@ public class LoanController {
         Optional<Loan> loan = this.loanRepository.findById(loanId);
         if (loan != null) {
             return ResponseEntity.ok("Loan ID is: " +loan);
-
         } else {
             return ResponseEntity.ok("No loans made" );
-
         }
-
     }
 
     @GetMapping("/cancel")
-    public ResponseEntity cancellLoan(@RequestBody Map<String, String> loanIdMap) {
-        String loanId = loanIdMap.get("loanId");// key JSON in postman
+    public ResponseEntity cancellLoan(@RequestParam("loanId") String loanId) {
         ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository)
                 .changeLoanStatus(loanId, LOANSTATUS.CANCELLED);
         return responseEntity;
@@ -141,6 +144,7 @@ public class LoanController {
         return responseEntity;
     }
 
+
     @DeleteMapping("/delete/{loanId}")
     public ResponseEntity deleteBooking(@RequestBody Map<String, String> loanIdMap) {
         String loanId = loanIdMap.get("loanId");
@@ -151,6 +155,29 @@ public class LoanController {
         } else {
             return ResponseEntity.ok("Loan: " + loan + " was not found.");
         }
+    }
+
+    //GET previous borrower
+    @GetMapping("/previousborrower")
+    public ResponseEntity getPreviousBorrower(@RequestParam(value="passId") String passId, @RequestParam(value="date") String dateString) {
+        LocalDate loanDate = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        System.out.println(loanDate);
+        UserService userService = new UserService(userRepository);
+        List<Loan> loan = loanRepository.findAllByPassId(passId);
+        System.out.println(loan);
+        for(Loan l: loan) {
+            if(l.getLoanDate().equals(loanDate.minusDays(1))) {
+                return ResponseEntity.ok(userService.getPublicUserDetailsByEmail(l.getUserEmail()));
+            }
+        } 
+        if(loanDate.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+            for(Loan l: loan) {
+                if(l.getLoanDate().equals(loanDate.minusDays(2))) {
+                    return ResponseEntity.ok(userService.getPublicUserDetailsByEmail(l.getUserEmail()));
+                }
+            } 
+        }
+        return ResponseEntity.ok("No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.");
     }
 
     @GetMapping("/{userEmail}")
@@ -172,9 +199,7 @@ public class LoanController {
             ArrayList<Loan> reminderLoans = loanRepository.findAllByStatus("CONFIRMED");
             ArrayList<Loan> savedLoans = new ArrayList<>();
             for (Loan loan : reminderLoans) {
-                Date currentDate = new Date();
-
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
+                LocalDate currentDate = LocalDate.now();
 
                 System.out.println(currentDate.compareTo(loan.getDueDate()) < 0);
                 if (currentDate.compareTo(loan.getDueDate()) > 0) {
@@ -193,9 +218,8 @@ public class LoanController {
         }
     }
 
-    public static boolean isSameDay(Date date1, Date date2) {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
-        return fmt.format(date1).equals(fmt.format(date2));
+    public static boolean isSameDay(LocalDate date1, LocalDate date2) {
+        return date1.equals(date2);
     }
 
     @Scheduled(cron = "0 0 9 * * MON-FRI") // Reminder sent at 9am 1 day before
@@ -206,12 +230,8 @@ public class LoanController {
             ArrayList<Loan> reminderLoans = loanRepository.findAllByStatus("CONFIRMED");
             ArrayList<Loan> savedLoans = new ArrayList<>();
             for (Loan loan : reminderLoans) {
-                Date currentDate = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(loan.getDueDate());
-                cal.add(Calendar.DAY_OF_YEAR, -1);
-                Date oneDayBefore = cal.getTime();
+                LocalDate currentDate = LocalDate.now();
+                LocalDate oneDayBefore = currentDate.minusDays(1);
 
                 if (isSameDay(currentDate, oneDayBefore)) {
                     loan.setStatus(LOANSTATUS.OVERDUE);

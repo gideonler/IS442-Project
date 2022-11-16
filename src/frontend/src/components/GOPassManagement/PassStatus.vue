@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="padding-bottom: 30px">
         <b-form @submit="onSubmit">
             <b-form-group id="input-group-1" label="Email address:" label-for="input-1">
                 <b-form-input id="input-1" v-model="form.email" type="email" placeholder="Enter email" required>
@@ -9,20 +9,21 @@
             <b-button type="submit" variant="primary" class="mb-4">Submit</b-button>
         </b-form>
 
-        <div class="card" v-if="bookingList.length > 1" v-for="(booking, b) in bookingList" :key="b">
-            <h5 class="card-header">
-                {{ booking.attractionName }}
-            </h5>
-            <div class="card-body">
-                <p class="card-text">Loan Date: {{ booking.loanDate.split("T")[0] }}</p>
-                <p class="card-text">Pass Number: {{ booking.passNo }}</p>
-                <p class="card-text">Booking Status: {{ booking.status }}</p>
-                <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info" @click="sendInfo(booking.loanID)">
-                    Edit Pass Status
-                </b-button>
+        <div class="row gx-3">
+            <div class="card col-md-5 mx-2" v-if="bookingList.length > 1" v-for="(booking, b) in bookingList" :key="b">
+                <h5 class="card-header">
+                    {{ booking.attractionName }}
+                </h5>
+                <div class="card-body">
+                    <p class="card-text">Loan Date: {{ booking.loanDate.split("T")[0] }}</p>
+                    <p class="card-text">Pass Number: {{ booking.passNo }}</p>
+                    <p class="card-text">Booking Status: {{ booking.status }}</p>
+                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info" @click="sendInfo(booking.loanID)">
+                        Edit Pass Status
+                    </b-button>
+                </div>
             </div>
         </div>
-
         <b-modal id="modal-1" title="Update Pass Status" alignment="center">
             <!-- <p class="my-4">Change pass status to:</p> -->
             <template #modal-footer>
@@ -83,26 +84,27 @@ export default {
                 .then((response) => {
                     console.log(response.data)
                     this.$alert(response.data);
-                    this.emailCollected(this.form.email);
-                })
-                .catch((error) => {
-                    console.log(error.response);
-                });
-        },
 
-        emailCollected(email) {
-            console.log(email);
-            return axios
-                .post(this.api.emailCollected, {
-                    "email": email,
-                }, {
-                    // headers: {
-                    //     "Access-Control-Allow-Origin": true
-                    // }
-                })
-                .then((response) => {
-                    console.log(response.data)
-                    this.$alert(response.data);
+                    if (status == "ONLOAN") {
+                        return axios
+                            .post(this.api.emailCollected, {
+                                "email": this.form.email,
+                            },
+                                {
+                                    headers: {
+                                        'Access-Control-Allow-Origin': '*',
+                                        'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
+                                        'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+                                    },
+                                })
+                            .then((response) => {
+                                console.log(response.data)
+                                this.$alert(response.data);
+                            })
+                            .catch((error) => {
+                                console.log(error.response);
+                            });
+                    }
                 })
                 .catch((error) => {
                     console.log(error.response);

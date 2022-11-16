@@ -1,6 +1,8 @@
 package oop.io.demo.loan;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import javax.persistence.Column;
 
@@ -8,13 +10,11 @@ import javax.persistence.Column;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.Id;
 
-
-
 public class Loan {
 
-    private Date loanDate;
+    private LocalDate loanDate;
     @Column(nullable = false)
-    private Date dueDate;
+    private LocalDate dueDate;
 
     private String attractionName;
 
@@ -27,7 +27,7 @@ public class Loan {
 
     private String name;
     private String contactNo;
-    private String passNo;
+    private String passId;
 
 
     private LOANSTATUS status;
@@ -37,7 +37,7 @@ public class Loan {
     public Loan() {
     }
 
-    public Loan(String userEmail, Date loanDate, String attractionName) {
+    public Loan(String userEmail, LocalDate loanDate, String attractionName) {
         this.loanId = userEmail;
         this.loanDate = loanDate;// the date where the user is making the booking
         this.attractionName = attractionName;
@@ -45,7 +45,7 @@ public class Loan {
         this.status = LOANSTATUS.CONFIRMED;
     }
 
-    public Loan(String userEmail, Date loanDate, String attractionName, String loanId) {
+    public Loan(String userEmail, LocalDate loanDate, String attractionName, String loanId) {
         this.loanId = loanId;
         this.loanDate = loanDate;// the date where the user is making the booking
         this.attractionName = attractionName;
@@ -56,12 +56,10 @@ public class Loan {
     }
 
     public void setLoanId() {
-        SimpleDateFormat dateFor = new SimpleDateFormat("dd/MM/yyyy");
-        String date=dateFor.format(this.loanDate);
-        this.loanId=date+this.userEmail+passNo;
+        this.loanId=loanDate.toString()+this.userEmail+passId;
     }
 
-    public void setLoanDate(Date loanDate) {
+    public void setLoanDate(LocalDate loanDate) {
         this.loanDate = loanDate;
     }
 
@@ -81,19 +79,19 @@ public class Loan {
         this.status = status;
     }
 
-    public void setPassNo(String passNo){
-        this.passNo = passNo;
+    public void setPassId(String passId){
+        this.passId = passId;
     }
 
-    public Date getLoanDate() {
+    public LocalDate getLoanDate() {
         return this.loanDate;
     }
 
-    public Date getDueDate(){
+    public LocalDate getDueDate(){
         return this.dueDate;
     }
-    public void setDueDate(Date dueDate){
-        Date tomorrow = new Date(dueDate.getTime() + (1000 * 60 * 60 * 24));
+    public void setDueDate(LocalDate dueDate){
+        LocalDate tomorrow = dueDate.plusDays(1);
         this.dueDate=tomorrow;
     }
 
@@ -114,8 +112,8 @@ public class Loan {
         return this.contactNo;
     }
 
-    public String getPassNo() {
-        return this.passNo;
+    public String getPassId() {
+        return this.passId;
     }
 
     public void setContactNo(String contactNo) {
