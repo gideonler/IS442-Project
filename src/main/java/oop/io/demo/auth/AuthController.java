@@ -119,15 +119,7 @@ public class AuthController {
             ConfirmationToken confirmationToken = authService.confirmToken(token);
             //set password           
             User user = confirmationToken.getUser();
-            /*try {
-                authService.setPassword(user, verificationRequest);
-            }
-            catch(Exception e) {
-                e.getMessage();
-            }*/
-            //Password validation to do on frontend
             user.setPassword(encoder.encode(verificationRequest.getPassword()));
-            //set contact no- can frontend check whether it exists?
             user.setContactNo(verificationRequest.getContactNo());
             
             //set confirmedAt to now

@@ -41,7 +41,7 @@ public class PassGOController {
         PASSSTATUS passStatus = PASSSTATUS.valueOf(loanIdAndStatusMap.get("passStatus"));
         Loan loan = loanRepository.findByLoanId(loanId);
         if(loan==null) return ResponseEntity.badRequest().body("Loan not found!");
-        String passId = loan.getAttractionName()+loan.getPassNo();
+        String passId = loan.getPassId();
         ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, passStatus);
         return responseEntity;
     }

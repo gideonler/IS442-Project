@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 import oop.io.demo.loan.Loan;
@@ -35,10 +36,10 @@ public class AnalysisService {
             List<Loan> loans = loanRepository.findAll();
 
             for (Loan loan: loans){
-                Date loanDate1 = loan.getLoanDate();
+                LocalDate loanDate1 = loan.getLoanDate();
                 DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
                 String strYear = dateFormat1.format(loanDate1);
-                Date loanDate2 = loan.getLoanDate();
+                LocalDate loanDate2 = loan.getLoanDate();
                 DateFormat dateFormat2 = new SimpleDateFormat("MM");
                 String strMonth = dateFormat2.format(loanDate2);
                 if (output.containsKey(strYear)){
@@ -96,12 +97,8 @@ public Map<String,Map<String,Map<String,Integer>>> allAttractionLoans() throws E
         List<Loan> loans = loanRepository.findAll();
 
         for (Loan loan: loans){
-            Date loanDate1 = loan.getLoanDate();
-            DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
-            String strYear = dateFormat1.format(loanDate1);
-            Date loanDate2 = loan.getLoanDate();
-            DateFormat dateFormat2 = new SimpleDateFormat("MM");
-            String strMonth = dateFormat2.format(loanDate2);
+            String strYear = ""+ loan.getLoanDate().getYear();
+            String strMonth = ""+ loan.getLoanDate().getMonth();
             String attraction = loan.getAttractionName();
             if (output.containsKey(strYear)){
                 if (output.get(strYear).containsKey(strMonth)){
@@ -139,9 +136,7 @@ public Map<String,Map<String,Map<String,Integer>>> allAttractionLoans() throws E
             List<Loan> loans = loanRepository.findAll();
 
             for (Loan loan: loans){
-                Date loanDate1 = loan.getLoanDate();
-                DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
-                String strYear = dateFormat1.format(loanDate1);
+                String strYear = ""+loan.getLoanDate().getYear();
 
                 if (output.containsKey(strYear)){
                     output.put(strYear, output.get(strYear) + 1);
@@ -166,12 +161,8 @@ public Map<String,Map<String,Map<String,Integer>>> allAttractionLoans() throws E
 
             for (Loan loan: loans){
                 String empEmail = loan.getUserEmail();
-                Date loanDate1 = loan.getLoanDate();
-                DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
-                String strYear = dateFormat1.format(loanDate1);
-                Date loanDate2 = loan.getLoanDate();
-                DateFormat dateFormat2 = new SimpleDateFormat("MM");
-                String strMonth = dateFormat2.format(loanDate2);
+                String strYear = ""+ loan.getLoanDate().getYear();
+                String strMonth = ""+ loan.getLoanDate().getMonth();
                 if (output.containsKey(strYear)){
                     if (output.get(strYear).containsKey(strMonth)){
                         if(!(employeeMap.get(strYear+strMonth).contains(empEmail))){
@@ -210,9 +201,7 @@ public Map<String,Map<String,Map<String,Integer>>> allAttractionLoans() throws E
 
             for (Loan loan: loans){
                 String empEmail = loan.getUserEmail();
-                Date loanDate1 = loan.getLoanDate();
-                DateFormat dateFormat1 = new SimpleDateFormat("yyyy");
-                String strYear = dateFormat1.format(loanDate1);
+                String strYear = ""+loan.getLoanDate().getYear();
 
                 if (output.containsKey(strYear)){
                     if(!(employeeMap.get(strYear).contains(empEmail))){

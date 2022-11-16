@@ -2,7 +2,6 @@ package oop.io.demo.user;
 
 public class EditProfileRequest {
 
-    private String email;
     private String contactNo;
 	private String name;
 
@@ -18,9 +17,6 @@ public class EditProfileRequest {
     }
     public void setName(String name) {
         this.name = name;
-    }
-    public String getEmail() {
-        return email;
     }
     
 

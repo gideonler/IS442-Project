@@ -48,4 +48,15 @@ public class UserService {
             return ResponseEntity.badRequest().body("User not found!");
         }
     }
+
+    public ResponseEntity getPublicUserDetailsByEmail(String email) {
+        try {
+            User user= userRepository.findByEmail(email).get();
+            UserPublicDetails publicUser = new UserPublicDetails(user.getEmail(), user.getContactNo(), user.getName());
+            return ResponseEntity.ok(publicUser);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching user details. Please check that username is entered correctly.");
+        }
+    }
 }
