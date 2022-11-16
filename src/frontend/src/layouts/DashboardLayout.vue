@@ -63,11 +63,14 @@
       ContentFooter,
       DashboardContent,
       MobileMenu
-
+    },
+    created(){
+      this.user= JSON.parse(localStorage.getItem('user')).userType.authority
+      console.log(this.user)
     },
     data(){
       return {
-        user: 'STAFF'
+        user: '',
       }
     },
     methods: {
