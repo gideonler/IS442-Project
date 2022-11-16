@@ -152,8 +152,7 @@ public class LoanController {
 
     //to set a loan status to lost
     @GetMapping("/lost")
-    public ResponseEntity ReportLoss(@RequestBody Map<String, String> loanIdMap) {
-        String loanId = loanIdMap.get("loanId");// key JSON in postman
+    public ResponseEntity ReportLoss(@RequestParam("loanId") String loanId) {
         ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository)
                 .changeLoanStatus(loanId, LOANSTATUS.LOST);
         return responseEntity;
