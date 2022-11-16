@@ -42,10 +42,11 @@ public class PassGOController {
     @PutMapping("/change")
     public ResponseEntity setPassStatusToInOffice(@RequestBody Map<String, String> loanIdAndStatusMap) {
         String loanId = loanIdAndStatusMap.get("loanId");
+        System.out.println(loanId);
         PASSSTATUS passStatus = PASSSTATUS.valueOf(loanIdAndStatusMap.get("passStatus"));
         Loan loan = loanRepository.findByLoanId(loanId);
         if(loan==null) return ResponseEntity.badRequest().body("Loan not found!");
-        String passId = loan.getLoanID();
+        String passId = loan.getPassId();
         if(passStatus.toString().equals("ONLOAN")){
             try {
                 CollectedRequest collected = new CollectedRequest(loan.getUserEmail());
