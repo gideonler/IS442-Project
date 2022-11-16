@@ -77,32 +77,49 @@ public class WebSecurityConfig {
             .authorizeRequests()
 
             //  .antMatchers(h2ConsolePath + "/**").permitAll()
+            //FRONTENDENDPOINTS
+            .antMatchers("/analytics").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            .antMatchers("/corporate-pass-creation").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            .antMatchers("/corporate-pass-management").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            .antMatchers("/users").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            .antMatchers("/gopass").hasAnyAuthority(USERTYPE.GENERALOFFICE.toString())
+            .antMatchers("/booking").hasAnyAuthority(USERTYPE.ADMIN.toString(),USERTYPE.ADMIN.toString())
+            .antMatchers("/pass-details").hasAnyAuthority(USERTYPE.ADMIN.toString(),USERTYPE.ADMIN.toString())
+            .antMatchers("/corporate-pass-management/passes/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            .antMatchers("/login").permitAll()
+            .antMatchers("/register").permitAll()
+            .antMatchers("/authentication").permitAll()
+            .and().logout()
+              .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+              .logoutSuccessUrl("/login")
+              .invalidateHttpSession(true).permitAll();
+
+            //BACKENDENDPOINTS
+            // .antMatchers("/uploadcsv/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+
+            // .antMatchers("/export/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+
+            // .antMatchers("/analysis/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+
+            // .antMatchers("/usermanagement/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            // .antMatchers("/user/editprofile").hasAnyAuthority(USERTYPE.STAFF.toString())
+            // .antMatchers("/user/userbyusername").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+            // .antMatchers("/user/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
             
-            .antMatchers("/uploadcsv/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
-
-            .antMatchers("/export/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
-
-            .antMatchers("/analysis/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
-
-            .antMatchers("/usermanagement/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
-            .antMatchers("/user/editprofile").hasAnyAuthority(USERTYPE.STAFF.toString())
-            .antMatchers("/user/userbyusername").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
-            .antMatchers("/user/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+            // .antMatchers("/passmanagement/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            // .antMatchers("/pass/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+            // .antMatchers("/passstatus/**").hasAnyAuthority(USERTYPE.GENERALOFFICE.toString())
             
-            .antMatchers("/passmanagement/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
-            .antMatchers("/pass/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
-            .antMatchers("/passstatus/**").hasAnyAuthority(USERTYPE.GENERALOFFICE.toString())
-            
-            .antMatchers("/attractionmanagement/**").hasAnyAuthority("ROLE_ADMIN")
-            .antMatchers("/attraction/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+            // .antMatchers("/attractionmanagement/**").hasAnyAuthority("ROLE_ADMIN")
+            // .antMatchers("/attraction/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
 
-            .antMatchers("/loan/delete/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
-            .antMatchers("/loan/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
+            // .antMatchers("/loan/delete/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
+            // .antMatchers("/loan/**").hasAnyAuthority(USERTYPE.ADMIN.toString(), USERTYPE.STAFF.toString())
 
-            .antMatchers("/email/**").permitAll()
+            // .antMatchers("/email/**").permitAll()
 
-            .antMatchers("/auth/**").permitAll()
-            .antMatchers("/password/**").permitAll();
+            // .antMatchers("/auth/**").permitAll()
+            // .antMatchers("/password/**").permitAll();
             //   .anyRequest().authenticated()
             // .and().formLogin().loginPage("/login").failureUrl("/login?error=true")
             //   .defaultSuccessUrl("/home", true)
