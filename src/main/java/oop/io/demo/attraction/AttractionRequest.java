@@ -1,7 +1,7 @@
 package oop.io.demo.attraction;
 
 
-public class AttractionRequest{
+public class AttractionRequest {
     
     private String attraction;
 

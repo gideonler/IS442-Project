@@ -133,9 +133,6 @@
           return this.attractionname!= '' &&
             this.isUniqueName &&
             this.replacementfee!= -1 &&
-            this.email_file!= null &&
-            this.pdf_file!= null &&
-            this.image!= null &&
             this.selected_passtype!= ''
           },
         isUniqueName(){
@@ -170,6 +167,10 @@
         async createAttraction () {
           if(this.isFormValid){
 
+            if(this.replacementfee==0 && this.selected_passtype=="PHYSICALPASS"){
+              this.replacementfee= 53.50
+            }
+
             //1. create attraction details
             await axios 
             .post(this.api.create_attraction, 
@@ -183,24 +184,32 @@
               console.log(response);
             }); 
 
-            //2. upload templates
-            let filesData = new FormData();
-            filesData.append('emailtemplate', this.email_file);
-            filesData.append('attachment', this.pdf_file);
+            if(this.pdf_file!= null || this.email_file!= null){
+              //2. upload templates
+              let filesData = new FormData();
 
-            await axios 
-            .put(this.api.upload_files, 
-            filesData,
-              {
-                headers: {
-                'Content-Type': 'multipart/formdata'      
+              if(this.pdf_file!=null){
+                filesData.append('attachment', this.pdf_file);
               }
-            }
-              )
-            .then((response) => {
-              console.log(response);
-            }); 
-                       
+              if(this.email_file!=null){
+                filesData.append('emailtemplate', this.email_file);
+              }
+
+              await axios 
+              .put(this.api.upload_files, 
+              filesData,
+                {
+                  headers: {
+                  'Content-Type': 'multipart/formdata'      
+                }
+              }
+                )
+              .then((response) => {
+                console.log(response);
+              }); 
+                  
+              }
+       
             //3. upload image
             let imageData = new FormData();
             imageData.append('image', this.image);
@@ -220,6 +229,8 @@
 
             this.$root.$refs.AttractionCreationConfirmation.showModal(this.attractionname);
           }
+
+          this.$emit('update-creation')
           this.formReset()
         },
 

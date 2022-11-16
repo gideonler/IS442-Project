@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
     @Id
-    private String username;
+    private String userId;
 
     @Column(unique=true)
 	private String email;
@@ -30,7 +30,7 @@ public class User {
 
     public User(String name,  String email) {
         this.email= email;
-        this.username = email.split("@")[0];
+        this.userId = email.split("@")[0];
         this.name = name;
         this.isVerified=false;
         this.userType = USERTYPE.STAFF;
@@ -86,13 +86,6 @@ public class User {
         return isVerified;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public double getOutstandingFees() {
         return outstandingFees;
@@ -100,6 +93,14 @@ public class User {
 
     public void setOutstandingFees(double outstandingFees) {
         this.outstandingFees = outstandingFees;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     

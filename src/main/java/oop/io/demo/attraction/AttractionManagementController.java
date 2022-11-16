@@ -144,9 +144,6 @@ public class AttractionManagementController {
                     //Update attractionname for all passes under this attraction
                     List<Pass> passes = passesUnderAttraction.get();
                     for(Pass p : passes) {
-                        if(passRepository.findByPassId(newName+ p.getPassNo()).isPresent()) {
-                            return ResponseEntity.badRequest().body("Pass with passId: " + newName+ p.getPassNo() + " already exists!");
-                        }
                         p.setAttractionName(newName);
                         passRepository.save(p);
                     }
