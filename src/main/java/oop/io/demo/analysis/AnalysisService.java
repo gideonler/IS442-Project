@@ -98,7 +98,7 @@ public Map<String,Map<String,Map<String,Integer>>> allAttractionLoans() throws E
 
         for (Loan loan: loans){
             String strYear = ""+ loan.getLoanDate().getYear();
-            String strMonth = ""+ loan.getLoanDate().getMonth();
+            String strMonth = ""+ loan.getLoanDate().getMonth().getValue();
             String attraction = loan.getAttractionName();
             if (output.containsKey(strYear)){
                 if (output.get(strYear).containsKey(strMonth)){
