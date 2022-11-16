@@ -5,6 +5,7 @@
  * 3. Emails with mapping (eg Booking emails with no attachment) sendEmailTemplate(Email mail,  String template, String templatePath)
  * 4. Emails with mapping and attachment (eg: Booking emails with attachment) sendEmailWithAttachment(Email mail, String template, String templatePath, String attachment, String attachmentPath)
  */
+
 package oop.io.demo.mail;
 
 import freemarker.template.Configuration;

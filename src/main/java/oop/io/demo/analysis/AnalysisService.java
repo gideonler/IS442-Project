@@ -13,9 +13,6 @@ package oop.io.demo.analysis;
 
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 import oop.io.demo.loan.Loan;
