@@ -4,6 +4,7 @@
  */
 package oop.io.demo.auth.security.services;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UserDetailImplementation implements UserDetails {
     private static final String serialVersionUID = "";
+
+    private final String ROLE_PREFIX = "ROLE_";
 
     private String email;
   
@@ -54,7 +57,8 @@ public class UserDetailImplementation implements UserDetails {
   
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = Collections.singletonList(authority);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX+authority));
         return authorities;
     }
 
