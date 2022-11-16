@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(maxAge = 3600)
@@ -54,15 +55,15 @@ public class UserAdminController {
     //Get all users by user type
     //Access: admin
     @GetMapping("/usersbytype")
-    public ResponseEntity findByUserType(@RequestBody Map map) {
-        USERTYPE userType = USERTYPE.valueOf(((String) map.get("userType")).toUpperCase());
+    public ResponseEntity findByUserType(@RequestParam(value = "userType") String uType) {
+        USERTYPE userType = USERTYPE.valueOf(uType.toUpperCase());
         if(userType==null) return ResponseEntity.badRequest().body("Please enter a valid usertype.");
         try {
             List<User> users= this.repository.findByUserType(userType).get();
             return ResponseEntity.ok(users);
         }
         catch(Exception e) {
-            return ResponseEntity.badRequest().body("No users with staff type: "+ (String) map.get("userType") +" were not found.");
+            return ResponseEntity.badRequest().body("No users with staff type: "+ uType +" were not found.");
         }
     }
 

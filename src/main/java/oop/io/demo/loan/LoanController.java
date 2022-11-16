@@ -130,8 +130,7 @@ public class LoanController {
     }
 
     @GetMapping("/cancel")
-    public ResponseEntity cancellLoan(@RequestBody Map<String, String> loanIdMap) {
-        String loanId = loanIdMap.get("loanId");// key JSON in postman
+    public ResponseEntity cancellLoan(@RequestParam("loanId") String loanId) {
         ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository)
                 .changeLoanStatus(loanId, LOANSTATUS.CANCELLED);
         return responseEntity;
