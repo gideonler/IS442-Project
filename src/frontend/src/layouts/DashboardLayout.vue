@@ -7,19 +7,30 @@
         <i class="nc-icon nc-notes"></i>
         <p>My Bookings</p>
       </sidebar-link>
-      <sidebar-link v-if="this.user=='STAFF'" to="/analytics">
+      <sidebar-link v-if="this.user=='ADMIN'" to="/analytics">
         <i class="nc-icon nc-chart-bar-32"></i>
         <p>Analytics</p>
       </sidebar-link>
-      <sidebar-link v-if="this.user=='STAFF'" to="/corporate-pass-creation">
+      <sidebar-link v-if="this.user=='ADMIN'" to="/corporate-pass-creation">
         <i class="nc-icon nc-badge"></i>
         <p>Create Passes</p>
       </sidebar-link>
-      <sidebar-link v-if="this.user=='STAFF'" to="/corporate-pass-management">
+      <sidebar-link v-if="this.user=='ADMIN'" to="/corporate-pass-management">
         <i class="nc-icon nc-ruler-pencil"></i>
         <p>Manage Passes</p>
       </sidebar-link>
-
+      <sidebar-link v-if="this.user == 'ADMIN'" to="/users">
+        <i class="nc-icon nc-circle-09"></i>
+        <p>Manage Employees</p>
+      </sidebar-link>
+      <sidebar-link v-if="this.user == 'GENERALOFFICE'" to="/gopass">
+        <i class="nc-icon nc-badge"></i>
+        <p>Passes Collection</p>
+      </sidebar-link>
+      <sidebar-link v-if="this.user == 'STAFF'" to="/pass-details">
+        <i class="nc-icon nc-notes"></i>
+        <p>Manage Passes</p>
+      </sidebar-link>
 
       <template slot="bottom-links">
         <sidebar-link class="active"
