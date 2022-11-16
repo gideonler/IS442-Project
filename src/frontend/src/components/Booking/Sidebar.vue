@@ -1,23 +1,21 @@
 <template>
     <!-- Vertical navbar -->
-    <div class="vertical-nav bg-white fixed-right" id="sidebar">
+    <div class="vertical-nav bg-light fixed-right" id="sidebar">
 
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Bookings</p>
+        <p class="bg-dark text-white font-weight-bold text-uppercase px-3">Total Bookings</p>
 
         <p class="px-3"> You have {{ number }} bookings in total </p>
 
-        <hr>
-
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Upcoming Bookings</p>
+        <p class="bg-dark text-white font-weight-bold text-uppercase px-3">Upcoming Bookings</p>
 
         <div class="scroll px-3 bg-booking " tabindex="0">
             <div v-if="bookingList.length > 1">
-                <ul class="no-bullets" v-for="(booking, b) in bookingList" :key="b" v-if="booking.status != 'CANCELLED'">
+                <ul class="no-bullets" v-for="(booking, b) in bookingList.filter(booking => booking.status != 'CANCELLED')" :key="b">
                     <li>Attraction Name: {{ booking.attractionName }}</li>
                     <li>Loan Date: {{ booking.loanDate.split("T")[0] }}</li>
                     <li>Pass ID: {{ booking.passId }}</li>
                     <li>Booking Status: {{ booking.status }}</li>
-                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="info" @click="sendInfo(booking.loanID)">
+                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="danger" @click="sendInfo(booking.loanID)">
                         Cancel booking
                     </b-button>
                     <hr>
@@ -34,10 +32,10 @@
             </template>
         </b-modal>
 
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Note</p>
-        <p class="px-3">Click <a href="/pass-details"> here </a> for more information regarding the passes</p>
+        <p class="bg-dark text-white font-weight-bold text-uppercase px-3">Note</p>
+        <p class="px-3">Click <a href="/pass-details"> here </a> for more info regarding the passes</p>
 
-        <p class="bg-light text-gray font-weight-bold text-uppercase px-3 mb-0">Contact</p>
+        <p class="bg-dark text-white font-weight-bold text-uppercase px-3">Contact</p>
         <p class="px-3"> General Office Phone: +65 6766 0100</p>
     </div>
 </template>
@@ -61,7 +59,8 @@ export default {
         return {
             number: "",
             month: "",
-            userEmail: this.user.username,
+            user: "",
+            userEmail: "",
             bookingList: [{ attractionName: "", loanDate: "", passId: "", status: "", loanID: "" }],
             bookingId: "",
             api: {
@@ -75,11 +74,12 @@ export default {
 
     created() {
         this.user = JSON.parse(localStorage.getItem('user'));
+        this.userEmail= this.user.username
     },
 
     mounted() {
         this.numberBookings();
-        this.getBookings(this.userEmail);
+        this.getBookings();
     },
 
     methods: {
@@ -154,10 +154,8 @@ export default {
 <style scoped>
 .vertical-nav {
     min-width: 10rem;
-    width: 20rem;
-    height: 100%;
-    position: fixed;
-    margin-top: -2%;
+    width: 22rem;
+    height: 55%;
     right: 0;
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.4s;
@@ -167,32 +165,18 @@ export default {
 .no-bullets {
     list-style-type: none;
     margin: 0;
-    padding: 0;
-}
-
-.bg-booking {
-    background-color: #fafcef;
+    padding-top: 10px;
+    padding-left: 10px;
+    background-color: rgb(251, 234, 213);
 }
 
 .scroll {
     position: relative;
-    height: 35%;
+    height: 48%;
     overflow: auto;
 }
 
-/* body {
-    background: #599fd9;
-    background: -webkit-linear-gradient(to right, #599fd9, #c2e59c);
-    background: linear-gradient(to right, #599fd9, #c2e59c);
-    min-height: 100vh;
-    overflow-x: hidden;
-} */
-
 .text-uppercase {
     letter-spacing: 0.1em;
-}
-
-.text-gray {
-    color: #aaa;
 }
 </style>
