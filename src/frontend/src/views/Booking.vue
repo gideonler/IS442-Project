@@ -4,10 +4,10 @@
       <div class="row">
         <div class="col-md-7" >
          <CalendarFilter @filter-attraction="filterAttraction" ></CalendarFilter>
-         <Calendar :key="this.selected_attraction" :selected_attraction="this.selected_attraction" fluid></Calendar>
+         <Calendar v-on:booking-confirmed="forceRerender" :key="this.selected_attraction" :selected_attraction="this.selected_attraction" fluid></Calendar>
         </div>
         <div class="col-md-5">
-          <Sidebar></Sidebar>
+          <Sidebar :key="componentKey" ></Sidebar>
         </div>
       </div>
     </div>
@@ -27,15 +27,20 @@
             data(){
               return {
                 selected_attraction: null,
+                componentKey:0
               }
             },
+            
             created() {
                 this.$emit('update:layout', DashboardLayout);
             },
             methods: {
               filterAttraction(selected_attraction) {
                 this.selected_attraction = selected_attraction;
-              }
+              },
+              forceRerender(){
+                this.componentKey+=1
+              },
             }
         };
 </script>

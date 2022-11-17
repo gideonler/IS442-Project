@@ -181,6 +181,7 @@
         },
         forceRerender(){
           this.componentKey+=1
+          this.$emit('booking-confirmed')
         },
         handleDateClick: function(info){ 
           let availability=  info.dayEl.innerText.split("\n")[1];
@@ -205,7 +206,7 @@
         <FullCalendar :key="componentKey" :options="calendarOptions" />
         <BookingPopUp :key="this.selected_date" :selected_date='this.selected_date' :no_avail="this.selected_no_pass" :attraction_name="this.selected_attraction" ></BookingPopUp>
         <WaitingListPopUp></WaitingListPopUp>
-        <BookingConfirmation v-on:booking-confirmation="forceRerender"></BookingConfirmation>
+        <BookingConfirmation v-on:booking-confirmed="forceRerender"></BookingConfirmation>
         <WaitingListConfirmation></WaitingListConfirmation>   
       </div>
     </template>
