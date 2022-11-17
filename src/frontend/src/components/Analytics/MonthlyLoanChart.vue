@@ -56,8 +56,15 @@
           var result= []
           var loans_in_year= this.total_loans[this.selectedYear]
           console.log(loans_in_year)
-          var attractions= Object.keys(Object.values(loans_in_year)[0]);
- 
+          // var attractions= Object.keys(Object.values(loans_in_year)[0]);
+          var attractions= []
+          for( var loan_year of Object.values(loans_in_year)){
+            for( var attraction of Object.keys(loan_year)){
+              if(!attractions.includes(attraction)){
+                attractions.push(attraction)
+              }
+            }
+          }
           var intermediate_data= {};
 
           for(var attraction of attractions){
