@@ -31,7 +31,6 @@ import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.LoginRequest;
 import oop.io.demo.auth.payload.request.SignupRequest;
-import oop.io.demo.auth.payload.request.VerificationRequest;
 import oop.io.demo.auth.payload.response.JwtResponse;
 import oop.io.demo.auth.payload.response.MessageResponse;
 import oop.io.demo.auth.security.jwt.JwtUtils;
