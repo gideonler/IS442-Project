@@ -14,8 +14,9 @@
           <div class="col-md-12">
             <base-input type="text"
                       label="Place of Interest"
-                      placeholder="eg. Gardens by the Bay"
-                      v-model="attractionname">
+                      v-model="attractionname"
+                      disabled
+                      >
             </base-input>
           </div>
         </div>

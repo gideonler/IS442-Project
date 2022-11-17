@@ -53,7 +53,8 @@
           var result= []
           var loans_in_year= this.total_loans[this.selectedYear]
           for( var i=1; i<13; i++){
-            var formattedNumber = ("0" + i).slice(-2);
+            // var formattedNumber = ("0" + i).slice(-2);
+            var formattedNumber= i;
             if(this.containsKey(loans_in_year, formattedNumber)){
               result.push(loans_in_year[formattedNumber])
             }else{

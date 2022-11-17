@@ -36,6 +36,7 @@
           .get(this.api.get_total_attractions)
           .then((response) => {
             this.total_loans = response.data
+            console.log(this.total_loans)
           })
           .catch((error) => {
               if (error) {
@@ -56,10 +57,7 @@
           var loans_in_year= this.total_loans[this.selectedYear]
           console.log(loans_in_year)
           var attractions= Object.keys(Object.values(loans_in_year)[0]);
-          //  for( var i=0; i<no_attractions; i++){
-          //     new_map = {type: 'bar'}
-          //     new_map['test']=3;
-          //  }
+ 
           var intermediate_data= {};
 
           for(var attraction of attractions){
@@ -67,17 +65,23 @@
           }
 
           for( var i=1; i<13; i++){
-            var formattedNumber = ("0" + i).slice(-2);
+            // var formattedNumber = ("0" + i).slice(-2);
+            var formattedNumber= i
             if(this.containsKey(loans_in_year, formattedNumber)){
               for(var attraction of attractions){
-                // console.log(loans_in_year[formattedNumber][attraction])
-                intermediate_data[attraction].push(loans_in_year[formattedNumber][attraction])
+                if(this.containsKey(loans_in_year[formattedNumber], attraction)){
+                  intermediate_data[attraction].push(loans_in_year[formattedNumber][attraction])
+                }else{
+                  intermediate_data[attraction].push(0)
+                }
               }
             }else{
-              intermediate_data[attraction].push(0)
+              for(var attraction of attractions){
+                intermediate_data[attraction].push(0)
+              }
             }
           }
-          // console.log(intermediate_data)
+          console.log(intermediate_data)
           // convert object to keys array
           const keys = Object.keys(intermediate_data);
           var temp_total=  {
@@ -93,8 +97,8 @@
             var temp_map = { type: 'bar'}
             temp_map['label']= attraction_name
             temp_map['data']= attraction_data
-            temp_map['backgroundColor']= this.backgroundColor[index]
-            temp_map['borderColor']= this.borderColor[index]
+            temp_map['backgroundColor']= this.backgroundColor[index%this.backgroundColor.length]
+            temp_map['borderColor']= this.borderColor[index%this.backgroundColor.length]
             var sum = attraction_data.map(function (num, idx) {
                       return num + temp_total["data"][idx];
                     });
@@ -157,8 +161,9 @@
 
     data() {
       return {
-        backgroundColor: ['rgba(255, 206, 86, 0.5)','rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)'],
-        borderColor:['rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+        backgroundColor: ['rgba(255, 206, 86, 0.5)','rgba(250, 150, 100, 0.5)', 'rgba(240, 180, 200, 0.5)','rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)',
+        ],
+        borderColor:['rgba(255, 206, 86, 1)', 'rgba(250, 150, 100, 1)','rgba(240, 180, 200, 1)' ,'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)',],
         api: {
           get_total_attractions: "http://localhost:8080/analysis/totalattractions" ,
         },

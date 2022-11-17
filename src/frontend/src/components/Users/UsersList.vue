@@ -6,7 +6,7 @@
                     <h2>Employee Management</h2>
                 </div>
                 <div class="col text-right">
-                    <b-dropdown id="dropdown-buttons" text="Filter By" variant="warning">
+                    <b-dropdown id="dropdown-buttons" text="Filter By" variant="secondary">
                         <b-dropdown-item-button @click="getUsers()">View All Users
                         </b-dropdown-item-button>
                         <b-dropdown-item-button @click="filterByType('STAFF')">View Staff Only
@@ -21,7 +21,7 @@
 
             <div>
                 <table class="table text-nowrap">
-                    <thead>
+                    <thead class="thead-dark">
                         <tr>
                             <th scope="col" id="Name">Name</th>
                             <th scope="col" id="Email">Email</th>
