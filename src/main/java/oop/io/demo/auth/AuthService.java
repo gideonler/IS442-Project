@@ -67,6 +67,7 @@ public class AuthService {
             LocalDateTime.now().plusMinutes(15),
             user
             );
+        System.out.println(confirmationToken);
         confirmationTokenService = new ConfirmationTokenService(confirmationTokenRepository);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         return token;
