@@ -1,7 +1,7 @@
 <template>
     <div>
   
-      <b-modal ref="my-modal" 
+      <b-modal ref="book-new-pass-modal" 
       hide-footer title="Book New Pass">
         <div class="d-block text-center">
           <h3>There are {{no_avail}} available passes on {{selected_date}} </h3>
@@ -85,10 +85,10 @@
         },  
         showModal(date) {
           this.date= date
-          this.$refs['my-modal'].show()
+          this.$refs['book-new-pass-modal'].show()
         },
         hideModal() {
-          this.$refs['my-modal'].hide()
+          this.$refs['book-new-pass-modal'].hide()
         },
         containsKey(obj, key ) {
         return Object.keys(obj).includes(String(key));
@@ -135,17 +135,17 @@
                 console.log(error.response);
             });
         },
-         confirmBooking(no_passes) {
+         async confirmBooking(no_passes) {
           //check if passes has been exceeded
           if(this.hasExceeededForMonth){
-            this.$refs['my-modal'].toggle('#toggle-btn')
+            this.$refs['book-new-pass-modal'].toggle('#toggle-btn')
 
             this.$root.$refs.BookingReply.showModal(
               "Unable to book. Max loans have been met for this month."
               ) 
           }
           else{
-            return axios 
+            await axios 
             .post(this.api.create_booking, 
               {
                 "loanDate" : this.selected_date,
@@ -155,14 +155,17 @@
               }
               )
             .then((response) => {
-              console.log(response.data)
+              // console.log(response.data)
               var status = response.data
-              status.includes("unsuccessful") ? this.$root.$refs.BookingReply.showModal(status) :  this.$root.$refs.BookingConfirmation.showModal(this.selected_date, no_passes)
-              this.$refs['my-modal'].toggle('#toggle-btn')
+              // console.log(response.data)
+              // status.includes("unsuccessful") ? this.$root.$refs.BookingReply.showModal(status) :  this.$root.$refs.BookingConfirmation.showModal(this.selected_date, no_passes, this.attraction_name)
+              this.$root.$refs.BookingConfirmation.showModal(this.selected_date, no_passes, this.attraction_name)
+              this.$refs['book-new-pass-modal'].toggle('#toggle-btn')
             })
             .catch((err)=>{
+              console.log(err)
               this.$root.$refs.BookingReply.showModal('Booking Unsuccessful. Try again later')
-              this.$refs['my-modal'].toggle('#toggle-btn')
+              this.$refs['book-new-pass-modal'].toggle('#toggle-btn')
             });
             ; 
 

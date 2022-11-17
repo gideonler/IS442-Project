@@ -24,9 +24,8 @@
         
         data() {
             return {
-                //TODO: replace dummy data with backend data
                 no_passes: null,
-                pass: 'Mandai Wildlife Reserve',
+                pass: '',
                 date: null,
             };
         },
@@ -34,10 +33,11 @@
         this.$root.$refs.BookingConfirmation= this;
         },
       methods: {
-        showModal(date, no_passes) {
+        showModal(date, no_passes, attraction) {
           this.$refs['my-modal'].show()
           this.date= date
           this.no_passes= no_passes
+          this.pass= attraction
           this.$emit('booking-confirmed')
         },
         hideModal() {
