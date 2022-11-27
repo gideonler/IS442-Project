@@ -8,5 +8,4 @@ public enum LOANSTATUS {
     COMPLETE,
     OVERDUE,
     LOST
-
 }

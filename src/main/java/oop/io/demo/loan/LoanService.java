@@ -27,8 +27,6 @@ import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.attraction.AttractionRepository;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -56,25 +54,11 @@ public class LoanService {
 
     public String extractPassId(String attractionName, LocalDate loanDate){
         String passId="";
-        List<String> loanedPasses = new ArrayList<String>();
-        Optional<List<Pass>> passList = passRepository.findByAttractionName(attractionName);
-        ArrayList<Loan> loanList = loanRepository.findAllByAttractionName(attractionName);
-        for (Loan loan: loanList){
-            String checkAttraction = loan.getAttractionName();
-            LocalDate checkDate = loan.getLoanDate();
-            if ((checkAttraction.equals(attractionName)) && (loanDate.equals(checkDate))){
-                loanedPasses.add(loan.getPassId());
-            }
+        List<String> passIdsUnavail = loanRepository.findByLoanDate(loanDate).stream().map(l->l.getPassId()).toList();
+        List<String> allPassIds = passRepository.findByAttractionName(attractionName).get().stream().map(p->p.getPassId()).toList();
+        for(String id: allPassIds) {
+            if(!passIdsUnavail.contains(id)) passId = id;
         }
-        for (Pass pass : passList.get()){
-            String checkPassId = pass.getPassId();
-            if (!loanedPasses.contains(checkPassId)){
-                passId = checkPassId;
-                break;
-            }
-        }
-
-
         return passId;
     }
 
@@ -86,10 +70,6 @@ public class LoanService {
         }
         return contactNo;
     }
-
-
-
-
 
     public Loan addBooking(String userEmail, LocalDate loanDate, String attractionName, String loanId) {
     
@@ -114,8 +94,6 @@ public class LoanService {
         l.setStatus(LOANSTATUS.CANCELLED);
         return ResponseEntity.ok("Loan cancelled: " + loanStatus.toString());
     }
-
-
 
 
     public ResponseEntity changeLoanStatus(String loanId, LOANSTATUS loanstatus){

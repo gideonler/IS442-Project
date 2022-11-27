@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import oop.io.demo.loan.LOANSTATUS;
 import oop.io.demo.loan.Loan;
 import oop.io.demo.loan.LoanRepository;
 import oop.io.demo.user.UserRepository;
@@ -37,18 +38,20 @@ public class AnalysisService {
             List<Loan> loans = loanRepository.findAll();
 
             for (Loan loan: loans){
-                String strYear = ""+loan.getLoanDate().getYear();
-                String strMonth = ""+loan.getLoanDate().getMonth().getValue();
-                if (output.containsKey(strYear)){
-                    if (output.get(strYear).containsKey(strMonth)){
-                        output.get(strYear).put(strMonth, output.get(strYear).get(strMonth) + 1);
+                if(loan.getStatus() != LOANSTATUS.CANCELLED){
+                    String strYear = ""+loan.getLoanDate().getYear();
+                    String strMonth = ""+loan.getLoanDate().getMonth().getValue();
+                    if (output.containsKey(strYear)){
+                        if (output.get(strYear).containsKey(strMonth)){
+                            output.get(strYear).put(strMonth, output.get(strYear).get(strMonth) + 1);
+                        } else {
+                            output.get(strYear).put(strMonth,1);
+                        }
                     } else {
-                        output.get(strYear).put(strMonth,1);
+                        Map<String,Integer> add = new TreeMap<>();
+                        add.put(strMonth, 1);
+                        output.put(strYear,add);
                     }
-                } else {
-                    Map<String,Integer> add = new TreeMap<>();
-                    add.put(strMonth, 1);
-                    output.put(strYear,add);
                 }
             }
 
@@ -94,28 +97,30 @@ public class AnalysisService {
             List<Loan> loans = loanRepository.findAll();
 
             for (Loan loan: loans){
-                String strYear = ""+ loan.getLoanDate().getYear();
-                String strMonth = ""+ loan.getLoanDate().getMonth().getValue();
-                String attraction = loan.getAttractionName();
-                if (output.containsKey(strYear)){
-                    if (output.get(strYear).containsKey(strMonth)){
-                        if (output.get(strYear).get(strMonth).containsKey(attraction)){
-                            output.get(strYear).get(strMonth).put(attraction,output.get(strYear).get(strMonth).get(attraction) + 1);
-                        }
-                        else {
-                            output.get(strYear).get(strMonth).put(attraction,1);
+                if(loan.getStatus() != LOANSTATUS.CANCELLED){
+                    String strYear = ""+ loan.getLoanDate().getYear();
+                    String strMonth = ""+ loan.getLoanDate().getMonth().getValue();
+                    String attraction = loan.getAttractionName();
+                    if (output.containsKey(strYear)){
+                        if (output.get(strYear).containsKey(strMonth)){
+                            if (output.get(strYear).get(strMonth).containsKey(attraction)){
+                                output.get(strYear).get(strMonth).put(attraction,output.get(strYear).get(strMonth).get(attraction) + 1);
+                            }
+                            else {
+                                output.get(strYear).get(strMonth).put(attraction,1);
+                            }
+                        } else {
+                            Map<String,Integer> add1 = new TreeMap<>();
+                            add1.put(attraction, 1);
+                            output.get(strYear).put(strMonth, add1);
                         }
                     } else {
                         Map<String,Integer> add1 = new TreeMap<>();
                         add1.put(attraction, 1);
-                        output.get(strYear).put(strMonth, add1);
+                        Map<String,Map<String,Integer>> add2 = new TreeMap<>();
+                        add2.put(strMonth,add1);
+                        output.put(strYear,add2);
                     }
-                } else {
-                    Map<String,Integer> add1 = new TreeMap<>();
-                    add1.put(attraction, 1);
-                    Map<String,Map<String,Integer>> add2 = new TreeMap<>();
-                    add2.put(strMonth,add1);
-                    output.put(strYear,add2);
                 }
             }
 
@@ -133,12 +138,14 @@ public class AnalysisService {
             List<Loan> loans = loanRepository.findAll();
 
             for (Loan loan: loans){
-                String strYear = ""+loan.getLoanDate().getYear();
+                if(loan.getStatus() != LOANSTATUS.CANCELLED){
+                    String strYear = ""+loan.getLoanDate().getYear();
 
-                if (output.containsKey(strYear)){
-                    output.put(strYear, output.get(strYear) + 1);
-                } else {
-                    output.put(strYear,1);
+                    if (output.containsKey(strYear)){
+                        output.put(strYear, output.get(strYear) + 1);
+                    } else {
+                        output.put(strYear,1);
+                    }
                 }
             }
 
@@ -157,28 +164,30 @@ public class AnalysisService {
             List<Loan> loans = loanRepository.findAll();
 
             for (Loan loan: loans){
-                String empEmail = loan.getUserEmail();
-                String strYear = ""+ loan.getLoanDate().getYear();
-                String strMonth = ""+ loan.getLoanDate().getMonth();
-                if (output.containsKey(strYear)){
-                    if (output.get(strYear).containsKey(strMonth)){
-                        if(!(employeeMap.get(strYear+strMonth).contains(empEmail))){
-                            output.get(strYear).put(strMonth, output.get(strYear).get(strMonth) + 1);
-                            employeeMap.get(strYear+strMonth).add(empEmail);
+                if(loan.getStatus() != LOANSTATUS.CANCELLED){
+                    String empEmail = loan.getUserEmail();
+                    String strYear = ""+ loan.getLoanDate().getYear();
+                    String strMonth = ""+ loan.getLoanDate().getMonth();
+                    if (output.containsKey(strYear)){
+                        if (output.get(strYear).containsKey(strMonth)){
+                            if(!(employeeMap.get(strYear+strMonth).contains(empEmail))){
+                                output.get(strYear).put(strMonth, output.get(strYear).get(strMonth) + 1);
+                                employeeMap.get(strYear+strMonth).add(empEmail);
+                            }
+                        } else {
+                            output.get(strYear).put(strMonth,1);
+                            ArrayList empList = new ArrayList<>();
+                            empList.add(empEmail);
+                            employeeMap.put(strYear+strMonth, empList);
                         }
                     } else {
-                        output.get(strYear).put(strMonth,1);
+                        Map<String,Integer> add = new TreeMap<>();
+                        add.put(strMonth, 1);
+                        output.put(strYear,add);
                         ArrayList empList = new ArrayList<>();
                         empList.add(empEmail);
                         employeeMap.put(strYear+strMonth, empList);
                     }
-                } else {
-                    Map<String,Integer> add = new TreeMap<>();
-                    add.put(strMonth, 1);
-                    output.put(strYear,add);
-                    ArrayList empList = new ArrayList<>();
-                    empList.add(empEmail);
-                    employeeMap.put(strYear+strMonth, empList);
                 }
             }
 
@@ -197,19 +206,21 @@ public class AnalysisService {
             List<Loan> loans = loanRepository.findAll();
 
             for (Loan loan: loans){
-                String empEmail = loan.getUserEmail();
-                String strYear = ""+loan.getLoanDate().getYear();
+                if(loan.getStatus() != LOANSTATUS.CANCELLED){
+                    String empEmail = loan.getUserEmail();
+                    String strYear = ""+loan.getLoanDate().getYear();
 
-                if (output.containsKey(strYear)){
-                    if(!(employeeMap.get(strYear).contains(empEmail))){
-                        output.put(strYear, output.get(strYear) + 1);
-                        employeeMap.get(strYear).add(empEmail);
+                    if (output.containsKey(strYear)){
+                        if(!(employeeMap.get(strYear).contains(empEmail))){
+                            output.put(strYear, output.get(strYear) + 1);
+                            employeeMap.get(strYear).add(empEmail);
+                        }
+                    } else {
+                        output.put(strYear,1);
+                        ArrayList empList = new ArrayList<>();
+                        empList.add(empEmail);
+                        employeeMap.put(strYear, empList);
                     }
-                } else {
-                    output.put(strYear,1);
-                    ArrayList empList = new ArrayList<>();
-                    empList.add(empEmail);
-                    employeeMap.put(strYear, empList);
                 }
             }
 

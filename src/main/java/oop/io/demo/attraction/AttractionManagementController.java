@@ -11,12 +11,14 @@
 package oop.io.demo.attraction;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -194,6 +196,22 @@ public class AttractionManagementController {
         } else {
             return ResponseEntity.badRequest().body("Attraction not found.");
         }
+    }
+    
+    //Delete attraction with attraction id as specified in the request body
+    //Access: admin
+    @DeleteMapping("/delete")
+    public ResponseEntity deleteUser(@RequestBody Map map) {
+        String attractionName = (String) map.get("attraction");
+        if(attractionName==null) return ResponseEntity.badRequest().body("No attraction name entered.");
+        try {
+            Attraction attraction = this.repository.findByAttractionName(attractionName).get();
+            repository.delete(attraction);
+            return ResponseEntity.ok("Successfully deleted attraction.");
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body("Attravtion was not found.");
+        }
+        
     }
 
 }
