@@ -20,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -124,6 +125,15 @@ public class UserAdminController {
             return ResponseEntity.badRequest().body("User was not found.");
         }
         
+    }
+
+    ///GO AND ADMIN ACCESS
+    //Update Outstanding Fees
+    //Access : only admin and GO 
+    @GetMapping("/updateFee")
+    public ResponseEntity updateOutstandingFee(@RequestParam(value="userEmail") String userEmail){
+        UserService userService = new UserService(repository);
+        return userService.updateOutstandingFee(userEmail);
     }
 
 } 

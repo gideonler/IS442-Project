@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.user.UserService;
+import oop.io.demo.attraction.AttractionRepository;
 import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.mail.*;
 import oop.io.demo.mail.payload.BookingRequest;
@@ -58,6 +59,8 @@ public class LoanController {
     @Autowired
     private PassRepository passRepository;
     @Autowired
+    private AttractionRepository attractionRepository;
+    @Autowired
     private LoanService loanService;
     @Autowired
     private EmailSender emailSender;
@@ -69,6 +72,11 @@ public class LoanController {
         String userEmail = loanRequest.getUserEmail();
 
         if(!userRepository.findByEmail(userEmail).isPresent()) return ResponseEntity.badRequest().body("User not found");
+        Double outstandingFee = userRepository.findByEmail(userEmail).get().getOutstandingFees();
+        
+        if (outstandingFee > 0){
+            return ResponseEntity.badRequest().body("You are currently on penalty hold and cannot make the booking. Please settle your outstanding fees first before booking.");
+        }
 
         String attractionName = loanRequest.getAttractionName();
         int noOfPass = loanRequest.getNoOfPass();
@@ -78,7 +86,7 @@ public class LoanController {
         LocalDate loanDate = LocalDate.parse(dateString, dateFormat);
 
         
-        loanService = new LoanService(loanRepository, passRepository, userRepository);
+        loanService = new LoanService(loanRepository, passRepository, userRepository, attractionRepository);
 
         if(noOfPass==0) return ResponseEntity.badRequest().body("Please enter the number of passes you want (1 or 2)");
         
@@ -149,7 +157,7 @@ public class LoanController {
     //to set a loan status to cancelled
     @GetMapping("/cancel")
     public ResponseEntity cancellLoan(@RequestParam("loanId") String loanId) {
-        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository)
+        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository, attractionRepository)
                 .changeLoanStatus(loanId, LOANSTATUS.CANCELLED);
         return responseEntity;
     }
@@ -157,8 +165,8 @@ public class LoanController {
     //to set a loan status to lost
     @GetMapping("/lost")
     public ResponseEntity ReportLoss(@RequestParam("loanId") String loanId) {
-        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository)
-                .changeLoanStatus(loanId, LOANSTATUS.LOST);
+        ResponseEntity responseEntity = new LoanService(loanRepository, passRepository, userRepository, attractionRepository)
+                .ReportLoss(loanId, LOANSTATUS.LOST);
         return responseEntity;
     }
 

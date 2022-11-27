@@ -20,10 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import oop.io.demo.attraction.Attraction;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
+import oop.io.demo.attraction.AttractionRepository;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -39,14 +41,16 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final PassRepository passRepository;
     private final UserRepository userRepository;
+    private final AttractionRepository attractionRepository;
 
     Pass p = new Pass();
     User u = new User();
 
-    public LoanService(LoanRepository loanRepository, PassRepository PassRepository, UserRepository UserRepository) {
+    public LoanService(LoanRepository loanRepository, PassRepository PassRepository, UserRepository UserRepository, AttractionRepository attractionRepository) {
         this.loanRepository = loanRepository;
         this.passRepository = PassRepository;
         this.userRepository = UserRepository;
+        this.attractionRepository = attractionRepository;
     }
 
 
@@ -206,10 +210,19 @@ public class LoanService {
 
     // Method for the user to report loss of cards
 
+
     public ResponseEntity ReportLoss(String loanID, LOANSTATUS loanStatus){
         Loan l = loanRepository.findByLoanId(loanID);
+        String attractionName = l.getAttractionName();
+        String userEmail = l.getUserEmail();
+        Attraction a = attractionRepository.findByAttractionName(attractionName).get();
+        User u = userRepository.findByEmail(userEmail).get();
         l.setStatus(LOANSTATUS.LOST);
-        return ResponseEntity.ok("Card changed to lost: " + loanStatus.toString());
+        Double fee = a.getReplacementFee();
+        u.setOutstandingFees(fee);
+        Double new_fee = u.getOutstandingFees();
+        userRepository.save(u);
+        return ResponseEntity.ok("Card changed to lost: " + loanStatus.toString()+ ", please pay a fee of " + new_fee);
     }
 
 
@@ -258,5 +271,7 @@ public class LoanService {
         }
         return output;
     }
+
+
 
 } 

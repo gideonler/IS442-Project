@@ -59,4 +59,19 @@ public class UserService {
             return ResponseEntity.badRequest().body("Error fetching user details. Please check that username is entered correctly.");
         }
     }
+
+    public ResponseEntity updateOutstandingFee(String userEmail){
+        Optional<User> _user = userRepository.findByEmail(userEmail);
+        if(_user.isPresent()) {
+            //Assuming that the user will pay back the full fees
+            User user = _user.get();
+            user.setOutstandingFees(0);
+            return ResponseEntity.ok("Penalty Fee payment has been made by " + user.getName()); 
+        } else {
+            return ResponseEntity.badRequest().body("Error fetching user details. Please check that username is entered correctly.");
+
+        }
+        
+    }
+
 }
