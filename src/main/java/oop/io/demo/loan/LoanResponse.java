@@ -3,51 +3,33 @@ package oop.io.demo.loan;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import javax.persistence.Column;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.Id;
+import oop.io.demo.pass.PASSSTATUS;
 
-public class Loan {
-
+public class LoanResponse {
     private String loanDate;
-    @Column(nullable = false)
     private String dueDate;
-
     private String attractionName;
-
-    @CreatedBy
     private String userEmail;
-
-    @Column(unique = true)
-    @Id
     private String loanId;
-
     private String name;
     private String contactNo;
     private String passId;
-
     private LOANSTATUS status;
+    private PASSSTATUS passStatus;
 
-    // constructor with attributes required to create a new loan
 
-    public Loan() {
-    }
-
-    public Loan(String userEmail, LocalDate loanDate, String attractionName) {
-        this.loanId = userEmail;
-        this.loanDate = loanDate.toString();// the date where the user is making the booking
+    public LoanResponse(String loanDate, String dueDate, String attractionName, String userEmail, String loanId,
+            String name, String contactNo, String passId, LOANSTATUS status, PASSSTATUS passStatus) {
+        this.loanDate = loanDate;
+        this.dueDate = dueDate;
         this.attractionName = attractionName;
         this.userEmail = userEmail;
-        this.status = LOANSTATUS.CONFIRMED;
-    }
-
-    public Loan(String userEmail, LocalDate loanDate, String attractionName, String loanId) {
         this.loanId = loanId;
-        this.loanDate = loanDate.toString();// the date where the user is making the booking
-        this.attractionName = attractionName;
-        this.userEmail = userEmail;
-        this.status = LOANSTATUS.CONFIRMED;
-
+        this.name = name;
+        this.contactNo = contactNo;
+        this.passId = passId;
+        this.status = status;
+        this.passStatus = passStatus;
     }
 
     public void setLoanId() {
@@ -92,7 +74,6 @@ public class Loan {
         this.dueDate=tomorrow.toString();
     }
 
-
     public String getAttractionName() {
         return this.attractionName;
     }
@@ -115,10 +96,14 @@ public class Loan {
 
     public void setContactNo(String contactNo) {
         this.contactNo = contactNo;
+        }
+
+    public PASSSTATUS getPassStatus() {
+        return passStatus;
     }
 
-    public String getLoanId() {
-        return loanId;
+    public void setPassStatus(PASSSTATUS passStatus) {
+        this.passStatus = passStatus;
     }
 
     

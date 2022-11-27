@@ -32,6 +32,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import oop.io.demo.pass.PASSSTATUS;
+import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.user.UserService;
@@ -186,7 +189,15 @@ public class LoanController {
     public ResponseEntity getLoansByUserEmail(@PathVariable("userEmail") String userEmail){
         List<Loan> loans = loanRepository.findAllByUserEmail(userEmail);
         if(!loans.isEmpty()) {
-            return ResponseEntity.ok(loans);
+            List<LoanResponse> loanResponses = new ArrayList<>();
+            for(Loan l: loans) {
+                PASSSTATUS status = null;
+                Boolean present = passRepository.findById(l.getPassId()).isPresent();
+                if(present) status = passRepository.findById(l.getPassId()).get().getPassStatus();
+                loanResponses.add(new LoanResponse(l.getLoanDate().toString(), l.getDueDate(), l.getAttractionName(), l.getUserEmail(), l.getLoanId(),
+                l.getName(), l.getContactNo(), l.getPassId(), l.getStatus(), status));
+            }
+            return ResponseEntity.ok(loanResponses);
         }
         else {
             return ResponseEntity.badRequest().body("User was not found!");
