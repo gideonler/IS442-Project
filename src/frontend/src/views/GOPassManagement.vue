@@ -8,7 +8,8 @@
 
 <script>
 import DashboardLayout from '../layouts/DashboardLayout'
-import PassStatus from '../components/GOPassManagement/PassStatus.vue';
+// import PassStatus from '../components/GOPassManagement/PassStatus.vue';
+import PassStatus from '../components/GOPassManagement/PassList.vue';
 
 export default {
 
