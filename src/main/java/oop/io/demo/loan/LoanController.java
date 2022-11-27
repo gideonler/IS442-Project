@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -67,50 +65,35 @@ public class LoanController {
     public ResponseEntity addBooking(@RequestBody LoanRequest loanRequest) {
 
         String userEmail = loanRequest.getUserEmail();
-
+        //check if user exists
         if(!userRepository.findByEmail(userEmail).isPresent()) return ResponseEntity.badRequest().body("User not found");
 
         String attractionName = loanRequest.getAttractionName();
         int noOfPass = loanRequest.getNoOfPass();
 
+        //get and parse loan date
         String dateString = loanRequest.getLoanDate();
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate loanDate = LocalDate.parse(dateString, dateFormat);
-
         
-        loanService = new LoanService(loanRepository, passRepository, userRepository);
-
         if(noOfPass==0) return ResponseEntity.badRequest().body("Please enter the number of passes you want (1 or 2)");
         
+        loanService = new LoanService(loanRepository, passRepository, userRepository);
         if (checkBooking(userEmail, loanDate)) {
-            if (noOfPass == 1) {
+            for(int i=0; i<noOfPass; i++) {
                 Loan loan = loanService.addBooking(userEmail, loanDate, attractionName, "1");
-                if (loan != null) {
-                    try {
-                        BookingRequest booking = new BookingRequest(userEmail, loan.getLoanID());
-                        emailSender.sendAttachmentMessage(booking);
-                    } catch (Exception e) {
-                        return ResponseEntity.badRequest().body("Booking error.");
-                    }
-                    return ResponseEntity.ok("One pass was created for " + attractionName + " for use on " + loanDate);
-                }
-            } else {
-                Loan loan1 = loanService.addBooking(userEmail, loanDate, attractionName, "1");
-                Loan loan2 = loanService.addBooking(userEmail, loanDate, attractionName, "2");
-                if (loan1 != null && loan2 != null) {
-                    try {
-                        BookingRequest booking1 = new BookingRequest(userEmail, loan1.getLoanID());
-                        emailSender.sendAttachmentMessage(booking1);
-                        BookingRequest booking2 = new BookingRequest(userEmail, loan2.getLoanID());
-                        emailSender.sendAttachmentMessage(booking2);
-                    } catch (Exception e) {
-                        return ResponseEntity.badRequest().body("Booking error.");
-                    }
-                    return ResponseEntity.ok("Two passes were created for " + attractionName + " for use on " + loanDate);
+                try {
+                    BookingRequest booking = new BookingRequest(userEmail, loan.getLoanID());
+                    emailSender.sendAttachmentMessage(booking);
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("Booking error.");
                 }
             }
+            String passesCreated = noOfPass== 1? "One pass": "Two passes";
+            return ResponseEntity.ok(passesCreated+ " created for " + attractionName + " for use on " + loanDate);
+        } else {
+            return ResponseEntity.badRequest().body("Booking already made for user on this date");
         }
-        return ResponseEntity.badRequest().body("Booking unsuccessful!");
     }
     
     //check booking exists
