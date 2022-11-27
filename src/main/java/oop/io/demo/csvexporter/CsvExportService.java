@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import javax.swing.text.Document;
+
 import oop.io.demo.loan.Loan;
 import oop.io.demo.loan.LoanRepository;
 import oop.io.demo.attraction.Attraction;
@@ -20,6 +22,10 @@ import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
+
+import java.io.*;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 @Service
 public class CsvExportService {
@@ -131,4 +137,121 @@ public class CsvExportService {
         }
         return output;
     }
+
+        //Export Email Templates
+        public String exportEmail(String attractionName) throws Exception{
+            try {
+                //Get webpage
+                Attraction attraction = attractionRepository.findByAttractionName(attractionName).get();
+                String templateName = attraction.getTemplateFilename();
+                String templatePath = attraction.getTemplateFilePath();
+
+                String webpage = templatePath + "/" + templateName;
+
+                URL url = new File(getClass().getResource(webpage).getFile()).toURI().toURL();
+                String strUrl1 = url.toString().replace("target/classes", "src/main/resources");
+                String strUrl2 = strUrl1.toString().replaceAll("%2520", "%20");
+
+                URL newUrl = new URL(strUrl2);
+                 
+                // Create URL object
+                BufferedReader readr = 
+                  new BufferedReader(new InputStreamReader(newUrl.openStream()));
+      
+                // Enter filename in which you want to download
+                //Specify the file name and path here
+                String writeFilePath = (url.getPath().split("Documents"))[0] + "Desktop/" + templateName;
+                File file = new File(writeFilePath);
+
+                /* This logic will make sure that the file 
+                * gets created if it is not present at the
+                * specified location*/
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+
+                BufferedWriter writer = 
+                  new BufferedWriter(new FileWriter(file));
+                  
+                // read each line from stream till end
+                String line;
+                while ((line = readr.readLine()) != null) {
+                    writer.write(line);
+                }
+      
+                readr.close();
+                writer.close();
+                
+                return "Successfully Downloaded Email Template.";
+            }
+      
+            // Exceptions
+            catch (MalformedURLException mue) {
+                return "Malformed URL Exception raised";
+            }
+            catch (IOException ie) {
+                ie.printStackTrace();
+                return "IOException raised";
+            }
+        }
+        /* 
+        //Export Attachment
+        public String exportAttachment(String attractionName) throws Exception{
+            try {
+                //Get webpage
+                Attraction attraction = attractionRepository.findByAttractionName(attractionName).get();
+                String attachmentName = attraction.getAttachmentPDFFilename();
+                String attachmentPath = attraction.getAttachmentPDFFilePath();
+
+                String webpage = attachmentPath + "/" + attachmentName;
+
+                URL url = new File(getClass().getResource(webpage).getFile()).toURI().toURL();
+                String strUrl1 = url.toString().replace("target/classes", "src/main/resources");
+                String strUrl2 = strUrl1.toString().replaceAll("%2520", "%20");
+
+                URL newUrl = new URL(strUrl2);
+                 
+                // Create URL object
+                Document pdfDocument = new Document(originalFileName);
+
+                BufferedReader readr = 
+                  new BufferedReader(new InputStreamReader(newUrl.openStream()));
+      
+                // Enter filename in which you want to download
+                //Specify the file name and path here
+                String writeFilePath = (url.getPath().split("Documents"))[0] + "Desktop/" + attachmentName;
+                File file = new File(writeFilePath);
+
+                /* This logic will make sure that the file 
+                * gets created if it is not present at the
+                * specified location
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+
+                BufferedWriter writer = 
+                  new BufferedWriter(new FileWriter(file));
+                  
+                // read each line from stream till end
+                String line;
+                while ((line = readr.readLine()) != null) {
+                    writer.write(line);
+                }
+      
+                readr.close();
+                writer.close();
+                
+                return "Successfully Downloaded Attachment Template.";
+            }
+      
+            // Exceptions
+            catch (MalformedURLException mue) {
+                return "Malformed URL Exception raised";
+            }
+            catch (IOException ie) {
+                ie.printStackTrace();
+                return "IOException raised";
+            }
+        }
+        */
 }
