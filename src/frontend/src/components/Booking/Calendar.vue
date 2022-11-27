@@ -67,7 +67,7 @@
       created() {
         this.getBookings();
         if(this.selected_attraction!= null){
-          this.getPasses()
+          this.getPasses();
           this.loadData();
         }
     },
@@ -141,31 +141,32 @@
                 avail_dates.push(yyyy+"-" +mm+ "-"+ dd)
             }
             var temp;
-
             if(this.containsKey(this.total_loans,this.selected_attraction)){
               this.availabilities=  response.data[this.selected_attraction]
               for(date of avail_dates){
                 if(this.containsKey(this.availabilities,date)){
                   //all available
                   if(this.availabilities[date]!=0){
-                    temp= { title: 'available', 'date': date,   display: 'background', passes_left: this.availabilities[date]  }
+                    temp= { title: this.availabilities[date]+ ' available', 'date': date,   display: 'background', passes_left: this.availabilities[date]  }
                   }
                 }
                 //all still available
                 else{
-                  temp= { title: 'available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
+                  temp= { title: this.selected_max_avail + ' available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
                 }
                 result.push(temp)
               }
             }else{
               for(date of avail_dates){
-                  temp= { title: 'available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
+                  temp= { title: this.selected_max_avail + ' available', 'date': date,   display: 'background' , passes_left: this.selected_max_avail}
+
                   result.push(temp)
                 }
             }
 
             this.calendarOptions.events= result;
-
+            console.log("HEKLLLOO THERE")
+            console.log(result)
           })
           .catch((error) => {
               if (error) {
@@ -185,7 +186,7 @@
         },
         handleDateClick: function(info){ 
           let availability=  info.dayEl.innerText.split("\n")[1];
-          if (availability== 'available'){
+          if (availability.includes('available')){
             this.selected_date = info.dateStr;
             if(this.containsKey(this.availabilities, info.dateStr)){
               this.selected_no_pass= this.availabilities[info.dateStr];
