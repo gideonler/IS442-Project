@@ -79,7 +79,16 @@ public class CsvExporterController {
         try{
             return ResponseEntity.ok(csvExportService.exportAttachment(attractionName));
         } catch (Exception e){
-            return ResponseEntity.badRequest().body("Email not exported! :(");
+            return ResponseEntity.badRequest().body("Attachment not exported! :(");
+        }
+    }
+
+    @GetMapping("/imageTemplate")
+    public ResponseEntity exportImage(@RequestParam("attractionName") String attractionName) throws Exception {
+        try{
+            return ResponseEntity.ok(csvExportService.exportImage(attractionName));
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Image not exported! :(");
         }
     }
 
