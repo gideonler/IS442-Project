@@ -11,6 +11,10 @@
         <i class="nc-icon nc-notes"></i>
         <p>Booking Calendar</p>
       </sidebar-link>
+      <sidebar-link  v-if="(this.user == 'STAFF' || this.user=='ADMIN')" to="/available-attractions">
+        <i class="nc-icon nc-bullet-list-67"></i>
+        <p>Available Attractions</p>
+      </sidebar-link>
       <sidebar-link v-if="this.user=='ADMIN'" to="/analytics">
         <i class="nc-icon nc-chart-bar-32"></i>
         <p>Analytics</p>

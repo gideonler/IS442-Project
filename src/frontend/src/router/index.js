@@ -20,6 +20,7 @@ import Authentication from '../views/Authentication.vue'
 import GOPass from '../views/GOPassManagement.vue'
 import UsersManagement from '../views/UsersManagement.vue'
 import PassDetails from '../views/PassDetails.vue'
+import ViewAttractions from '../views/ViewAttractionPage.vue'
 // import NotFound from '../views/NotFound.vue'
 // import Overview from '../views/Overview.vue'
 
@@ -34,7 +35,8 @@ const routes = [
   },
   { path: '/notifications', component: Notifications },
   { path: '/analytics', component: Analytics},
-  { path: '/booking', component: Booking },
+  { path: '/booking', component: Booking, name: 'Booking' },
+  { path: '/available-attractions', component: ViewAttractions },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/authentication', component: Authentication },
