@@ -13,6 +13,7 @@
         </div>
         <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
+        v-if="this.user_type!='GENERALOFFICE'"
         >
           <b-form-input
             :value= "this.attraction_name"
@@ -31,7 +32,7 @@
   
       </form>
         
-        <b-button class="mt-2" variant="success" block @click="confirmBooking( no_passes)">Confirm Booking</b-button>
+        <b-button class="mt-2" v-if="this.user_type!='GENERALOFFICE'" variant="success" block @click="confirmBooking( no_passes)">Confirm Booking</b-button>
       </b-modal>
     <div hidden>
       <booking-reply></booking-reply>
@@ -64,6 +65,7 @@
         created() {
           this.user = JSON.parse(localStorage.getItem('user'));
           this.user_email= this.user.username
+          this.user_type= this.user.userType.authority
           this.$root.$refs.BookingPopUp = this;
         },
         mounted(){
