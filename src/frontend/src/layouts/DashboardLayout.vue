@@ -3,9 +3,13 @@
     <div class="wrapper">
       <side-bar :title="this.user">
       <mobile-menu slot="content"></mobile-menu>
-      <sidebar-link to="/booking">
+      <sidebar-link  v-if="(this.user == 'STAFF' || this.user=='ADMIN')" to="/booking">
         <i class="nc-icon nc-notes"></i>
         <p>My Bookings</p>
+      </sidebar-link>
+      <sidebar-link  v-if="(this.user == 'GENERALOFFICE')" to="/booking">
+        <i class="nc-icon nc-notes"></i>
+        <p>Booking Calendar</p>
       </sidebar-link>
       <sidebar-link v-if="this.user=='ADMIN'" to="/analytics">
         <i class="nc-icon nc-chart-bar-32"></i>

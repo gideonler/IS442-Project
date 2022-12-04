@@ -6,7 +6,7 @@
          <CalendarFilter @filter-attraction="filterAttraction" ></CalendarFilter>
          <Calendar v-on:booking-confirmed="forceRerender" :key="this.selected_attraction" :selected_attraction="this.selected_attraction" fluid></Calendar>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-5" v-if="this.user!='GENERALOFFICE'">
           <Sidebar :key="componentKey" ></Sidebar>
         </div>
       </div>
@@ -33,6 +33,7 @@
             
             created() {
                 this.$emit('update:layout', DashboardLayout);
+                this.user= JSON.parse(localStorage.getItem('user')).userType.authority
             },
             methods: {
               filterAttraction(selected_attraction) {
