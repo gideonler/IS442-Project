@@ -1,27 +1,31 @@
 <template>
     <!-- Vertical navbar -->
-    <div class="vertical-nav bg-light fixed-right" id="sidebar">
+    <div class="vertical-nav bg-light fixed-right" id="sidebar" style="padding-bottom: 10%;">
 
-        <p class="bg-dark text-white font-weight-bold text-uppercase px-3">Total Bookings</p>
+        <!-- <p class="bg-dark text-white font-weight-bold text-uppercase px-3">Bookings This Month</p>
 
-        <p class="px-3"> You have {{ number }} bookings in total </p>
+        <p class="px-3"> You have {{ number }} bookings in this month </p> -->
 
-        <p class="bg-dark text-white font-weight-bold text-uppercase px-3">Upcoming Bookings</p>
+        <p class="bg-dark text-white font-weight-bold text-uppercase px-3">{{nameOfMonth}} Bookings</p>
 
-        <div class="scroll px-3 bg-booking " tabindex="0">
+        <p class="px-3"> You have {{ number }} bookings in this month </p>
+
+        <!-- <div class="scroll px-3 bg-booking " tabindex="0"> -->
+        <div>
             <div v-if="bookingList.length > 1">
-                <ul class="no-bullets" v-for="(booking, b) in bookingList.filter(booking => booking.status != 'CANCELLED')" :key="b">
+                <!-- <ul class="no-bullets" v-for="(booking, b) in bookingList.filter(booking => booking.status != 'CANCELLED' && booking.loanDate.substring(5, 7) == monthNumber)" :key="b"> -->
+                <ul class="no-bullets" v-for="(booking, b) in bookingList.filter(booking => booking.loanDate.substring(5, 7) == monthNumber)" :key="b">
                     <li>Attraction Name: {{ booking.attractionName }}</li>
                     <li>Loan Date: {{ booking.loanDate.split("T")[0] }}</li>
                     <li>Pass ID: {{ booking.passId }}</li>
                     <li>Booking Status: {{ booking.status }}</li>
-                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="danger" @click="sendInfo(booking.loanID)">
+                    <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="danger" @click="sendInfo(booking.loanID)" v-if="booking.status != 'CANCELLED'">
                         Cancel booking
                     </b-button>
                     <hr>
                 </ul>
             </div>
-            <div v-else>No upcoming bookings</div>
+            <div class="px-3" v-else>No upcoming bookings</div>
         </div>
 
         <b-modal id="modal-1" title="Booking Cancellation" alignment="center">
@@ -37,6 +41,10 @@
 
         <p class="bg-dark text-white font-weight-bold text-uppercase px-3">Contact</p>
         <p class="px-3"> General Office Phone: +65 6766 0100</p>
+<!-- 
+        <br>
+        <br>
+        <br> -->
     </div>
 </template>
   
@@ -50,6 +58,13 @@ function dateFormat(date) {
     return dateFormatted;
 }
 
+const nameOfMonth = new Date().toLocaleString(
+  'default', {month: 'long'}
+);
+
+var months  = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const monthNumber = months.indexOf(nameOfMonth) + 1;
+
 export default {
     name: 'SideBar',
     props: {
@@ -57,6 +72,8 @@ export default {
     },
     data() {
         return {
+            nameOfMonth,
+            monthNumber,
             number: "",
             month: "",
             user: "",
@@ -152,7 +169,6 @@ export default {
         }
     }
 }
-
 
 </script>
   
