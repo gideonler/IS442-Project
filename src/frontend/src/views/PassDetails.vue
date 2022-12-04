@@ -1,5 +1,5 @@
 <template>
-    <div style="padding-bottom: 10%;">
+    <div style="padding-bottom: 10%; margin-bottom: 10%;">
         <div class="row">
             <div class="card col-md-12" style="background-color: #808588">
                 <div class="card-header" style="background-color: #808588">
