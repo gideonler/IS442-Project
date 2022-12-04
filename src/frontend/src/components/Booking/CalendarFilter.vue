@@ -36,6 +36,13 @@
         },
         created() {
             this.loadData();
+            this.selected= this.$route.params.attractionname;
+            console.log(this.selected)
+            this.$root.$on('select_attraction', data => {
+                console.log(data)
+
+                this.selected= data;
+            });
         },
         methods: {
             updateBooking(pass_type) {
