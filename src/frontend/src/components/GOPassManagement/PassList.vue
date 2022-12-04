@@ -97,13 +97,10 @@
           ></b-pagination>
         </b-col>
       </b-row>
-
-
-<b-editable-table
+      <b-editable-table
+      width= 100%
       head-variant="dark"
       disableDefaultEdit
-      :rowUpdate="rowUpdate"
-      :editMode="'row'"
       bordered
       class="editable-table"
       v-model="items"
@@ -119,15 +116,17 @@
       show-empty
       small
       @filtered="onFiltered"
-    >
-    <template #cell(editPassStatus)="data" >
-        <div>
-            <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="secondary" @click="sendInfo(data.item.loanID); getPassStatus(data.item.passId)">
-            Edit Pass Status
-        </b-button>
-        </div>
+      >
+      <template #cell(editPassStatus)="data" >
+          <div>
+              <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="secondary" @click="sendInfo(data.item.loanID); getPassStatus(data.item.passId)">
+              Edit Pass Status
+          </b-button>
+          </div>
       </template>
-    </b-editable-table>
+      </b-editable-table>
+     
+
 <!-- 
                 <table class="table text-nowrap">
                     <thead class="thead-dark">
@@ -236,7 +235,8 @@ export default {
                 class: "status-col",
                 sortable: true,
                 },
-                { key: "editPassStatus", label: "" ,  class: "edit-pass-col",},
+                { key: "editPassStatus", label: "" ,  
+                class: "edit-pass-col",},
             ],
             rowUpdate: {},
             totalRows: 1,
@@ -268,6 +268,9 @@ export default {
                 .then((response) => {
                     console.log(response.data)
                     this.bookingList = response.data;
+                    this.bookingList.forEach(function (value, i) {
+                    value["id"]= i+1
+                });
                     this.items= this.bookingList
                     console.log(this.items)
                     this.totalRows= this.items.length
@@ -349,8 +352,10 @@ export default {
   margin: 10px;
 }
 
-table.editable-table {
+table.b-table.editable-table {
+  width: 100%;
   margin-top: 10px;
+  margin-bottom:100px;
 }
 
 table.editable-table td {
@@ -362,22 +367,8 @@ table.editable-table td {
   vertical-align: middle;
 }
 
-.editable-table .custom-checkbox {
-  width: 50px;
-}
 
-.remove-icon {
-  color: red;
-  cursor: pointer;
-  font-size: 20px;
-}
-
-.edit-icon {
-  color: rgb(4, 83, 158);
-  cursor: pointer;
-  font-size: 20px;
-}
-
+@media only screen and (min-width: 600px){
 .attraction-col {
   width:  15%;
 }
@@ -401,6 +392,6 @@ table.editable-table td {
 .edit-pass-col {
   width: 20%;
 }
-
+}
 
 </style>
