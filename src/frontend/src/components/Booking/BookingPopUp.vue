@@ -9,11 +9,11 @@
             <li>You can only borrow 1 day to 8 weeks prior visitation.</li>
             <li>You may borrow a maximum of 2 passes each time.</li>
           </ul>
-         
+          <strong style="color:red"  v-if="(this.user_type!='GENERALOFFICE' && this.hasOutstandingFees)">You have an outstanding fee of ${{this.outstanding_fee}} from your reported pass loss. <br> You may not book until the fees are paid in the GO.</strong>
         </div>
         <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
-        v-if="this.user_type!='GENERALOFFICE'"
+        v-if="(this.user_type!='GENERALOFFICE' && !this.hasOutstandingFees)"
         >
           <b-form-input
             :value= "this.attraction_name"
@@ -31,8 +31,7 @@
         </b-form-group>
   
       </form>
-        
-        <b-button class="mt-2" v-if="this.user_type!='GENERALOFFICE'" variant="success" block @click="confirmBooking( no_passes)">Confirm Booking</b-button>
+        <b-button class="mt-2" v-if="(this.user_type!='GENERALOFFICE' && !this.hasOutstandingFees)" variant="success" block @click="confirmBooking( no_passes)">Confirm Booking</b-button>
       </b-modal>
     <div hidden>
       <booking-reply></booking-reply>
@@ -55,11 +54,13 @@
                   create_booking: "http://localhost:8080/loan/book",
                   get_booking_count: 'http://localhost:8080/loan/getbookingcount',
                   get_bookings: 'http://localhost:8080/loan/',
+                  get_user_details: 'http://localhost:8080/user/mydetails',
                 },
                 no_passes:1,
                 pass_type:null,
                 loan_count: null,
                 loans_in_month: {},
+                outstanding_fee: null
             };
         },
         created() {
@@ -70,6 +71,7 @@
         },
         mounted(){
           // this.checkUserBookings()
+          this.getOutstandingFee()
           this.getBookings()
         },
         computed:{
@@ -79,7 +81,14 @@
               return true
             }
             return false
+          },
+          hasOutstandingFees(){
+            if(this.outstanding_fee>0){
+              return true
+            }
+            return false
           }
+
     },
       methods: {
         updatePassType(pass_type){
@@ -110,6 +119,18 @@
         //       }
         //   });
         // },
+        async getOutstandingFee(){
+          await axios
+          .get(this.api.get_user_details,{
+            params: {
+              useremail:  this.user_email
+            }})
+            .then ((response) => {
+              this.outstanding_fee = response.data.outstandingFees
+            })
+            console.log(this.outstanding_fee==0)
+
+        },
         async getBookings() {
         await axios
             //change to user email
