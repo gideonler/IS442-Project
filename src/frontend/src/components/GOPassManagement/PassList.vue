@@ -64,7 +64,7 @@
           <template #cell(editPassStatus)="data">
             <div>
               <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="secondary"
-                @click="sendInfo(data.item.loanID); getPassStatus(data.item.passId)">
+                @click="sendInfo(data.item); getPassStatus(data.item.passId)">
                 Edit Pass Status
               </b-button>
             </div>
@@ -100,11 +100,15 @@
                     </tbody>
                 </table> -->
         <b-modal id="modal-1" title="Update Pass Status" alignment="center">
-          <p class="card-text">Current Pass Status: {{ passLocation }}</p>
+          <p class="card-text"><b>Current Pass Status:</b> {{ passLocation }}</p>
+          <p v-if="bookingStatus=='LOST'" class="card-text"><b>Status:</b> {{ bookingStatus }}</p>
+          <p  v-if="bookingStatus=='LOST'" class="card=text"><b>Replacement Fee to Pay: </b> ${{ outstanding_fee}}</p>
           <template #modal-footer>
-            <b-button variant="secondary" @click="passStatus(bookingId, 'INOFFICE'); $bvModal.hide('modal-1')">
+            <b-button v-if="bookingStatus!='LOST'" variant="secondary" @click="passStatus(bookingId, 'INOFFICE'); $bvModal.hide('modal-1')">
               Returned</b-button>
-            <b-button variant="success" @click="passStatus(bookingId, 'ONLOAN'); $bvModal.hide('modal-1')">Collected
+              <b-button v-if="bookingStatus=='LOST'" variant="secondary" @click="payPenalty(); $bvModal.hide('modal-1')">
+              Pay Fee</b-button>
+            <b-button v-if="bookingStatus!='LOST'" variant="success" @click="passStatus(bookingId, 'ONLOAN'); $bvModal.hide('modal-1')">Collected
             </b-button>
           </template>
         </b-modal>
@@ -143,6 +147,8 @@ export default {
         passStatus: "http://localhost:8080/passstatus/change",
         emailCollected: "http://localhost:8080/email/collected",
         passDetails: "http://localhost:8080/pass/",
+        get_user_details: 'http://localhost:8080/user/mydetails',
+        pay_penalty:'http://localhost:8080/usermanagement/updateFee',
       },
       items: null,
       fields: [
@@ -202,6 +208,8 @@ export default {
       sortDirection: 'asc',
       filter: null,
       filterOn: [],
+      outstanding_fee: null,
+      bookingStatus: ''
     }
   },
 
@@ -213,6 +221,7 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault()
+      this.getOutstandingFee();
       return axios
         .get(this.api.bookingList + this.form.email, {
           params: {
@@ -235,9 +244,10 @@ export default {
         });
     },
 
-    sendInfo(loanID) {
-      console.log(loanID)
-      this.bookingId = loanID;
+    sendInfo(item) {
+      console.log(item)
+      this.bookingStatus= item.status;
+      this.bookingId = item.loanID;
     },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
@@ -284,6 +294,25 @@ export default {
           console.log(error.response);
         });
     },
+    async getOutstandingFee(){
+          await axios
+          .get(this.api.get_user_details,{
+            params: {
+              useremail:  this.form.email
+            }})
+            .then ((response) => {
+              this.outstanding_fee = response.data.outstandingFees
+            })
+        },
+    async payPenalty(){
+      await axios
+      .post(this.api.pay_penalty,{
+        useremail: this.form.email,
+      })
+      .then ((response) => {
+        console.log(response);
+      })
+    },
   },
   computed: {
     sortOptions() {
@@ -294,6 +323,12 @@ export default {
           return { text: f.label, value: f.key }
         })
     },
+    hasOutstandingFees(){
+            if(this.outstanding_fee>0){
+              return true
+            }
+            return false
+          }
   },
 }
 </script>

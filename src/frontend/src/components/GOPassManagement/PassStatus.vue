@@ -26,9 +26,13 @@
         </div>
         <b-modal id="modal-1" title="Update Pass Status" alignment="center">
             <p class="card-text">Current Pass Status: {{ passLocation }}</p>
+            <p class="card-text">Current Booking Status: {{ booking.status }}</p>
+
             <template #modal-footer>
                 <b-button variant="secondary" @click="passStatus(bookingId, 'INOFFICE'); $bvModal.hide('modal-1')">
                     Returned</b-button>
+                <b-button variant="secondary" @click="passStatus(bookingId, 'INOFFICE'); $bvModal.hide('modal-1')">
+                Returned</b-button>
                 <b-button variant="success" @click="passStatus(bookingId, 'ONLOAN'); $bvModal.hide('modal-1')">Collected
                 </b-button>
             </template>

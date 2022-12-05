@@ -180,6 +180,7 @@ export default {
 
         sendInfo(loanID) {
             this.bookingId = loanID;
+            console.log(this.bookingId)
         },
 
         reportLoss(bookingId) {

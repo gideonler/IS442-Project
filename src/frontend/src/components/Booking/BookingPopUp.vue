@@ -9,7 +9,7 @@
             <li>You can only borrow 1 day to 8 weeks prior visitation.</li>
             <li>You may borrow a maximum of 2 passes each time.</li>
           </ul>
-         
+          <strong style="color:red"  v-if="(this.user_type!='GENERALOFFICE' && this.hasOutstandingFees)">You have an outstanding fee of ${{this.outstanding_fee}} from your reported pass loss. <br> You may not book until the fees are paid in the GO.</strong>
         </div>
         <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
@@ -31,7 +31,6 @@
         </b-form-group>
   
       </form>
-        <strong style="color:red"  v-if="(this.user_type!='GENERALOFFICE' && this.hasOutstandingFees)">You have an outstanding fee of ${{this.outstanding_fee}} from your reported pass loss. <br> Please clear the outstanding fees before you can book.</strong>
         <b-button class="mt-2" v-if="(this.user_type!='GENERALOFFICE' && !this.hasOutstandingFees)" variant="success" block @click="confirmBooking( no_passes)">Confirm Booking</b-button>
       </b-modal>
     <div hidden>
