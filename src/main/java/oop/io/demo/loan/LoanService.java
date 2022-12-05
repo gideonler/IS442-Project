@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import oop.io.demo.attraction.Attraction;
 import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.Pass;
+import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
