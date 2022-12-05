@@ -130,7 +130,7 @@ public class UserAdminController {
     ///GO AND ADMIN ACCESS
     //Update Outstanding Fees
     //Access : only admin and GO 
-    @GetMapping("/updateFee")
+    @PostMapping("/updatefee")
     public ResponseEntity updateOutstandingFee(@RequestParam(value="userEmail") String userEmail){
         UserService userService = new UserService(repository);
         return userService.updateOutstandingFee(userEmail);
