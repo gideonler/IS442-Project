@@ -1,5 +1,5 @@
 <template>
-    <div style="padding-bottom: 10%">
+    <div style="padding-bottom: 10%; margin-bottom: 10%;">
         <div class="row">
             <div class="card col-md-12" style="background-color: #808588">
                 <div class="card-header" style="background-color: #808588">
@@ -18,7 +18,71 @@
                 </div>
             </div>
         </div>
-        <div class="row d-flex justify-content-around" v-if="bookingList[0].attractionName.length > 0">
+
+        <div class="row">
+            <div class="col">
+                <h2>All Bookings</h2>
+            </div>
+        </div>
+
+        <div>
+            <table class="table text-nowrap">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" id="Name">Attraction Name</th>
+                        <th scope="col" id="Email">Loan Date</th>
+                        <th scope="col" id="UserType">Pass ID</th>
+                        <th scope="col" id="OutstandingFees">Booking Status</th>
+                        <th scope="col" id="UserStatus">Pass Status</th>
+                        <th scope="col" id="ChangeStatus">Report Loss</th>
+                    </tr>
+                </thead>
+                <tbody v-if="bookingList[0].attractionName.length > 0">
+                    <tr v-for="(booking, i) in bookingList" :key="i">
+                        <td scope="row">{{ booking.attractionName }}</td>
+                        <td>{{ booking.loanDate.split("T")[0] }}</td>
+                        <td>{{ booking.passId }}</td>
+                        <td>{{ booking.status }}</td>
+                        <td class="text-nowrap">
+                            <b-button v-b-modal.modal-1 class="btn-sm mt-1" variant="secondary"
+                                @click="getPassStatus(booking.passId); previousBorrower(booking.passId, booking.loanDate)">
+                                Check Pass Status
+                            </b-button>
+                        </td>
+                        <td class="text-nowrap">
+                            <b-button v-b-modal.modal-2 class="btn-sm mt-1 float-right" variant="danger"
+                                @click="sendInfo(booking.loanID); getReplacementFee(booking.attractionName)">
+                                Report Pass Loss
+                            </b-button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <b-modal id="modal-1" title="Pass Status" alignment="center">
+                <p>Pass Status: {{ passStatus }}</p>
+                <p v-if="borrower.email.length > 0">Previous Day Borrower:</p>
+                <ul v-if="borrower.email.length > 0">
+                    <li> Email: {{ borrower.email }} </li>
+                    <li> Contact No: {{ borrower.contactNo }} </li>
+                    <li> Name: {{ borrower.name }} </li>
+                </ul>
+                <template #modal-footer>
+                    <b-button variant="primary" @click="$bvModal.hide('modal-1')">Ok</b-button>
+                </template>
+            </b-modal>
+
+            <b-modal id="modal-2" title="Report Pass Loss" alignment="center">
+                <p class="my-4">Replacement fee for this pass is ${{ replacementFee }}</p>
+                <template #modal-footer>
+                    <b-button variant="secondary" @click="$bvModal.hide('modal-2')">Cancel</b-button>
+                    <b-button variant="danger" @click="reportLoss(bookingId); $bvModal.hide('modal-2')">Report Loss
+                    </b-button>
+                </template>
+            </b-modal>
+        </div>
+
+        <!-- <div class="row d-flex justify-content-around" v-if="bookingList[0].attractionName.length > 0">
             <div class="card bg-light col-md-5" v-for="(booking, b) in bookingList" :key="b">
                 <h4 class="card-header font-weight-bold">
                     {{ booking.attractionName }}
@@ -58,7 +122,7 @@
                 <b-button variant="danger" @click="reportLoss(bookingId); $bvModal.hide('modal-2')">Report Loss
                 </b-button>
             </template>
-        </b-modal>
+        </b-modal> -->
     </div>
 </template>
 
@@ -66,7 +130,6 @@
 <script>
 import DashboardLayout from '../layouts/DashboardLayout';
 import axios from "axios";
-
 
 export default {
     name: "Pass-Details",
@@ -200,9 +263,9 @@ export default {
                     if (response.data == "No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.") {
                         console.log(response.data)
                         this.$alert("No borrowers the day before you. Please check back the Friday before your loan to see if there is a borrower. Otherwise, collect your pass(es) from the General Office.");
-                        this.borrower.email = "", 
-                        this.borrower.contactNo = "",
-                        this.borrower.name = "";
+                        this.borrower.email = "",
+                            this.borrower.contactNo = "",
+                            this.borrower.name = "";
                     }
                 })
                 .catch((error) => {
@@ -214,4 +277,8 @@ export default {
 
 </script>
 
-
+<style>
+td {
+    text-align: left;
+}
+</style>

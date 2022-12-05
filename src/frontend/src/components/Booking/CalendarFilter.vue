@@ -1,6 +1,6 @@
 <template>
     <div>
-        <strong>Filter Booking Calendar</strong>
+        <strong>Select an Attraction</strong>
         <div class="row mb-3">
             <b-form-select class="col-md-6 mx-3" v-model="selected" :options="options" size="sm" ></b-form-select> 
         </div>
@@ -36,6 +36,13 @@
         },
         created() {
             this.loadData();
+            this.selected= this.$route.params.attractionname;
+            console.log(this.selected)
+            this.$root.$on('select_attraction', data => {
+                console.log(data)
+
+                this.selected= data;
+            });
         },
         methods: {
             updateBooking(pass_type) {
@@ -55,7 +62,7 @@
                 });
 
                 var options= [
-                { value: null, text: 'Please select a pass type' }]
+                { value: null, text: 'Please select an attraction' }]
 
                 for(var attraction of this.current_attractions){
                     var attractionName = attraction["attractionName"]

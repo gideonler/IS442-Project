@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import oop.io.demo.attraction.Attraction;
+import oop.io.demo.pass.PASSSTATUS;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 import oop.io.demo.user.User;
@@ -196,6 +197,9 @@ public class LoanService {
         Attraction a = attractionRepository.findByAttractionName(attractionName).get();
         User u = userRepository.findByEmail(userEmail).get();
         l.setStatus(LOANSTATUS.LOST);
+        String passId = l.getPassId();
+        Pass p = passRepository.findById(passId).get();
+        p.setPassStatus(PASSSTATUS.DEACTIVATED);
         Double fee = a.getReplacementFee();
         u.setOutstandingFees(fee);
         Double new_fee = u.getOutstandingFees();

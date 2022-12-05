@@ -66,6 +66,7 @@ public class UserService {
             //Assuming that the user will pay back the full fees
             User user = _user.get();
             user.setOutstandingFees(0);
+            userRepository.save(user);
             return ResponseEntity.ok("Penalty Fee payment has been made by " + user.getName()); 
         } else {
             return ResponseEntity.badRequest().body("Error fetching user details. Please check that username is entered correctly.");

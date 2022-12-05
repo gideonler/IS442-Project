@@ -5576,7 +5576,7 @@
   }
   .main-panel > .content {
     padding: 0px 0px 0px 0px;
-    min-height: 100%;
+    /* min-height: 100%; */
   }
   .main-panel > .content .row .col-md-12 > .title {
     margin-top: 0;

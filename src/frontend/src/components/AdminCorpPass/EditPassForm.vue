@@ -29,12 +29,14 @@
           <label>Templates</label>
           <b-form-file enctype="multipart/form-data" v-model="email_file" :state="Boolean(email_file)"
             placeholder="Upload Email Template Here..." drop-placeholder="Drop file here..."></b-form-file>
+          <span class="downloadTemplate"> Click here to <a href="/src/main/resources/templates/Attraction-Creation-Email-Template.html.html" download>download email template</a></span>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <b-form-file enctype="multipart/form-data" v-model="pdf_file" :state="Boolean(pdf_file)"
             placeholder="Upload PDF Attachement Template Here..." drop-placeholder="Drop file here..."></b-form-file>
+            <span class="downloadTemplate"> Click here to <a href="/src/main/resources/attachments/Attachment-Template.pdf" download>download PDF template</a></span>
         </div>
       </div>
 
@@ -92,7 +94,8 @@ export default {
         create_attraction: "http://localhost:8080/attractionmanagement/new",
         upload_files: "",
         upload_image: "",
-        get_attractions: "http://localhost:8080/attraction/attractions"
+        get_attractions: "http://localhost:8080/attraction/attractions",
+
       },
     }
   },
@@ -114,9 +117,9 @@ export default {
     },
   },
   created() {
-        this.user = JSON.parse(localStorage.getItem('user'));
-        console.log(this.user.jwt)
-    },
+    this.user = JSON.parse(localStorage.getItem('user'));
+    console.log(this.user.jwt)
+  },
   async mounted() {
     await axios
       .get(this.api.get_attractions, {
@@ -221,6 +224,12 @@ export default {
 
 </script>
 <style>
+
+.downloadTemplate {
+  color: rgb(170, 170, 170);
+  font-size: 12px;
+  font-style: italic;
+}
 
 </style>
   
