@@ -18,7 +18,7 @@
 		<java.version>17</java.version>
 		<node.version>v16.15.1</node.version>
 		<npm.version>8.19.1</npm.version>
-		<spring.version>5.2.0.RELEASE</spring.version>
+		<spring.version>5.3.36</spring.version>
 		<email.version>1.16.18</email.version>
 	</properties>
 
